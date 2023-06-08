@@ -8,13 +8,12 @@ fun TimerItem.toEntities(): Pair<TimerItemEntity, List<SelectedNumberEntity>>{
     val timerItemEntity = TimerItemEntity(
         time = time,
         unixEndTime = unixEndTime,
-        timerId = id,
     )
     val selectedNumberEntities: MutableList<SelectedNumberEntity> = ArrayList<SelectedNumberEntity>(100)
     selectedNumbers.forEach{ number ->
         selectedNumberEntities.add(SelectedNumberEntity(
             selectedNumber = number,
-            timerId = id,
+            unixEndTime = unixEndTime
         ))
     }
     return Pair(timerItemEntity, selectedNumberEntities)

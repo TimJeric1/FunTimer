@@ -35,7 +35,6 @@ class AppModule {
     ): TimerRepository {
         return TimerRepositoryImpl(
             timerDao = db.timerDao(),
-            selectedNumberDao = db.selectedNumberDao()
         )
     }
 }

@@ -76,7 +76,8 @@ fun TimerScreen(
             time = DurationOption.durationOptionToDuration(
                 viewModel.state.durationOption,
                 viewModel.state.durations
-            )
+            ),
+            onNumberBoxClick = { number: Int -> viewModel.onEvent(TimerEvent.onSelectedNumberClick(number)) }
         )
 
     }

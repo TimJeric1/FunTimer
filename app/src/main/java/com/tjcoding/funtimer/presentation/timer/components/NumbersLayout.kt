@@ -1,5 +1,6 @@
 package com.tjcoding.funtimer.presentation.timer.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun NumbersLayout(selectedNumbers: List<Int>) {
+fun NumbersLayout(selectedNumbers: List<Int>, onClick: ((Int) -> Unit)?) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -25,10 +26,16 @@ fun NumbersLayout(selectedNumbers: List<Int>) {
             ) {
                 selectedNumbers.forEachIndexed() { index, number ->
                     NumberBox(
-                        modifier = Modifier.padding(
-                            vertical = 2.dp,
-                            horizontal = 4.dp
-                        ), number = number
+                        modifier = Modifier
+                            .padding(
+                                vertical = 2.dp,
+                                horizontal = 4.dp
+                            )
+                            .clickable {
+                                if (onClick != null) {
+                                    onClick(number)
+                                }
+                            }, number = number
                     )
                 }
             }
@@ -42,10 +49,16 @@ fun NumbersLayout(selectedNumbers: List<Int>) {
                 selectedNumbers.forEachIndexed() { index, number ->
                     if (index > 3) return@forEachIndexed
                     NumberBox(
-                        modifier = Modifier.padding(
-                            vertical = 2.dp,
-                            horizontal = 4.dp
-                        ), number = number
+                        modifier = Modifier
+                            .padding(
+                                vertical = 2.dp,
+                                horizontal = 4.dp
+                            )
+                            .clickable {
+                                if (onClick != null) {
+                                    onClick(number)
+                                }
+                            }, number = number
                     )
                 }
             }
@@ -57,10 +70,16 @@ fun NumbersLayout(selectedNumbers: List<Int>) {
                 selectedNumbers.forEachIndexed() { index, number ->
                     if (index <= 3) return@forEachIndexed
                     NumberBox(
-                        modifier = Modifier.padding(
-                            vertical = 2.dp,
-                            horizontal = 4.dp
-                        ), number = number
+                        modifier = Modifier
+                            .padding(
+                                vertical = 2.dp,
+                                horizontal = 4.dp
+                            )
+                            .clickable {
+                                if (onClick != null) {
+                                    onClick(number)
+                                }
+                            }, number = number
                     )
                 }
             }
@@ -74,10 +93,16 @@ fun NumbersLayout(selectedNumbers: List<Int>) {
                 selectedNumbers.forEachIndexed() { index, number ->
                     if (index > 3) return@forEachIndexed
                     NumberBox(
-                        modifier = Modifier.padding(
-                            vertical = 2.dp,
-                            horizontal = 4.dp
-                        ), number = number
+                        modifier = Modifier
+                            .padding(
+                                vertical = 2.dp,
+                                horizontal = 4.dp
+                            )
+                            .clickable {
+                                if (onClick != null) {
+                                    onClick(number)
+                                }
+                            }, number = number
                     )
                 }
             }
@@ -89,10 +114,16 @@ fun NumbersLayout(selectedNumbers: List<Int>) {
                 selectedNumbers.forEachIndexed() { index, number ->
                     if (index <= 3 || index > 7) return@forEachIndexed
                     NumberBox(
-                        modifier = Modifier.padding(
-                            vertical = 2.dp,
-                            horizontal = 4.dp
-                        ), number = number
+                        modifier = Modifier
+                            .padding(
+                                vertical = 2.dp,
+                                horizontal = 4.dp
+                            )
+                            .clickable {
+                                if (onClick != null) {
+                                    onClick(number)
+                                }
+                            }, number = number
                     )
                 }
             }
@@ -104,10 +135,16 @@ fun NumbersLayout(selectedNumbers: List<Int>) {
                 selectedNumbers.forEachIndexed() { index, number ->
                     if (index <= 7) return@forEachIndexed
                     NumberBox(
-                        modifier = Modifier.padding(
-                            vertical = 2.dp,
-                            horizontal = 4.dp
-                        ), number = number
+                        modifier = Modifier
+                            .padding(
+                                vertical = 2.dp,
+                                horizontal = 4.dp
+                            )
+                            .clickable {
+                                if (onClick != null) {
+                                    onClick(number)
+                                }
+                            }, number = number
                     )
                 }
             }

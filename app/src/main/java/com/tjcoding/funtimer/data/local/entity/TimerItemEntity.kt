@@ -7,18 +7,16 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class TimerItemEntity (
-    @PrimaryKey(autoGenerate = true) val timerId: Int? = null,
+    @PrimaryKey val unixEndTime: Long,
     val time: Int,
-    val unixEndTime: Long,
 )
 
 @Entity(foreignKeys = arrayOf(ForeignKey(entity = TimerItemEntity::class,
-    parentColumns = arrayOf("timerId"),
-    childColumns = arrayOf("timer_id"),
+    parentColumns = arrayOf("unixEndTime"),
+    childColumns = arrayOf("unixEndTime"),
     onDelete = ForeignKey.CASCADE)))
 data class SelectedNumberEntity(
-    @PrimaryKey(autoGenerate = true) val selectedNumberId: Int? = null,
-    val selectedNumber: Int,
-    @ColumnInfo(name = "timer_id", index = true)
-    val timerId : Int? = null,
+    @PrimaryKey val selectedNumber: Int,
+    @ColumnInfo(index = true)
+    val unixEndTime: Long,
         )

@@ -22,11 +22,12 @@ import androidx.compose.ui.unit.dp
 fun TimerCard(
     modifier: Modifier = Modifier,
     numbers: List<Int>,
-    time: Int
+    time: Int,
+    onNumberBoxClick: ((Int) -> Unit)? = null
 ) {
     Card(
         modifier = modifier
-            .size(width = 200.dp, height = 200.dp),
+            .size(width = 180.dp, height = 180.dp),
     ) {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -41,7 +42,7 @@ fun TimerCard(
                         .weight(8f),
                     contentAlignment = Alignment.Center,
                 ) {
-                    NumbersLayout(selectedNumbers = numbers)
+                    NumbersLayout(selectedNumbers = numbers, onClick = onNumberBoxClick)
                 }
                 Text(
                     modifier = Modifier.weight(2f),

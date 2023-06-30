@@ -1,0 +1,5 @@
+
+Ukotlin:S1172"8Use "_" instead of this unused lambda parameter "index".(Æ¸Áşÿÿÿÿ
+„kotlin:S5612"lThis lambda has 131 lines of code, which is greater than the 20 authorized. Split it into smaller functions.(­ïã
+‹kotlin:S138"oThis function has 138 lines of code, which is greater than the 100 authorized. Split it into smaller functions.(áú½ùÿÿÿÿ
+okotlin:S3776"RRefactor this method to reduce its Cognitive Complexity from 68 to the 15 allowed.(áú½ùÿÿÿÿ

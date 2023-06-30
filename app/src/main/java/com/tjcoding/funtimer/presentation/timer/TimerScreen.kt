@@ -24,6 +24,7 @@ fun TimerScreen(
     modifier: Modifier = Modifier,
     viewModel: TimerViewModel = hiltViewModel()
 ) {
+    val state = viewModel.state
 
 
     val radioOptions = listOf("30 min", "60 min", "Custom")
@@ -35,7 +36,7 @@ fun TimerScreen(
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         NumberSelector(
-            displayedNumber = viewModel.state.displayedNumber,
+            displayedNumber = state.displayedNumber,
             onLeftFilledArrowClick = {
                 viewModel.onEvent(TimerEvent.onLeftFilledArrowClick)
             },
@@ -45,7 +46,7 @@ fun TimerScreen(
         )
         TimeRadioGroup(
             radioOptions = radioOptions,
-            selectedOption = DurationOption.durationOptionToIndex(viewModel.state.durationOption),
+            selectedOption = state.durationOption.toIndex(),
             onOptionSelected = { index ->
                 viewModel.onEvent(
                     TimerEvent.onDurationRadioButtonClick(
@@ -72,11 +73,8 @@ fun TimerScreen(
             }
         }
         TimerCard(
-            numbers = viewModel.state.selectedNumbers,
-            time = DurationOption.durationOptionToDuration(
-                viewModel.state.durationOption,
-                viewModel.state.durations
-            ),
+            numbers = state.selectedNumbers,
+            time = state.getDurationInTimeFormat(),
             onNumberBoxClick = { number: Int -> viewModel.onEvent(TimerEvent.onSelectedNumberClick(number)) }
         )
 

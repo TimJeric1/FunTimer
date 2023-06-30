@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 fun TimerCard(
     modifier: Modifier = Modifier,
     numbers: List<Int>,
-    time: Int,
+    time: String,
     onNumberBoxClick: ((Int) -> Unit)? = null
 ) {
     Card(
@@ -37,7 +37,6 @@ fun TimerCard(
                 Icon(modifier = Modifier.padding(top = 4.dp), imageVector = Icons.Outlined.Timer, contentDescription = null)
                 Box(
                     modifier = Modifier
-
                         .fillMaxWidth()
                         .weight(8f),
                     contentAlignment = Alignment.Center,
@@ -46,7 +45,7 @@ fun TimerCard(
                 }
                 Text(
                     modifier = Modifier.weight(2f),
-                    text = "${time}:00"
+                    text = time
                 )
             }
         }

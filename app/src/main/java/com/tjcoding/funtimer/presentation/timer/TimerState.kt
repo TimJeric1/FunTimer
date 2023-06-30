@@ -5,15 +5,17 @@ data class SetupState(
     val selectedNumbers: List<Int> = ArrayList<Int>(100),
     val possibleNumbers: List<Int> = (1..99).toList(),
     val durationOption: DurationOption = DurationOption.ONE,
-    val durations: Map<DurationOption, Int> = mapOf(DurationOption.ONE to 30, DurationOption.TWO to 60)
-)
-
-
-sealed class Duration2 {
-    data class OPTION_ONE(val duration: Int): Duration2()
-    data class OPTION_TWO(val duration: Int): Duration2()
-    data class CUSTOM(val duration: Int): Duration2()
+    val durations: Map<DurationOption, Int> = mapOf(DurationOption.ONE to 30, DurationOption.TWO to 60, DurationOption.CUSTOM to 5)
+){
+    fun getDuration(): Int {
+        return durationOption.toDuration(durations)
+    }
+    fun getDurationInTimeFormat(): String {
+        val duration = getDuration()
+        return "$duration:00"
+    }
 }
+
 
 enum class DurationOption {
     ONE, TWO, CUSTOM;
@@ -27,17 +29,18 @@ enum class DurationOption {
                 else -> ONE
             }
         }
-        fun durationOptionToDuration(durationOption: DurationOption, durations: Map<DurationOption, Int>): Int {
-            val duration = durations.get(durationOption)
-            if(duration != null) return duration
-            return durations.values.first()
-        }
-        fun durationOptionToIndex(durationOption: DurationOption): Int{
-            return when(durationOption){
-                ONE -> 0
-                TWO -> 1
-                CUSTOM -> 2
-            }
-        }
+    }
+}
+
+fun DurationOption.toDuration(durations: Map<DurationOption, Int>): Int{
+    val duration = durations.get(this)
+    if(duration != null) return duration
+    return durations.values.first()
+}
+fun DurationOption.toIndex(): Int{
+    return when(this){
+        DurationOption.ONE -> 0
+        DurationOption.TWO -> 1
+        DurationOption.CUSTOM -> 2
     }
 }

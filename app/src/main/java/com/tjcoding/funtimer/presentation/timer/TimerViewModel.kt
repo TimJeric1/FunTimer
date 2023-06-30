@@ -1,5 +1,6 @@
 package com.tjcoding.funtimer.presentation.timer
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,8 +11,10 @@ import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.utility.addInOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
+private const val TAG = "TimerViewModel"
 @HiltViewModel
 class TimerViewModel @Inject constructor(
     private val repository: TimerRepository
@@ -60,12 +63,12 @@ class TimerViewModel @Inject constructor(
                 if(event.duration == DurationOption.CUSTOM) onCustomDurationSelected()
             }
             TimerEvent.onSaveButtonClick -> {
+                Log.d(TAG, "onSaveButtonClick: ")
                 if(state.selectedNumbers.isEmpty()) return
-                val timerDuration = DurationOption.durationOptionToDuration(state.durationOption, state.durations)
+                val timerDuration = state.getDuration()
                 val timerItem = TimerItem(
                     selectedNumbers = state.selectedNumbers,
-                    time = timerDuration,
-                    unixEndTime = calculateUnixEndTime(duration = timerDuration)
+                    time = if(timerDuration == 5) LocalDateTime.now().plusSeconds(timerDuration.toLong()) else LocalDateTime.now().plusMinutes(timerDuration.toLong())
                 )
                 viewModelScope.launch {
                     repository.insertTimerItem(timerItem)
@@ -92,12 +95,7 @@ class TimerViewModel @Inject constructor(
 
     }
 
-    private fun calculateUnixEndTime(duration: Int): Long{
-        val currentTime = System.currentTimeMillis()
-        val durationInMillis = (duration*60 * 1000).toLong()
-        val unixEndTime = currentTime + durationInMillis
-        return  unixEndTime
-    }
+
 
     private fun onLeftFilledArrowClick() {
         val possibleNumbers = state.possibleNumbers

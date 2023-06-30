@@ -2,11 +2,14 @@ package com.tjcoding.funtimer.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.tjcoding.funtimer.data.local.daos.TimerDao
+import androidx.room.TypeConverters
+import com.tjcoding.funtimer.data.local.dao.TimerDao
 import com.tjcoding.funtimer.data.local.entity.SelectedNumberEntity
-import com.tjcoding.funtimer.data.local.entity.TimerItemEntity
+import com.tjcoding.funtimer.data.local.entity.TimeEntity
+import com.tjcoding.funtimer.data.local.type_converter.Converters
 
-@Database(entities = [TimerItemEntity::class, SelectedNumberEntity::class], version = 1)
+@Database(entities = [TimeEntity::class, SelectedNumberEntity::class], version = 7, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class TimerDatabase: RoomDatabase() {
     abstract fun timerDao(): TimerDao
 }

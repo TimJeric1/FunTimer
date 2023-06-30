@@ -1,4 +1,4 @@
-package com.tjcoding.funtimer.navigation
+package com.tjcoding.funtimer.utility.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons

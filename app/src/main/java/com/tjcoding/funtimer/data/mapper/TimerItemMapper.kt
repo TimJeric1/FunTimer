@@ -1,39 +1,33 @@
 package com.tjcoding.funtimer.data.mapper
 
-import android.util.Log
 import com.tjcoding.funtimer.data.local.entity.SelectedNumberEntity
-import com.tjcoding.funtimer.data.local.entity.TimerItemEntity
+import com.tjcoding.funtimer.data.local.entity.TimeEntity
 import com.tjcoding.funtimer.domain.model.TimerItem
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 
-fun TimerItem.toEntities(): Pair<TimerItemEntity, List<SelectedNumberEntity>>{
-    val unixEndTime = time.atZone(ZoneId.systemDefault()).toEpochSecond()
-    val timerItemEntity = TimerItemEntity(
-        key = this.hashCode(),
-        unixEndTime = unixEndTime,
+
+fun TimerItem.toEntitiesPair(): Pair<TimeEntity, List<SelectedNumberEntity>>{
+    val timerItemEntity = TimeEntity(
+        id = this.hashCode(),
+        time = time,
     )
-    val selectedNumberEntities: MutableList<SelectedNumberEntity> = ArrayList<SelectedNumberEntity>(100)
-    selectedNumbers.forEach{ number ->
-        selectedNumberEntities.add(SelectedNumberEntity(
-            selectedNumber = number,
-            timerItemKey = this.hashCode()
-        ))
+    val selectedNumberEntities = selectedNumbers.map {
+        SelectedNumberEntity(
+            selectedNumber = it,
+            timeItemId = this.hashCode()
+        )
     }
     return Pair(timerItemEntity, selectedNumberEntities)
 }
 
-fun Pair<TimerItemEntity, List<SelectedNumberEntity>>.toTimerItem(): TimerItem {
+fun Pair<TimeEntity, List<SelectedNumberEntity>>.toTimerItem(): TimerItem {
     val timerItemEntity = this.first
     val selectedNumberEntities = this.second
 
     val selectedNumbers = selectedNumberEntities.map { it.selectedNumber }.toList()
 
-
     return TimerItem(
         selectedNumbers = selectedNumbers,
-        time = Instant.ofEpochSecond(timerItemEntity.unixEndTime).atZone(ZoneId.systemDefault()).toLocalDateTime(),
+        time = timerItemEntity.time
     )
 }
 

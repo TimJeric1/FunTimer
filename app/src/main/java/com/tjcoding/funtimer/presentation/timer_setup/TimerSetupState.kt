@@ -1,6 +1,6 @@
-package com.tjcoding.funtimer.presentation.timer
+package com.tjcoding.funtimer.presentation.timer_setup
 
-data class SetupState(
+data class TimerSetupState(
     val displayedNumber: Int = 1,
     val selectedNumbers: List<Int> = ArrayList<Int>(100),
     val possibleNumbers: List<Int> = (1..99).toList(),

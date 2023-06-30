@@ -1,4 +1,4 @@
-package com.tjcoding.funtimer.ui
+package com.tjcoding.funtimer.presentation.timer_setup.components
 
 import android.graphics.Paint
 import android.graphics.Path
@@ -9,14 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-class CommonCanvasIcons {
 
-    companion object {
         @Composable
-        fun left_filled_arrow(modifier: Modifier = Modifier.size(32.dp)) {
+        fun LeftFilledArrow(modifier: Modifier = Modifier.size(32.dp)) {
             Canvas(modifier = modifier) {
                 val canvasWidth = this.size.width
                 val canvasHeight = this.size.height
@@ -47,7 +44,7 @@ class CommonCanvasIcons {
         }
 
         @Composable
-        fun right_filled_arrow(modifier: Modifier = Modifier.size(32.dp), @ColorInt color : Int = android.graphics.Color.BLACK) {
+        fun RightFilledArrow(modifier: Modifier = Modifier.size(32.dp), @ColorInt color : Int = android.graphics.Color.BLACK) {
             Canvas(modifier = modifier) {
                 val canvasWidth = this.size.width
                 val canvasHeight = this.size.height
@@ -76,6 +73,5 @@ class CommonCanvasIcons {
 
             }
         }
-    }
-}
+
 

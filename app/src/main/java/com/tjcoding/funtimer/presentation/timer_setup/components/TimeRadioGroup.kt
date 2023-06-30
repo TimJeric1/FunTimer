@@ -1,4 +1,4 @@
-package com.tjcoding.funtimer.presentation.timer.components
+package com.tjcoding.funtimer.presentation.timer_setup.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

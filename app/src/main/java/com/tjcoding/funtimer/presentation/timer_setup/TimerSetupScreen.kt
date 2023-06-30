@@ -1,4 +1,4 @@
-package com.tjcoding.funtimer.presentation.timer
+package com.tjcoding.funtimer.presentation.timer_setup
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
@@ -6,29 +6,40 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.tjcoding.funtimer.presentation.timer.components.NumberSelector
-import com.tjcoding.funtimer.presentation.timer.components.TimeRadioGroup
-import com.tjcoding.funtimer.presentation.timer.components.TimerCard
+import com.tjcoding.funtimer.presentation.timer_setup.components.NumberSelector
+import com.tjcoding.funtimer.presentation.timer_setup.components.TimeRadioGroup
+import com.tjcoding.funtimer.presentation.timer_setup.components.TimerCard
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
+
+@Composable
+fun TimerSetupScreenRoot(
+    modifier: Modifier = Modifier,
+    viewModel: TimerSetupViewModel = hiltViewModel()
+) {
+    TimerSetupScreen(
+        modifier = modifier,
+        onEvent = viewModel::onEvent,
+        state = viewModel.state.collectAsStateWithLifecycle().value
+    )
+}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimerScreen(
+@Preview
+fun TimerSetupScreen(
+    state: TimerSetupState = TimerSetupState(),
+    onEvent: (TimerSetupEvent) -> Unit = {},
     modifier: Modifier = Modifier,
-    viewModel: TimerViewModel = hiltViewModel()
 ) {
-    val state = viewModel.state
-
-
     val radioOptions = listOf("30 min", "60 min", "Custom")
-
     Column(
         modifier = modifier
             .fillMaxSize(),
@@ -38,18 +49,18 @@ fun TimerScreen(
         NumberSelector(
             displayedNumber = state.displayedNumber,
             onLeftFilledArrowClick = {
-                viewModel.onEvent(TimerEvent.onLeftFilledArrowClick)
+                onEvent(TimerSetupEvent.onLeftFilledArrowClick)
             },
             onRightFilledArrowClick = {
-                viewModel.onEvent(TimerEvent.onRightFilledArrowClick)
+                onEvent(TimerSetupEvent.onRightFilledArrowClick)
             }
         )
         TimeRadioGroup(
             radioOptions = radioOptions,
             selectedOption = state.durationOption.toIndex(),
             onOptionSelected = { index ->
-                viewModel.onEvent(
-                    TimerEvent.onDurationRadioButtonClick(
+                onEvent(
+                    TimerSetupEvent.onDurationRadioButtonClick(
                         duration = DurationOption.indexToDurationOption(
                             index
                         )
@@ -62,12 +73,12 @@ fun TimerScreen(
             Arrangement.SpaceEvenly
         ) {
             OutlinedButton(onClick = {
-                viewModel.onEvent(TimerEvent.onAddButtonClick)
+                onEvent(TimerSetupEvent.onAddButtonClick)
             }) {
                 Text(text = "Add")
             }
             OutlinedButton(onClick = {
-                viewModel.onEvent(TimerEvent.onSaveButtonClick)
+                onEvent(TimerSetupEvent.onSaveButtonClick)
             }) {
                 Text(text = "Save")
             }
@@ -75,12 +86,17 @@ fun TimerScreen(
         TimerCard(
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
-            onNumberBoxClick = { number: Int -> viewModel.onEvent(TimerEvent.onSelectedNumberClick(number)) }
+            onNumberBoxClick = { number: Int -> onEvent(TimerSetupEvent.onSelectedNumberClick(number)) }
         )
 
     }
 
-
 }
+
+
+
+
+
+
 
 

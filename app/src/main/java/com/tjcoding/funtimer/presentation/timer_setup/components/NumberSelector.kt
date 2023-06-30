@@ -1,4 +1,4 @@
-package com.tjcoding.funtimer.presentation.timer.components
+package com.tjcoding.funtimer.presentation.timer_setup.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tjcoding.funtimer.ui.CommonCanvasIcons
 
 @Composable
 fun NumberSelector(
@@ -20,7 +19,7 @@ fun NumberSelector(
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        CommonCanvasIcons.left_filled_arrow(modifier = Modifier
+        LeftFilledArrow(modifier = Modifier
             .size(48.dp)
             .clickable {
                 onLeftFilledArrowClick()
@@ -28,7 +27,7 @@ fun NumberSelector(
         Spacer(modifier = Modifier.size(height = 0.dp, width = 48.dp))
         NumberBox(fontSize = 48.sp, number = displayedNumber)
         Spacer(modifier = Modifier.size(height = 0.dp, width = 48.dp))
-        CommonCanvasIcons.right_filled_arrow(modifier = Modifier
+        RightFilledArrow(modifier = Modifier
             .size(48.dp)
             .clickable {
                 onRightFilledArrowClick()

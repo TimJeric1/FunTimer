@@ -1,14 +1,18 @@
 package com.tjcoding.funtimer
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import android.util.DisplayMetrics
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -17,21 +21,25 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.tjcoding.funtimer.presentation.history.HistoryScreen
-import com.tjcoding.funtimer.navigation.Screen
-import com.tjcoding.funtimer.presentation.timer.TimerScreen
+import com.tjcoding.funtimer.presentation.active_timers.ActiveTimersScreenRoot
+import com.tjcoding.funtimer.utility.navigation.Screen
+import com.tjcoding.funtimer.presentation.timer_setup.TimerSetupScreenRoot
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -46,7 +54,10 @@ class MainActivity : ComponentActivity() {
             Screen.History,
         )
 
+
         setContent {
+            AskNotificationsPermission(context = LocalContext.current)
+
             FunTimerTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -98,8 +109,8 @@ class MainActivity : ComponentActivity() {
                         }
                     ) { contentPadding ->
                         NavHost(navController = navController, startDestination = "timer") {
-                            composable("timer") { TimerScreen(modifier = Modifier.padding(contentPadding)) }
-                            composable("history") { HistoryScreen(modifier = Modifier.padding(contentPadding)) }
+                            composable("timer") { TimerSetupScreenRoot(modifier = Modifier.padding(contentPadding)) }
+                            composable("history") { ActiveTimersScreenRoot(modifier = Modifier.padding(contentPadding)) }
                             /*...*/
                         }
                     }
@@ -107,6 +118,38 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    @Composable
+    fun AskNotificationsPermission(context: Context) {
+        var hasNotificationPermission by remember {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                mutableStateOf(
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+                )
+            } else mutableStateOf(true)
+        }
+        val permissionLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted ->
+                hasNotificationPermission = isGranted
+                if(!isGranted){
+                    shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        )
+        LaunchedEffect(key1 = hasNotificationPermission) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if(!hasNotificationPermission) {
+                    permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        }
+
+    }
+
 }
+
 
 

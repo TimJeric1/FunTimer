@@ -7,18 +7,19 @@ import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.utility.addInOrder
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.IOException
 import java.time.LocalDateTime
 import javax.inject.Inject
 
-private const val TAG = "TimerViewModel"
 
 @HiltViewModel
 class TimerSetupViewModel @Inject constructor(
@@ -28,9 +29,13 @@ class TimerSetupViewModel @Inject constructor(
 
 
     private var timerItemsFlowCounter = 0
-
-    private val timerItemsFlow = repository.getAllTimerItemsStream().onEach { timerItems -> updateState(timerItems) }
+    private val timerItemsFlow = repository.getAllTimerItemsStream()
+        .retryWhen {cause, attempt -> return@retryWhen handleRetries(attempt, cause) }
+        .onEach { timerItems -> updateState(timerItems) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+
+
     private val _state = MutableStateFlow(TimerSetupState())
     val state = combine(_state, timerItemsFlow) { state, timerItems -> state }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TimerSetupState())
@@ -117,6 +122,7 @@ class TimerSetupViewModel @Inject constructor(
                 possibleNumbers = newPossibleNumbers.toList(),
             )
         }
+
     }
 
     private fun onLeftFilledArrowClick() {
@@ -171,5 +177,15 @@ class TimerSetupViewModel @Inject constructor(
         _state.update {
             it.copy(possibleNumbers = newPossibleNumbers)
         }
+    }
+
+    private suspend fun handleRetries(attempt: Long, cause: Throwable): Boolean {
+        if (attempt > 3) return false
+        val currentDelay = 2000L * attempt
+        if (cause is IOException) {
+            delay(currentDelay)
+            return true
+        }
+        return false
     }
 }

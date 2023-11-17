@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
-
     <application
         android:name=".Application"
         android:allowBackup="true"
@@ -19,9 +18,15 @@
         android:theme="@style/Theme.FunTimer"
         tools:targetApi="31">
         <activity
+            android:name=".service.alarm.AlarmActivity"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.FunTimer"
+            />
+
+        <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.FunTimer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,7 +34,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".service.alarm.AlarmReceiver"/>
+
+        <receiver android:name=".service.alarm.AlarmReceiver" />
     </application>
 
 </manifest>

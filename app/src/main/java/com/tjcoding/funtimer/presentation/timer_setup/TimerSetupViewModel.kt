@@ -30,11 +30,9 @@ class TimerSetupViewModel @Inject constructor(
 
     private var timerItemsFlowCounter = 0
     private val timerItemsFlow = repository.getAllTimerItemsStream()
-        .retryWhen {cause, attempt -> return@retryWhen handleRetries(attempt, cause) }
+        .retryWhen {cause, attempt -> return@retryWhen shouldRetry(attempt, cause) }
         .onEach { timerItems -> updateState(timerItems) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-
-
 
     private val _state = MutableStateFlow(TimerSetupState())
     val state = combine(_state, timerItemsFlow) { state, timerItems -> state }
@@ -179,7 +177,7 @@ class TimerSetupViewModel @Inject constructor(
         }
     }
 
-    private suspend fun handleRetries(attempt: Long, cause: Throwable): Boolean {
+    private suspend fun shouldRetry(attempt: Long, cause: Throwable): Boolean {
         if (attempt > 3) return false
         val currentDelay = 2000L * attempt
         if (cause is IOException) {
@@ -187,5 +185,9 @@ class TimerSetupViewModel @Inject constructor(
             return true
         }
         return false
+    }
+
+    override fun onCleared() {
+        super.onCleared()
     }
 }

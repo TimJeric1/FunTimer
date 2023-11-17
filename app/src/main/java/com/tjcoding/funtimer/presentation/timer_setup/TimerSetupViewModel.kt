@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retryWhen
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -27,16 +28,15 @@ class TimerSetupViewModel @Inject constructor(
     private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
 
-
     private var timerItemsFlowCounter = 0
     private val timerItemsFlow = repository.getAllTimerItemsStream()
         .retryWhen {cause, attempt -> return@retryWhen shouldRetry(attempt, cause) }
-        .onEach { timerItems -> updateState(timerItems) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-
+        .onEach { updateState(it) }
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
     private val _state = MutableStateFlow(TimerSetupState())
-    val state = combine(_state, timerItemsFlow) { state, timerItems -> state }
+    val state = combine(_state, timerItemsFlow) { state, _ -> state }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TimerSetupState())
+
 
 
 

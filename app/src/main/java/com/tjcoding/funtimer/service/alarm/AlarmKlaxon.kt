@@ -1,4 +1,5 @@
 package com.tjcoding.funtimer.service.alarm
+
 import android.app.Service
 import android.content.Context
 import android.media.AudioAttributes
@@ -6,16 +7,18 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
+import android.os.Build
 import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 
 
+
 /**
  * Manages playing alarm ringtones and vibrating the device.
  */
-internal object AlarmKlaxon: MediaPlayer.OnPreparedListener {
+internal object AlarmKlaxon : MediaPlayer.OnPreparedListener {
     private val VIBRATE_PATTERN = longArrayOf(500, 500)
     private var sStarted = false
     private var mAudioManager: AudioManager? = null
@@ -39,15 +42,30 @@ internal object AlarmKlaxon: MediaPlayer.OnPreparedListener {
     private fun vibrate(vibrator: Vibrator) {
 
         val vibrationEffect = VibrationEffect.createWaveform(VIBRATE_PATTERN, 0)
-
-        vibrator.vibrate(vibrationEffect, VibrationAttributes.Builder()
-            .setUsage(VibrationAttributes.USAGE_ALARM)
-            .setFlags(VibrationAttributes.FLAG_BYPASS_INTERRUPTION_POLICY, 1)
-            .build())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            vibrator.vibrate(
+                vibrationEffect, VibrationAttributes.Builder()
+                    .setUsage(VibrationAttributes.USAGE_ALARM)
+                    .setFlags(VibrationAttributes.FLAG_BYPASS_INTERRUPTION_POLICY, 1)
+                    .build()
+            )
+        } else {
+            vibrator.vibrate(
+                VIBRATE_PATTERN,
+                0,
+                AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+            )
+        }
     }
 
     private fun getVibrator(context: Context): Vibrator {
-        return (context.getSystemService(Service.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            (context.getSystemService(Service.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
+        } else {
+            context.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator
+        }
     }
 
     private fun getMediaPlayer(context: Context): MediaPlayer {
@@ -57,9 +75,8 @@ internal object AlarmKlaxon: MediaPlayer.OnPreparedListener {
                 setDataSource(context, alarmNoise)
                 prepareAsync()
             }
-        }
-        else {
-            mediaPlayer!!.prepareAsync()
+        } else {
+            if(!mediaPlayer!!.isPlaying) mediaPlayer!!.prepareAsync()
         }
 
         return mediaPlayer as MediaPlayer
@@ -72,7 +89,7 @@ internal object AlarmKlaxon: MediaPlayer.OnPreparedListener {
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .build()
 
-        if(mAudioManager == null) {
+        if (mAudioManager == null) {
             mAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         }
 
@@ -80,8 +97,8 @@ internal object AlarmKlaxon: MediaPlayer.OnPreparedListener {
         mMediaPlayer.isLooping = true
         mAudioManager!!.requestAudioFocus(
             AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
-            .setAudioAttributes(alarmAudioAttributes)
-            .build()
+                .setAudioAttributes(alarmAudioAttributes)
+                .build()
         )
         mMediaPlayer.setOnPreparedListener(this)
 

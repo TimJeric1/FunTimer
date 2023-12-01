@@ -5,10 +5,11 @@ import androidx.room.Room
 import com.tjcoding.funtimer.data.local.TimerDatabase
 import com.tjcoding.funtimer.data.repository.TimerRepositoryImpl
 import com.tjcoding.funtimer.domain.repository.TimerRepository
+import com.tjcoding.funtimer.service.alarm.AlarmNotifications
+import com.tjcoding.funtimer.service.alarm.AlarmNotificationsImpl
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
 import com.tjcoding.funtimer.service.alarm.AlarmSchedulerImpl
-import com.tjcoding.funtimer.service.notifications.NotificationsService
-import com.tjcoding.funtimer.service.notifications.NotificationsServiceImpl
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,7 +20,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class AppModule {
 
-
+    // for non static provide functions
     @Provides
     @Singleton
     fun provideTimerDatabase(app: Application): TimerDatabase {
@@ -47,9 +48,15 @@ class AppModule {
         )
     }
 
-    @Provides
-    @Singleton
-    fun provideNotificationService(app: Application): NotificationsService {
-        return NotificationsServiceImpl(app.applicationContext)
-    }
+
 }
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class BindsAppModule {
+
+    @Binds
+    abstract fun bindAlarmNotifications(alarmNotificationsImpl: AlarmNotificationsImpl): AlarmNotifications
+}
+
+

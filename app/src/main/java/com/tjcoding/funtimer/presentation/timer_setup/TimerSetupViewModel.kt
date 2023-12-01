@@ -11,6 +11,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+
+
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.shareIn
@@ -185,9 +187,5 @@ class TimerSetupViewModel @Inject constructor(
             return true
         }
         return false
-    }
-
-    override fun onCleared() {
-        super.onCleared()
     }
 }

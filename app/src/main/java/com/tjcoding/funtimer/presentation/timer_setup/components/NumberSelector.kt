@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -19,15 +20,15 @@ fun NumberSelector(
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        LeftFilledArrow(modifier = Modifier
+        LeftOutlinedArrow(modifier = Modifier
             .size(48.dp)
             .clickable {
                 onLeftFilledArrowClick()
             })
         Spacer(modifier = Modifier.size(height = 0.dp, width = 48.dp))
-        NumberBox(fontSize = 48.sp, number = displayedNumber)
+        NumberBox(spanStyle = SpanStyle(fontSize = 48.sp), number = displayedNumber)
         Spacer(modifier = Modifier.size(height = 0.dp, width = 48.dp))
-        RightFilledArrow(modifier = Modifier
+        RightOutlinedArrow(modifier = Modifier
             .size(48.dp)
             .clickable {
                 onRightFilledArrowClick()

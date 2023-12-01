@@ -5,6 +5,11 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".Application"
@@ -22,6 +27,11 @@
             android:exported="true"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.FunTimer"
+            android:directBootAware="true"
+            android:excludeFromRecents="true"
+            android:showOnLockScreen="true"
+            android:taskAffinity=""
+            android:windowSoftInputMode="stateAlwaysHidden"
             />
 
         <activity
@@ -35,7 +45,12 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".service.alarm.AlarmReceiver" />
+        <receiver android:name=".service.alarm.AlarmReceiver"/>
+        <service
+            android:name=".service.alarm.AlarmService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="systemExempted"/>
     </application>
 
 </manifest>

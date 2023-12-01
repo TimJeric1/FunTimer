@@ -23,7 +23,7 @@ fun TimerCard(
     modifier: Modifier = Modifier,
     numbers: List<Int>,
     time: String,
-    onNumberBoxClick: ((Int) -> Unit)? = null
+    onNumberBoxClick: (Int) -> Unit = {  }
 ) {
     Card(
         modifier = modifier
@@ -41,7 +41,7 @@ fun TimerCard(
                         .weight(8f),
                     contentAlignment = Alignment.Center,
                 ) {
-                    NumbersLayout(selectedNumbers = numbers, onClick = onNumberBoxClick)
+                    NumbersLayout(selectedNumbers = numbers, onClick = onNumberBoxClick, modifier = Modifier.fillMaxSize())
                 }
                 Text(
                     modifier = Modifier.weight(2f),

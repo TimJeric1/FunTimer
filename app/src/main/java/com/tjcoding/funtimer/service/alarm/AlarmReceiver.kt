@@ -1,13 +1,13 @@
 package com.tjcoding.funtimer.service.alarm
+
+
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
-import androidx.core.content.ContextCompat.startActivity
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
-import com.tjcoding.funtimer.service.notifications.NotificationsService
+import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.DISMISS_ALARM_ACTION
+import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.FIRE_ALARM_ACTION
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -18,47 +18,49 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 
-@AndroidEntryPoint
-class AlarmReceiver(
-): BroadcastReceiver() {
 
-    @Inject lateinit var notificationService: NotificationsService
-    @Inject lateinit var timerRepository: TimerRepository
+
+@AndroidEntryPoint
+class AlarmReceiver: BroadcastReceiver() {
+
+    @Inject
+    lateinit var timerRepository: TimerRepository
     override fun onReceive(context: Context?, intent: Intent?) {
-        val timerItem: TimerItem = if(VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-            intent?.getParcelableExtra("TIMER_ITEM", TimerItem::class.java) ?: return
-        } else {
-            intent?.getParcelableExtra("TIMER_ITEM") ?: return
+
+        if(intent?.action == null) return
+
+        if(FIRE_ALARM_ACTION == intent.action) {
+            val timerItem = intent.getParcelableExtra("TIMER_ITEM", TimerItem::class.java) ?: return
+            goAsync {
+                timerRepository.deleteTimerItem(timerItem)
+            }
+                val serviceIntent = Intent(context, AlarmService::class.java)
+                serviceIntent.action = intent.action
+                serviceIntent.putExtra("TIMER_ITEM", timerItem)
+                context?.startForegroundService(serviceIntent)
         }
-        notificationService.showNotification(timerItem.selectedNumbers.toString())
-        goAsync {
-            timerRepository.deleteTimerItem(timerItem)
+        else if(DISMISS_ALARM_ACTION == intent.action) {
+            val serviceIntent = Intent(context, AlarmService::class.java)
+            serviceIntent.action = intent.action
+            context?.startForegroundService(serviceIntent)
         }
-        val intent = Intent(context, AlarmActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        if (context != null) {
-            startActivity(context, intent, null)
-        }
+
+
     }
 
 
-
-}
-
-
-@OptIn(DelicateCoroutinesApi::class)
-fun BroadcastReceiver.goAsync(
-    context: CoroutineContext = EmptyCoroutineContext,
-    block: suspend CoroutineScope.() -> Unit
-) {
-    val pendingResult = goAsync()
-    GlobalScope.launch(context) {
-        try {
-            block()
-        } finally {
-            pendingResult.finish()
+    @OptIn(DelicateCoroutinesApi::class)
+    fun BroadcastReceiver.goAsync(
+        context: CoroutineContext = EmptyCoroutineContext,
+        block: suspend CoroutineScope.() -> Unit
+    ) {
+        val pendingResult = goAsync()
+        GlobalScope.launch(context) {
+            try {
+                block()
+            } finally {
+                pendingResult.finish()
+            }
         }
     }
 }

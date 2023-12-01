@@ -1,0 +1,95 @@
+package com.tjcoding.funtimer.service.alarm
+import android.app.Service
+import android.content.Context
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
+import android.media.MediaPlayer
+import android.media.RingtoneManager
+import android.os.VibrationAttributes
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
+
+
+/**
+ * Manages playing alarm ringtones and vibrating the device.
+ */
+internal object AlarmKlaxon: MediaPlayer.OnPreparedListener {
+    private val VIBRATE_PATTERN = longArrayOf(500, 500)
+    private var sStarted = false
+    private var mAudioManager: AudioManager? = null
+    private var mediaPlayer: MediaPlayer? = null
+    fun stop(context: Context) {
+        if (sStarted) {
+            sStarted = false
+            getMediaPlayer(context).stop()
+            getVibrator(context).cancel()
+        }
+    }
+
+    fun start(context: Context) {
+        // Make sure we are stopped before starting
+        stop(context)
+        vibrate(getVibrator(context))
+        playRingtone(getMediaPlayer(context), context)
+        sStarted = true
+    }
+
+    private fun vibrate(vibrator: Vibrator) {
+
+        val vibrationEffect = VibrationEffect.createWaveform(VIBRATE_PATTERN, 0)
+
+        vibrator.vibrate(vibrationEffect, VibrationAttributes.Builder()
+            .setUsage(VibrationAttributes.USAGE_ALARM)
+            .setFlags(VibrationAttributes.FLAG_BYPASS_INTERRUPTION_POLICY, 1)
+            .build())
+    }
+
+    private fun getVibrator(context: Context): Vibrator {
+        return (context.getSystemService(Service.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
+    }
+
+    private fun getMediaPlayer(context: Context): MediaPlayer {
+        if (mediaPlayer == null) {
+            val alarmNoise = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(context, alarmNoise)
+                prepareAsync()
+            }
+        }
+        else {
+            mediaPlayer!!.prepareAsync()
+        }
+
+        return mediaPlayer as MediaPlayer
+    }
+
+    private fun playRingtone(mMediaPlayer: MediaPlayer, context: Context) {
+
+        val alarmAudioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_ALARM)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build()
+
+        if(mAudioManager == null) {
+            mAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        }
+
+        mMediaPlayer.setAudioAttributes(alarmAudioAttributes)
+        mMediaPlayer.isLooping = true
+        mAudioManager!!.requestAudioFocus(
+            AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+            .setAudioAttributes(alarmAudioAttributes)
+            .build()
+        )
+        mMediaPlayer.setOnPreparedListener(this)
+
+
+    }
+
+    override fun onPrepared(mediaPlayer: MediaPlayer) {
+        mediaPlayer.start()
+    }
+
+}

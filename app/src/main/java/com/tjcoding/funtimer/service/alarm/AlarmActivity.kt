@@ -1,18 +1,14 @@
 package com.tjcoding.funtimer.service.alarm
 
 import android.app.KeyguardManager
+import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import com.tjcoding.funtimer.domain.model.TimerItem
+import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.DISMISS_ALARM_ACTION
+import com.tjcoding.funtimer.service.alarm.presentation.AlarmScreen
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 
 
@@ -29,20 +25,25 @@ class AlarmActivity : ComponentActivity() {
                     WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
         )
 
+        val timerItem = intent?.getParcelableExtra("TIMER_ITEM", TimerItem::class.java) ?: return
+
+
         setContent {
             FunTimerTheme {
-                Scaffold { paddingValues ->
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(text = "We did it", Modifier.padding(paddingValues))
-                    }
-                }
-            }
+                AlarmScreen(numbers = timerItem.selectedNumbers, onDismiss = ::onDismiss
 
+                )
+            }
         }
 
     }
+
+
+    private fun onDismiss() {
+        val dismissIntent = Intent(this, AlarmService::class.java)
+        dismissIntent.action = DISMISS_ALARM_ACTION
+        startForegroundService(dismissIntent)
+        finish()
+    }
+
 }

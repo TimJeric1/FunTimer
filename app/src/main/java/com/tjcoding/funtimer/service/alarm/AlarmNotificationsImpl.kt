@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.tjcoding.funtimer.R
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.model.toMessage
@@ -15,6 +16,7 @@ import com.tjcoding.funtimer.service.alarm.AlarmNotifications.Companion.getRemin
 import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.DISMISS_ALARM_ACTION
 import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.MUTE_ALARM_ACTION
 import javax.inject.Inject
+
 
 class AlarmNotificationsImpl @Inject constructor() : AlarmNotifications {
 
@@ -82,9 +84,15 @@ class AlarmNotificationsImpl @Inject constructor() : AlarmNotifications {
         )
         notification.setFullScreenIntent(fullScreenPendingIntent, true)
 
+        clearNotification(context, getAlarmNotificationId(timerItem))
         service.startForeground(getAlarmNotificationId(timerItem), notification.build())
 
 
+    }
+
+    private fun clearNotification(context: Context, id: Int) {
+        val notificationManager = NotificationManagerCompat.from(context)
+        notificationManager.cancel(id)
     }
 
     override fun showMissedTimerItemNotification(context: Context, timerItem: TimerItem) {

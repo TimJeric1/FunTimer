@@ -25,7 +25,8 @@ class AlarmService : Service() {
 
 
 
-        if (intent?.action == null) return START_NOT_STICKY
+        intent ?: return START_NOT_STICKY
+        intent.action ?: return START_NOT_STICKY
 
         val newAlarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("TIMER_ITEM", TimerItem::class.java)
@@ -42,13 +43,6 @@ class AlarmService : Service() {
             DISMISS_ALARM_ACTION -> {
                 stopAlarm()
             }
-
-            DISMISS_AND_ADD_NOTIFICATION_ACTION -> {
-                newAlarm ?: return START_NOT_STICKY
-                alarmNotifications.showMissedTimerItemNotification(this, newAlarm)
-                stopAlarm()
-            }
-
             MUTE_ALARM_ACTION -> {
                 AlarmKlaxon.stop(this)
             }
@@ -66,7 +60,6 @@ class AlarmService : Service() {
             alarmNotifications.showMissedTimerItemNotification(this, currentAlarm!!)
             stopAlarm()
         }
-
         currentAlarm = newAlarm
         alarmNotifications.showAlarmNotification(this, timerItem = currentAlarm!!)
         AlarmKlaxon.start(this)
@@ -75,6 +68,7 @@ class AlarmService : Service() {
         if (currentAlarm == null) {
             return
         }
+        sendBroadcast(Intent(ALARM_DONE_ACTION))
         stopForeground(STOP_FOREGROUND_REMOVE)
         AlarmKlaxon.stop(this)
         currentAlarm = null
@@ -84,12 +78,17 @@ class AlarmService : Service() {
     companion object {
         const val FIRE_ALARM_ACTION = "fire_alarm_action"
         const val DISMISS_ALARM_ACTION = "dismiss_alarm_action"
-        const val DISMISS_AND_ADD_NOTIFICATION_ACTION = "dismiss_and_add_notification_alarm_action"
         const val MUTE_ALARM_ACTION = "mute_alarm_action"
+        const val ALARM_DONE_ACTION = "alarm_done_action"
     }
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopAlarm()
     }
 
 

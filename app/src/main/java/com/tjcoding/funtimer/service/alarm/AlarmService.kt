@@ -1,7 +1,10 @@
 package com.tjcoding.funtimer.service.alarm
 
 import android.app.Service
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.IBinder
 import com.tjcoding.funtimer.domain.model.TimerItem
@@ -15,7 +18,21 @@ class AlarmService : Service() {
     @Inject
     lateinit var alarmNotifications: AlarmNotifications
     private var currentAlarm: TimerItem? = null
+    private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            AlarmKlaxon.stop(context)
+        }
+    }
 
+
+    override fun onCreate() {
+        super.onCreate()
+        val filter = IntentFilter("android.media.VOLUME_CHANGED_ACTION")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            registerReceiver(receiver, filter, RECEIVER_NOT_EXPORTED)
+        else
+            registerReceiver(receiver, filter)
+    }
 
 
 
@@ -89,6 +106,7 @@ class AlarmService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         stopAlarm()
+        unregisterReceiver(receiver)
     }
 
 

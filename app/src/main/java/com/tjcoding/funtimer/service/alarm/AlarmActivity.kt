@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.ALARM_DONE_ACTION
@@ -32,6 +33,12 @@ class AlarmActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        onBackPressedDispatcher.addCallback(this /* lifecycle owner */) {
+            // don't let the user finish the activity with back button
+        }
+
+
 
         val filter = IntentFilter(ALARM_DONE_ACTION)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
@@ -77,5 +84,8 @@ class AlarmActivity : ComponentActivity() {
         super.onDestroy()
         unregisterReceiver(receiver)
     }
+
+
+
 
 }

@@ -40,7 +40,6 @@ class AlarmService : Service() {
             }
 
             DISMISS_ALARM_ACTION -> {
-                newAlarm ?: return START_NOT_STICKY
                 stopAlarm()
             }
 
@@ -65,14 +64,19 @@ class AlarmService : Service() {
     private fun startAlarm(newAlarm: TimerItem) {
         if(currentAlarm != null) {
             alarmNotifications.showMissedTimerItemNotification(this, currentAlarm!!)
+            stopAlarm()
         }
+
         currentAlarm = newAlarm
         alarmNotifications.showAlarmNotification(this, timerItem = currentAlarm!!)
         AlarmKlaxon.start(this)
     }
     private fun stopAlarm() {
-        AlarmKlaxon.stop(this)
+        if (currentAlarm == null) {
+            return
+        }
         stopForeground(STOP_FOREGROUND_REMOVE)
+        AlarmKlaxon.stop(this)
         currentAlarm = null
     }
 

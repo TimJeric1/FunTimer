@@ -7,7 +7,8 @@ import com.tjcoding.funtimer.domain.model.TimerItem
 interface AlarmNotifications {
     fun showAlarmNotification(service: Service, timerItem: TimerItem)
 
-    fun showPastTimerItemNotification(context: Context, timerItem: TimerItem)
+    fun showMissedTimerItemNotification(context: Context, timerItem: TimerItem)
+
 
     fun removeNotification(context: Context ,notificationId: Int)
 

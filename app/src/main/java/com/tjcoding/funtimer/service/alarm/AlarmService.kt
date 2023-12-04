@@ -5,59 +5,76 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import com.tjcoding.funtimer.domain.model.TimerItem
-import com.tjcoding.funtimer.service.alarm.AlarmNotifications.Companion.getAlarmNotificationId
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AlarmService: Service()
-{
+class AlarmService : Service() {
 
 
-    @Inject lateinit var alarmNotifications: AlarmNotifications
+    @Inject
+    lateinit var alarmNotifications: AlarmNotifications
+    private var currentAlarm: TimerItem? = null
+
+
+
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
 
-        if(intent?.action == null) return START_NOT_STICKY
 
-        val timerItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+
+        if (intent?.action == null) return START_NOT_STICKY
+
+        val newAlarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("TIMER_ITEM", TimerItem::class.java)
         } else {
             intent.getParcelableExtra("TIMER_ITEM")
         }
 
-        when(intent.action) {
+        when (intent.action) {
             FIRE_ALARM_ACTION -> {
-                timerItem ?: return START_NOT_STICKY
-                alarmNotifications.showAlarmNotification(this, timerItem = timerItem)
-                AlarmKlaxon.start(this)
+                newAlarm ?: return START_NOT_STICKY
+                startAlarm(newAlarm)
             }
+
             DISMISS_ALARM_ACTION -> {
-                timerItem ?: return START_NOT_STICKY
-                stopForeground(STOP_FOREGROUND_DETACH)
-                AlarmKlaxon.stop(this)
-                alarmNotifications.removeNotification(this, getAlarmNotificationId(timerItem))
+                newAlarm ?: return START_NOT_STICKY
+                stopAlarm()
             }
+
             DISMISS_AND_ADD_NOTIFICATION_ACTION -> {
-                timerItem ?: return START_NOT_STICKY
-                alarmNotifications.showPastTimerItemNotification(this, timerItem)
-                AlarmKlaxon.stop(this)
-                stopForeground(STOP_FOREGROUND_DETACH)
+                newAlarm ?: return START_NOT_STICKY
+                alarmNotifications.showMissedTimerItemNotification(this, newAlarm)
+                stopAlarm()
             }
+
             MUTE_ALARM_ACTION -> {
                 AlarmKlaxon.stop(this)
             }
+
             else -> {
                 return START_NOT_STICKY
             }
         }
-
         return START_STICKY
 
     }
 
-
+    private fun startAlarm(newAlarm: TimerItem) {
+        if(currentAlarm != null) {
+            alarmNotifications.showMissedTimerItemNotification(this, currentAlarm!!)
+        }
+        currentAlarm = newAlarm
+        alarmNotifications.showAlarmNotification(this, timerItem = currentAlarm!!)
+        AlarmKlaxon.start(this)
+    }
+    private fun stopAlarm() {
+        AlarmKlaxon.stop(this)
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        currentAlarm = null
+    }
 
 
     companion object {
@@ -72,4 +89,8 @@ class AlarmService: Service()
     }
 
 
+
+
 }
+
+

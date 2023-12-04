@@ -24,8 +24,8 @@ class AlarmNotificationsImpl @Inject constructor() : AlarmNotifications {
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.baseline_pool_24)
-            .setContentTitle("Kraj zabave")
-            .setContentText("Kraj zabave za brojeve ${timerItem.toMessage()}")
+            .setContentTitle("Aquapark Alarm")
+            .setContentText("End of playtime for numbers ${timerItem.toMessage()}")
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
@@ -39,7 +39,6 @@ class AlarmNotificationsImpl @Inject constructor() : AlarmNotifications {
         // Setup Dismiss Action
         val dismissIntent = Intent(context, AlarmService::class.java)
         dismissIntent.action = DISMISS_ALARM_ACTION
-        dismissIntent.putExtra("TIMER_ITEM", timerItem)
         val dismissPendingIntent = PendingIntent.getService(
             context,
             101, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -88,16 +87,16 @@ class AlarmNotificationsImpl @Inject constructor() : AlarmNotifications {
 
     }
 
-    override fun showPastTimerItemNotification(context: Context, timerItem: TimerItem) {
+    override fun showMissedTimerItemNotification(context: Context, timerItem: TimerItem) {
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.baseline_pool_24)
-            .setContentTitle("Kraj zabave")
-            .setContentText("Kraj zabave za brojeve ${timerItem.toMessage()}")
+            .setContentTitle("Missed Aquapark alarm")
+            .setContentText("End of playtime for numbers ${timerItem.toMessage()}")
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
-            .setPriority(NotificationCompat.PRIORITY_MIN)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .build()
 

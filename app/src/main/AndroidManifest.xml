@@ -6,10 +6,9 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
 
     <application
         android:name=".Application"
@@ -50,7 +49,7 @@
             android:name=".service.alarm.AlarmService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="systemExempted"/>
+            android:foregroundServiceType="specialUse"/>
     </application>
 
 </manifest>

@@ -15,9 +15,6 @@ import android.os.VibratorManager
 
 
 
-/**
- * Manages playing alarm ringtones and vibrating the device.
- */
 internal object AlarmKlaxon : MediaPlayer.OnPreparedListener {
     private val VIBRATE_PATTERN = longArrayOf(500, 500)
     private var sStarted = false
@@ -32,7 +29,6 @@ internal object AlarmKlaxon : MediaPlayer.OnPreparedListener {
     }
 
     fun start(context: Context) {
-        // Make sure we are stopped before starting
         stop(context)
         vibrate(getVibrator(context))
         playRingtone(getMediaPlayer(context), context)

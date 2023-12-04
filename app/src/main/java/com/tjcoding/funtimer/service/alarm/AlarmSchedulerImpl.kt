@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.tjcoding.funtimer.domain.model.TimerItem
-import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.FIRE_ALARM_ACTION
 import java.time.ZoneId
 
 
@@ -18,7 +17,6 @@ class AlarmSchedulerImpl(
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("TIMER_ITEM", timerItem)
         }
-        intent.action = FIRE_ALARM_ACTION
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             timerItem.time.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,

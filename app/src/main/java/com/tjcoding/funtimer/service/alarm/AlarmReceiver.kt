@@ -4,9 +4,9 @@ package com.tjcoding.funtimer.service.alarm
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
-import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.DISMISS_ALARM_ACTION
 import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.FIRE_ALARM_ACTION
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -18,32 +18,26 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 
-
-
 @AndroidEntryPoint
-class AlarmReceiver: BroadcastReceiver() {
+class AlarmReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var timerRepository: TimerRepository
     override fun onReceive(context: Context?, intent: Intent?) {
 
-        if(intent?.action == null) return
 
-        if(FIRE_ALARM_ACTION == intent.action) {
-            val timerItem = intent.getParcelableExtra("TIMER_ITEM", TimerItem::class.java) ?: return
-            goAsync {
-                timerRepository.deleteTimerItem(timerItem)
-            }
-                val serviceIntent = Intent(context, AlarmService::class.java)
-                serviceIntent.action = intent.action
-                serviceIntent.putExtra("TIMER_ITEM", timerItem)
-                context?.startForegroundService(serviceIntent)
+        val timerItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent?.getParcelableExtra("TIMER_ITEM", TimerItem::class.java) ?: return
+        } else {
+            intent?.getParcelableExtra("TIMER_ITEM") ?: return
         }
-        else if(DISMISS_ALARM_ACTION == intent.action) {
-            val serviceIntent = Intent(context, AlarmService::class.java)
-            serviceIntent.action = intent.action
-            context?.startForegroundService(serviceIntent)
+        goAsync {
+            timerRepository.deleteTimerItem(timerItem)
         }
+        val serviceIntent = Intent(context, AlarmService::class.java)
+        serviceIntent.action = FIRE_ALARM_ACTION
+        serviceIntent.putExtra("TIMER_ITEM", timerItem)
+        context?.startForegroundService(serviceIntent)
 
 
     }

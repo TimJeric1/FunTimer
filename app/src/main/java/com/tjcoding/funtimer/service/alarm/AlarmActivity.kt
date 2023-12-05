@@ -11,12 +11,18 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.ALARM_DONE_ACTION
 import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.DISMISS_ALARM_ACTION
 import com.tjcoding.funtimer.service.alarm.presentation.AlarmScreen
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
-
+import java.time.Instant
+import kotlin.properties.Delegates
 
 class AlarmActivity : ComponentActivity() {
 
@@ -30,10 +36,10 @@ class AlarmActivity : ComponentActivity() {
             }
         }
     }
+    private var activityCreationTime by Delegates.notNull<Long>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         onBackPressedDispatcher.addCallback(this /* lifecycle owner */) {
             // don't let the user finish the activity with back button
         }
@@ -62,16 +68,54 @@ class AlarmActivity : ComponentActivity() {
         }
 
 
+
+
         setContent {
             FunTimerTheme {
+                val openDialog = remember { mutableStateOf(false) }
                 AlarmScreen(
                     numbers = timerItem.selectedNumbers,
-                    onDismiss = ::onDismiss,
+                    onDismiss = {
+                        muteSound()
+                        val lessThan5SecondsPassed = Instant.now().epochSecond < activityCreationTime + 5
+                        if(lessThan5SecondsPassed) {
+                            openDialog.value = true
+                        } else {
+                            onDismiss()
+                        }
+                    },
                     onMute = ::muteSound
-
                 )
+                if (openDialog.value) {
+                    AlertDialog(
+                        onDismissRequest = { openDialog.value = false },
+                        title = {
+                            Text(text = "Dismiss the alarm?")
+                        },
+                        text = {
+                            Text("Are you sure you want to dismiss the alarm this quickly?")
+                        },
+                        confirmButton = {
+                            TextButton(
+                                onClick = ::onDismiss
+                            ) {
+                                Text("Yes")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(
+                                onClick = {
+                                    openDialog.value = false
+                                }
+                            ) {
+                                Text("No")
+                            }
+                        }
+                    )
+                }
             }
         }
+        activityCreationTime = Instant.now().epochSecond
 
     }
 
@@ -96,3 +140,6 @@ class AlarmActivity : ComponentActivity() {
 
 
 }
+
+
+

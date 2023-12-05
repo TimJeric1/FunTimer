@@ -1,10 +1,9 @@
 package com.tjcoding.funtimer.service.alarm.presentation.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -12,6 +11,7 @@ import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
@@ -60,7 +61,8 @@ enum class SwipeLocations {
 @Preview
 fun SwipeableButton(
     modifier: Modifier = Modifier,
-    onSwipeAction: () -> Unit = {}
+    onLeftSwipeAction: () -> Unit = {},
+    onRightSwipeAction: () -> Unit = {}
 ) {
     val density = LocalDensity.current
     val buttonSize = 64.dp
@@ -91,11 +93,20 @@ fun SwipeableButton(
     var areArrowsVisible by remember {
         mutableStateOf(false)
     }
+    
+    val arrowsAlpha by animateFloatAsState(
+        targetValue =  if(areArrowsVisible) 100f else 0f ,
+        animationSpec = spring(),
+        label = "alpha"
+    )
 
 
     LaunchedEffect(key1 = stateHorizontal.currentValue) {
         areArrowsVisible = stateHorizontal.currentValue == SwipeLocations.MIDDLE
-        if (stateHorizontal.currentValue != SwipeLocations.MIDDLE) onSwipeAction()
+        if(stateHorizontal.currentValue == SwipeLocations.MIDDLE) return@LaunchedEffect
+        if(stateHorizontal.currentValue == SwipeLocations.LEFT) onLeftSwipeAction()
+        if(stateHorizontal.currentValue == SwipeLocations.RIGHT) onRightSwipeAction()
+        stateHorizontal.animateTo(targetValue = SwipeLocations.MIDDLE)
     }
 
 
@@ -105,13 +116,12 @@ fun SwipeableButton(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
     ) {
-        AnimatedVisibility(visible = areArrowsVisible, exit = fadeOut()) {
             LeftMovingArrow(
                 modifier = Modifier
                     .width(48.dp)
                     .height(16.dp)
+                    .alpha(arrowsAlpha)
             )
-        }
         Spacer(modifier = Modifier.padding(4.dp))
         Box {
             Canvas(modifier = Modifier.size(buttonSize)) {
@@ -166,13 +176,12 @@ fun SwipeableButton(
         }
 
         Spacer(modifier = Modifier.padding(4.dp))
-        AnimatedVisibility(visible = areArrowsVisible, exit = fadeOut()) {
             RightMovingArrow(
                 modifier = Modifier
                     .width(48.dp)
                     .height(16.dp)
+                    .alpha(arrowsAlpha)
             )
-        }
 
     }
 

@@ -24,7 +24,7 @@ class AlarmService : Service() {
                 val newVolume = intent.getIntExtra("android.media.EXTRA_VOLUME_STREAM_VALUE", 0)
                 val oldVolume =
                     intent.getIntExtra("android.media.EXTRA_PREV_VOLUME_STREAM_VALUE", 0)
-                if (newVolume < oldVolume) AlarmKlaxon.stop(context)
+                if (newVolume < oldVolume) AlarmHorn.stop(context)
             }
         }
     }
@@ -70,7 +70,7 @@ class AlarmService : Service() {
                 stopAlarm()
             }
             MUTE_ALARM_ACTION -> {
-                AlarmKlaxon.stop(this)
+                AlarmHorn.stop(this)
             }
 
             else -> {
@@ -88,7 +88,7 @@ class AlarmService : Service() {
         }
         currentAlarm = newAlarm
         alarmNotifications.showAlarmNotification(this, timerItem = currentAlarm!!)
-        AlarmKlaxon.start(this)
+        AlarmHorn.start(this)
     }
     private fun stopAlarm() {
         if (currentAlarm == null) {
@@ -96,7 +96,7 @@ class AlarmService : Service() {
         }
         sendBroadcast(Intent(ALARM_DONE_ACTION))
         stopForeground(STOP_FOREGROUND_REMOVE)
-        AlarmKlaxon.stop(this)
+        AlarmHorn.stop(this)
         currentAlarm = null
     }
 

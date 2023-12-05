@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Pool
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -39,7 +42,8 @@ import com.tjcoding.funtimer.ui.theme.Typography
 @Preview
 fun AlarmScreen(
     numbers: List<Int> = listOf(1, 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),
-    onDismiss: () -> Unit = {}
+    onDismiss: () -> Unit = {},
+    onMute: () -> Unit = {}
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
     Scaffold(Modifier.background(color = if(isSystemInDarkTheme()) Color.LightGray else Color.White)) { paddingValues ->
@@ -81,7 +85,15 @@ fun AlarmScreen(
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
-            SwipeableButton(onSwipeAction = onDismiss)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(modifier = Modifier.size(64.dp), imageVector = Icons.AutoMirrored.Filled.VolumeOff,  tint = Color.LightGray,contentDescription = "Volume Off")
+                SwipeableButton(onLeftSwipeAction = onMute, onRightSwipeAction = onDismiss)
+                Icon(modifier = Modifier.size(64.dp), imageVector = Icons.Filled.Close, tint = Color.LightGray,contentDescription = "Close")
+            }
             Spacer(modifier = Modifier.height((screenHeight*0.15).dp))
 
         }

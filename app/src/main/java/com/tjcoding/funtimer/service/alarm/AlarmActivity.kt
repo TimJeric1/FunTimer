@@ -65,11 +65,18 @@ class AlarmActivity : ComponentActivity() {
         setContent {
             FunTimerTheme {
                 AlarmScreen(
-                    numbers = timerItem.selectedNumbers, onDismiss = ::onDismiss
+                    numbers = timerItem.selectedNumbers,
+                    onDismiss = ::onDismiss,
+                    onMute = ::muteSound
+
                 )
             }
         }
 
+    }
+
+    private fun muteSound() {
+        AlarmHorn.stop(this)
     }
 
 

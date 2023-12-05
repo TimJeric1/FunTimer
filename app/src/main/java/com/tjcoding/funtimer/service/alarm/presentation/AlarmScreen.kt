@@ -30,7 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.tjcoding.funtimer.presentation.timer_setup.components.BigNumbersGrid
 import com.tjcoding.funtimer.service.alarm.presentation.components.SwipeableButton
@@ -39,7 +39,7 @@ import com.tjcoding.funtimer.ui.theme.Typography
 
 
 @Composable
-@Preview
+@PreviewLightDark
 fun AlarmScreen(
     numbers: List<Int> = listOf(1, 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),
     onDismiss: () -> Unit = {},
@@ -90,9 +90,9 @@ fun AlarmScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Icon(modifier = Modifier.size(64.dp), imageVector = Icons.AutoMirrored.Filled.VolumeOff,  tint = Color.LightGray,contentDescription = "Volume Off")
+                Icon(modifier = Modifier.size(64.dp), imageVector = Icons.AutoMirrored.Filled.VolumeOff,  tint = if(isSystemInDarkTheme()) Color.LightGray.copy(alpha = 0.25f) else Color.LightGray,contentDescription = "Volume Off")
                 SwipeableButton(onLeftSwipeAction = onMute, onRightSwipeAction = onDismiss)
-                Icon(modifier = Modifier.size(64.dp), imageVector = Icons.Filled.Close, tint = Color.LightGray,contentDescription = "Close")
+                Icon(modifier = Modifier.size(64.dp), imageVector = Icons.Filled.Close, tint = if(isSystemInDarkTheme()) Color.LightGray.copy(alpha = 0.25f) else Color.LightGray,contentDescription = "Close")
             }
             Spacer(modifier = Modifier.height((screenHeight*0.15).dp))
 

@@ -15,11 +15,12 @@ import android.os.VibratorManager
 
 
 
-internal object AlarmKlaxon : MediaPlayer.OnPreparedListener {
+internal object AlarmHorn : MediaPlayer.OnPreparedListener {
     private val VIBRATE_PATTERN = longArrayOf(500, 500)
     private var sStarted = false
     private var mAudioManager: AudioManager? = null
     private var mediaPlayer: MediaPlayer? = null
+    private var vibrator: Vibrator? = null
     fun stop(context: Context) {
         if (sStarted) {
             sStarted = false
@@ -57,11 +58,15 @@ internal object AlarmKlaxon : MediaPlayer.OnPreparedListener {
     }
 
     private fun getVibrator(context: Context): Vibrator {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if(vibrator != null) return vibrator!!
+
+        vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             (context.getSystemService(Service.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
         } else {
             context.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator
         }
+
+        return vibrator!!
     }
 
     private fun getMediaPlayer(context: Context): MediaPlayer {

@@ -20,7 +20,12 @@ class AlarmService : Service() {
     private var currentAlarm: TimerItem? = null
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            AlarmKlaxon.stop(context)
+            if (intent.action.equals("android.media.VOLUME_CHANGED_ACTION")) {
+                val newVolume = intent.getIntExtra("android.media.EXTRA_VOLUME_STREAM_VALUE", 0)
+                val oldVolume =
+                    intent.getIntExtra("android.media.EXTRA_PREV_VOLUME_STREAM_VALUE", 0)
+                if (newVolume < oldVolume) AlarmKlaxon.stop(context)
+            }
         }
     }
 

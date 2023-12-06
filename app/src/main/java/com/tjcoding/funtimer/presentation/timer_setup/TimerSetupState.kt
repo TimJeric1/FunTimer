@@ -4,8 +4,9 @@ data class TimerSetupState(
     val displayedNumber: Int = 1,
     val selectedNumbers: List<Int> = ArrayList<Int>(100),
     val possibleNumbers: List<Int> = (1..99).toList(),
-    val durationOption: DurationOption = DurationOption.ONE,
-    val durations: Map<DurationOption, Int> = mapOf(DurationOption.ONE to 30, DurationOption.TWO to 60, DurationOption.CUSTOM to 5)
+    val durationOption: DurationOption = DurationOption.THIRTY_MINUTES,
+    val customDuration : Int = -1,
+    val durations: Map<DurationOption, Int> = mapOf(DurationOption.THIRTY_MINUTES to 30, DurationOption.SIXTY_MINUTES to 60, DurationOption.CUSTOM to customDuration)
 ){
     fun getDuration(): Int {
         return durationOption.toDuration(durations)
@@ -18,15 +19,15 @@ data class TimerSetupState(
 
 
 enum class DurationOption {
-    ONE, TWO, CUSTOM;
+    THIRTY_MINUTES, SIXTY_MINUTES, CUSTOM;
 
     companion object {
         fun indexToDurationOption(index: Int): DurationOption {
             return when (index) {
-                0 -> ONE
-                1 -> TWO
+                0 -> THIRTY_MINUTES
+                1 -> SIXTY_MINUTES
                 2 -> CUSTOM
-                else -> ONE
+                else -> THIRTY_MINUTES
             }
         }
     }
@@ -39,8 +40,8 @@ fun DurationOption.toDuration(durations: Map<DurationOption, Int>): Int{
 }
 fun DurationOption.toIndex(): Int{
     return when(this){
-        DurationOption.ONE -> 0
-        DurationOption.TWO -> 1
+        DurationOption.THIRTY_MINUTES -> 0
+        DurationOption.SIXTY_MINUTES -> 1
         DurationOption.CUSTOM -> 2
     }
 }

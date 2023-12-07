@@ -29,6 +29,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val timerItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent?.getParcelableExtra("TIMER_ITEM", TimerItem::class.java) ?: return
         } else {
+            @Suppress("DEPRECATION")
             intent?.getParcelableExtra("TIMER_ITEM") ?: return
         }
         goAsync {

@@ -103,7 +103,7 @@ class MainActivity : ComponentActivity() {
         NavigationBar {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry?.destination
-            screens.forEachIndexed { index, screen ->
+            screens.forEach { screen ->
                 NavigationBarItem(
                     icon = { Icon(screen.icon, contentDescription = screen.route) },
                     selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,

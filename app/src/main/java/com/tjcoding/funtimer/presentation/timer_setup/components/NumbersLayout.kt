@@ -37,7 +37,7 @@ fun NumbersLayout(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                selectedNumbers.forEachIndexed() { index, number ->
+                selectedNumbers.forEach() { number ->
                     NumberBox(
                         modifier = Modifier
                             .padding(

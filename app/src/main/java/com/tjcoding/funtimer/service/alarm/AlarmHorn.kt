@@ -47,6 +47,7 @@ internal object AlarmHorn : MediaPlayer.OnPreparedListener {
                     .build()
             )
         } else {
+            @Suppress("DEPRECATION")
             vibrator.vibrate(
                 VIBRATE_PATTERN,
                 0,
@@ -63,6 +64,7 @@ internal object AlarmHorn : MediaPlayer.OnPreparedListener {
         vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             (context.getSystemService(Service.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
         } else {
+            @Suppress("DEPRECATION")
             context.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator
         }
 

@@ -57,6 +57,7 @@ class AlarmService : Service() {
         val newAlarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("TIMER_ITEM", TimerItem::class.java)
         } else {
+            @Suppress("DEPRECATION")
             intent.getParcelableExtra("TIMER_ITEM")
         }
 

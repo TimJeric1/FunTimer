@@ -1,5 +1,6 @@
 package com.tjcoding.funtimer.service.alarm
 
+import android.annotation.SuppressLint
 import android.app.KeyguardManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -38,6 +39,7 @@ class AlarmActivity : ComponentActivity() {
     }
     private var activityCreationTime by Delegates.notNull<Long>()
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         onBackPressedDispatcher.addCallback(this /* lifecycle owner */) {
@@ -64,6 +66,7 @@ class AlarmActivity : ComponentActivity() {
         timerItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent?.getParcelableExtra("TIMER_ITEM", TimerItem::class.java) ?: return
         } else {
+            @Suppress("DEPRECATION")
             intent?.getParcelableExtra("TIMER_ITEM") ?: return
         }
 

@@ -114,7 +114,7 @@ fun SwipeableButton(
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
     ) {
             LeftMovingArrow(
                 modifier = Modifier

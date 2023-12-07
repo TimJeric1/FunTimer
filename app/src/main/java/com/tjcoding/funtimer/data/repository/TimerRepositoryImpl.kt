@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 
-private const val TAG = "TimerRepositoryImpl"
 
 class TimerRepositoryImpl(
     private val timerDao: TimerDao,
@@ -34,7 +33,8 @@ class TimerRepositoryImpl(
 
     override suspend fun deleteTimerItem(timerItem: TimerItem) {
         // no need for withContext(Dispatcher.io) because room automatically does that
-        timerDao.deleteTimerItemAsPair(timerItem.toEntitiesPair())
+        val timeEntity = timerItem.toEntitiesPair().first
+        timerDao.deleteTimeEntity(timeEntity)
     }
 
 

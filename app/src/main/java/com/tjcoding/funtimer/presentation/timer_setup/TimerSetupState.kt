@@ -5,8 +5,7 @@ data class TimerSetupState(
     val selectedNumbers: List<Int> = ArrayList<Int>(100),
     val possibleNumbers: List<Int> = (1..99).toList(),
     val durationOption: DurationOption = DurationOption.THIRTY_MINUTES,
-    val customDuration : Int = -1,
-    val durations: Map<DurationOption, Int> = mapOf(DurationOption.THIRTY_MINUTES to 30, DurationOption.SIXTY_MINUTES to 60, DurationOption.CUSTOM to customDuration)
+    val durations: Map<DurationOption, Int> = mapOf(DurationOption.THIRTY_MINUTES to 30, DurationOption.SIXTY_MINUTES to 60, DurationOption.CUSTOM to -1)
 ){
     fun getDuration(): Int {
         return durationOption.toDuration(durations)

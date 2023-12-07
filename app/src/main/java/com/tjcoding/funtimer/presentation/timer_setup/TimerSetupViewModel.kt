@@ -7,6 +7,7 @@ import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.utility.addInOrder
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.combine
 
 
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -39,6 +41,10 @@ class TimerSetupViewModel @Inject constructor(
     val state = combine(_state, timerItemsFlow) { state, _ -> state }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TimerSetupState())
 
+    private val alertDialogChannel = Channel<Boolean>()
+    val alertDialogChannelFlow = alertDialogChannel.receiveAsFlow()
+
+
 
 
 
@@ -46,23 +52,30 @@ class TimerSetupViewModel @Inject constructor(
 
     fun onEvent(event: TimerSetupEvent) {
         when (event) {
-            TimerSetupEvent.onAddButtonClick -> {
+            TimerSetupEvent.OnAddButtonClick -> {
                 onAddButtonClick()
             }
-            is TimerSetupEvent.onDurationRadioButtonClick -> {
+            is TimerSetupEvent.OnDurationRadioButtonClick -> {
                 onDurationRadioButtonClick(newDuration = event.duration)
             }
-            TimerSetupEvent.onSaveButtonClick -> {
+            TimerSetupEvent.OnSaveButtonClick -> {
                 onSaveButtonClick()
             }
-            TimerSetupEvent.onLeftFilledArrowClick -> {
+            TimerSetupEvent.OnLeftFilledArrowClick -> {
                 onLeftFilledArrowClick()
             }
-            TimerSetupEvent.onRightFilledArrowClick -> {
+            TimerSetupEvent.OnRightFilledArrowClick -> {
                 onRightFilledArrowClick()
             }
-            is TimerSetupEvent.onSelectedNumberClick -> {
+            is TimerSetupEvent.OnSelectedNumberClick -> {
                 onSelectedNumberClick(number = event.number)
+            }
+
+            is TimerSetupEvent.OnCustomDurationPicked -> {
+                _state.update { it.copy(durations = _state.value.durations + (DurationOption.CUSTOM to event.duration)) }
+            }
+            is TimerSetupEvent.OnDurationRadioButtonLongClick -> {
+                if(event.index == 2) viewModelScope.launch { alertDialogChannel.send(true) }
             }
         }
 
@@ -107,6 +120,11 @@ class TimerSetupViewModel @Inject constructor(
         }
         if (newDuration == DurationOption.CUSTOM) onCustomDurationSelected()
     }
+    private fun onCustomDurationSelected() {
+        if(state.value.durations[DurationOption.CUSTOM] == -1)
+            viewModelScope.launch { alertDialogChannel.send(true) }
+    }
+
 
     private fun onAddButtonClick() {
         if (state.value.selectedNumbers.size >= 11) return
@@ -145,17 +163,14 @@ class TimerSetupViewModel @Inject constructor(
         }
     }
 
-    private fun onCustomDurationSelected() {
-        return
-    }
 
 
     private fun updateState(timerItems: List<TimerItem>) {
         timerItemsFlowCounter++
 
-        val shouldUpdateDisplayedNumber = timerItemsFlowCounter <= 1
-
         updateSelectedNumbers(timerItems)
+
+        val shouldUpdateDisplayedNumber = timerItemsFlowCounter <= 1
 
         // updates the displayed number only when user navigates to the screen or opens the app
         // this is used because otherwise if alarm fires when user is on this screen the displayed

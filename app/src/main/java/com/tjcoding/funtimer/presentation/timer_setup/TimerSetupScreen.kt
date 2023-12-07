@@ -19,20 +19,28 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tjcoding.funtimer.presentation.timer_setup.components.NumberSelector
 import com.tjcoding.funtimer.presentation.timer_setup.components.TimeRadioGroup
 import com.tjcoding.funtimer.presentation.timer_setup.components.TimerCard
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.tjcoding.funtimer.presentation.timer_setup.components.Picker
 import com.tjcoding.funtimer.presentation.timer_setup.components.rememberPickerState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -43,7 +51,8 @@ fun TimerSetupScreenRoot(
     TimerSetupScreen(
         modifier = modifier,
         onEvent = viewModel::onEvent,
-        state = viewModel.state.collectAsStateWithLifecycle().value
+        state = viewModel.state.collectAsStateWithLifecycle().value,
+        alertDialogEventFlow = viewModel.alertDialogChannelFlow
     )
 }
 
@@ -54,23 +63,35 @@ fun TimerSetupScreen(
     modifier: Modifier = Modifier,
     state: TimerSetupState = TimerSetupState(),
     onEvent: (TimerSetupEvent) -> Unit = {},
+    alertDialogEventFlow: Flow<Boolean> = flowOf(false)
 ) {
+
+
+
+
     val pickerState = rememberPickerState()
-    val openDialog = remember { mutableStateOf(true) }
-    val radioOptions = listOf("30 min", "60 min", "Custom")
+    val openDialog = remember { mutableStateOf(false) }
+    var radioOptions = state.durations.values.map { if(it == -1) "custom" else "$it min" }
+
+    LaunchedEffect(key1 = state.durations.values) {
+        radioOptions = state.durations.values.map { if(it == -1) "custom" else "$it min" }
+    }
+
+    ObserveAsEvents(flow = alertDialogEventFlow) {shouldShowDialog ->
+        openDialog.value = shouldShowDialog
+    }
     Column(
-        modifier = modifier
-            .fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         NumberSelector(
             displayedNumber = state.displayedNumber,
             onLeftFilledArrowClick = {
-                onEvent(TimerSetupEvent.onLeftFilledArrowClick)
+                onEvent(TimerSetupEvent.OnLeftFilledArrowClick)
             },
             onRightFilledArrowClick = {
-                onEvent(TimerSetupEvent.onRightFilledArrowClick)
+                onEvent(TimerSetupEvent.OnRightFilledArrowClick)
             }
         )
         TimeRadioGroup(
@@ -78,12 +99,15 @@ fun TimerSetupScreen(
             selectedOption = state.durationOption.toIndex(),
             onOptionSelected = { index ->
                 onEvent(
-                    TimerSetupEvent.onDurationRadioButtonClick(
+                    TimerSetupEvent.OnDurationRadioButtonClick(
                         duration = DurationOption.indexToDurationOption(
                             index
                         )
                     )
                 )
+            },
+            onLongClick = {index ->
+                onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick(index = index))
             }
         )
         Row(
@@ -91,12 +115,12 @@ fun TimerSetupScreen(
             Arrangement.SpaceEvenly
         ) {
             OutlinedButton(onClick = {
-                onEvent(TimerSetupEvent.onAddButtonClick)
+                onEvent(TimerSetupEvent.OnAddButtonClick)
             }) {
                 Text(text = "Add")
             }
             OutlinedButton(onClick = {
-                onEvent(TimerSetupEvent.onSaveButtonClick)
+                onEvent(TimerSetupEvent.OnSaveButtonClick)
             }) {
                 Text(text = "Save")
             }
@@ -104,7 +128,7 @@ fun TimerSetupScreen(
         TimerCard(
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
-            onNumberBoxClick = { number: Int -> onEvent(TimerSetupEvent.onSelectedNumberClick(number)) }
+            onNumberBoxClick = { number: Int -> onEvent(TimerSetupEvent.OnSelectedNumberClick(number)) }
         )
 
     }
@@ -137,6 +161,7 @@ fun TimerSetupScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                     TextButton(
                         onClick = {
+                            onEvent(TimerSetupEvent.OnCustomDurationPicked(pickerState.selectedItem.toInt()))
                             openDialog.value = false
                         },
                         modifier = Modifier.align(Alignment.End)
@@ -150,8 +175,17 @@ fun TimerSetupScreen(
 
 }
 
-
-
+@Composable
+private fun <T> ObserveAsEvents(flow: Flow<T>, onEvent: (T) -> Unit) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(flow, lifecycleOwner.lifecycle) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            withContext(Dispatchers.Main.immediate) {
+                flow.collect(onEvent)
+            }
+        }
+    }
+}
 
 
 

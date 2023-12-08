@@ -21,7 +21,7 @@ object Util {
     }
     suspend fun shouldRetry(cause: Throwable, attempt: Long): Boolean {
         if (attempt > 3) return false
-        val currentDelay = 2000L * attempt
+        val currentDelay = 1000L * attempt
         if (cause is IOException) {
             delay(currentDelay)
             return true

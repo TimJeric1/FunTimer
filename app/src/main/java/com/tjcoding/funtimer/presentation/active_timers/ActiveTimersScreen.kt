@@ -15,13 +15,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.presentation.timer_setup.components.TimerCard
-import com.tjcoding.funtimer.utility.getDuration
+import com.tjcoding.funtimer.utility.Util.getDuration
 import java.time.LocalDateTime
 
 @Composable
 fun ActiveTimersScreenRoot(
-    viewModel: ActiveTimersViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ActiveTimersViewModel = hiltViewModel()
 ) {
     ActiveTimersScreen(
         state = viewModel.historyState.collectAsStateWithLifecycle().value,
@@ -34,9 +34,9 @@ fun ActiveTimersScreenRoot(
 @Composable
 @Preview
 fun ActiveTimersScreen(
+    modifier: Modifier = Modifier,
     state: ActiveTimersState = ActiveTimersState(timerItems = listOf(TimerItem(listOf(1,2,3), LocalDateTime.now()))),
-    onEvent: (ActiveTimersEvent) -> Unit = {},
-    modifier: Modifier = Modifier
+    onEvent: (ActiveTimersEvent) -> Unit = {}
 ) {
     LazyVerticalGrid(
         modifier = modifier.fillMaxSize(),

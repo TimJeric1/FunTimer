@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
-import com.tjcoding.funtimer.utility.addInOrder
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
+import com.tjcoding.funtimer.utility.Util.addInOrder
+import com.tjcoding.funtimer.utility.Util.shouldRetry
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.IOException
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -194,13 +193,5 @@ class TimerSetupViewModel @Inject constructor(
         }
     }
 
-    private suspend fun shouldRetry(attempt: Long, cause: Throwable): Boolean {
-        if (attempt > 3) return false
-        val currentDelay = 2000L * attempt
-        if (cause is IOException) {
-            delay(currentDelay)
-            return true
-        }
-        return false
-    }
+
 }

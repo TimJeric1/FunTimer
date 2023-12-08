@@ -19,7 +19,7 @@ object Util {
         val localTime = if(duration >= 0) LocalTime.ofSecondOfDay(duration) else LocalTime.ofSecondOfDay(0)
         return localTime.format(DateTimeFormatter.ofPattern("mm:ss"))
     }
-    suspend fun shouldRetry(attempt: Long, cause: Throwable): Boolean {
+    suspend fun shouldRetry(cause: Throwable, attempt: Long): Boolean {
         if (attempt > 3) return false
         val currentDelay = 2000L * attempt
         if (cause is IOException) {

@@ -33,7 +33,7 @@ class TimerSetupViewModel @Inject constructor(
 
     private var timerItemsFlowCounter = 0
     private val timerItemsFlow = repository.getAllTimerItemsStream()
-        .retryWhen {cause, attempt -> return@retryWhen shouldRetry(attempt, cause) }
+        .retryWhen {cause, attempt -> return@retryWhen shouldRetry(cause, attempt) }
         .onEach { updateState(it) }
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
     private val _state = MutableStateFlow(TimerSetupState())

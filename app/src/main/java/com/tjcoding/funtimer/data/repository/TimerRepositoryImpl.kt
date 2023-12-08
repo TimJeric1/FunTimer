@@ -5,12 +5,13 @@ import com.tjcoding.funtimer.data.mapper.toEntitiesPair
 import com.tjcoding.funtimer.data.mapper.toTimerItem
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
+import com.tjcoding.funtimer.utility.Util
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-
+import kotlinx.coroutines.flow.retryWhen
 
 
 class TimerRepositoryImpl(
@@ -22,6 +23,7 @@ class TimerRepositoryImpl(
         // flowOn(Dispatchers.Default) is used for cpu intensive tasks
         // and it applies the Dispatcher for all operations that come before it (in this case the .map function and .getAllTimerItemsMap function).
         return timerDao.getAllTimerItemsAsMapsStream()
+            .retryWhen { cause, attempt -> Util.shouldRetry(cause, attempt) }
             .map { timerItemMap -> timerItemMap.map { it.toPair().toTimerItem() } }
             .flowOn(defaultDispatcher)
     }

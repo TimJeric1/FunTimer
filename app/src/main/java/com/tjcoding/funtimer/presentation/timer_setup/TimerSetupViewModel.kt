@@ -7,7 +7,6 @@ import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.domain.repository.UserPreferencesRepository
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
 import com.tjcoding.funtimer.utility.Util.addInOrder
-import com.tjcoding.funtimer.utility.Util.shouldRetry
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +16,6 @@ import kotlinx.coroutines.flow.combine
 
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -35,7 +33,6 @@ class TimerSetupViewModel @Inject constructor(
 
     private var timerItemsFlowCounter = 0
     private val timerItemsFlow = timerRepository.getAllTimerItemsStream()
-        .retryWhen { cause, attempt -> return@retryWhen shouldRetry(cause, attempt) }
         .onEach { updateState(it) }
 
     private val userPreferencesFlow = userPreferencesRepository.userPreferencesFlow

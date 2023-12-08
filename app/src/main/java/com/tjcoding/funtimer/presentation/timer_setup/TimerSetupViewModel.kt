@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
+import com.tjcoding.funtimer.domain.repository.UserPreferencesRepository
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
 import com.tjcoding.funtimer.utility.Util.addInOrder
 import com.tjcoding.funtimer.utility.Util.shouldRetry
@@ -27,26 +28,30 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TimerSetupViewModel @Inject constructor(
-    private val repository: TimerRepository,
+    private val timerRepository: TimerRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
 
+
     private var timerItemsFlowCounter = 0
-    private val timerItemsFlow = repository.getAllTimerItemsStream()
-        .retryWhen {cause, attempt -> return@retryWhen shouldRetry(cause, attempt) }
+    private val timerItemsFlow = timerRepository.getAllTimerItemsStream()
+        .retryWhen { cause, attempt -> return@retryWhen shouldRetry(cause, attempt) }
         .onEach { updateState(it) }
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+
+    private val userPreferencesFlow = userPreferencesRepository.userPreferencesFlow
+
     private val _state = MutableStateFlow(TimerSetupState())
-    val state = combine(_state, timerItemsFlow) { state, _ -> state }
+    val state = combine(_state, timerItemsFlow, userPreferencesFlow) { state, _, userPreference ->
+        state.copy(
+            durations = state.durations + (DurationOption.CUSTOM to userPreference.customDuration)
+        )
+    }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TimerSetupState())
 
     private val alertDialogChannel = Channel<Boolean>()
     val alertDialogChannelFlow = alertDialogChannel.receiveAsFlow()
-
-
-
-
-
 
 
     fun onEvent(event: TimerSetupEvent) {
@@ -54,31 +59,43 @@ class TimerSetupViewModel @Inject constructor(
             TimerSetupEvent.OnAddButtonClick -> {
                 onAddButtonClick()
             }
+
             is TimerSetupEvent.OnDurationRadioButtonClick -> {
-                onDurationRadioButtonClick(newDuration = event.duration)
+                onDurationRadioButtonClick(event.duration)
             }
+
             TimerSetupEvent.OnSaveButtonClick -> {
                 onSaveButtonClick()
             }
+
             TimerSetupEvent.OnLeftFilledArrowClick -> {
                 onLeftFilledArrowClick()
             }
+
             TimerSetupEvent.OnRightFilledArrowClick -> {
                 onRightFilledArrowClick()
             }
+
             is TimerSetupEvent.OnSelectedNumberClick -> {
-                onSelectedNumberClick(number = event.number)
+                onSelectedNumberClick(event.number)
             }
 
             is TimerSetupEvent.OnCustomDurationPicked -> {
-                _state.update { it.copy(durations = _state.value.durations + (DurationOption.CUSTOM to event.duration)) }
+                onCustomDurationPicked(event.duration)
             }
+
             is TimerSetupEvent.OnDurationRadioButtonLongClick -> {
-                if(event.index == 2) viewModelScope.launch { alertDialogChannel.send(true) }
+                if (event.index == 2) viewModelScope.launch { alertDialogChannel.send(true) }
             }
         }
 
 
+    }
+
+    private fun onCustomDurationPicked(duration: Int) {
+        viewModelScope.launch {
+            userPreferencesRepository.updateCustomDuration(duration)
+        }
     }
 
     private fun onSelectedNumberClick(number: Int) {
@@ -104,7 +121,7 @@ class TimerSetupViewModel @Inject constructor(
                 .plusMinutes(timerDuration.toLong())
         )
         viewModelScope.launch {
-            repository.insertTimerItem(timerItem)
+            timerRepository.insertTimerItem(timerItem)
         }
         alarmScheduler.schedule(timerItem)
         _state.update {
@@ -119,8 +136,9 @@ class TimerSetupViewModel @Inject constructor(
         }
         if (newDuration == DurationOption.CUSTOM) onCustomDurationSelected()
     }
+
     private fun onCustomDurationSelected() {
-        if(state.value.durations[DurationOption.CUSTOM] == -1)
+        if (state.value.durations[DurationOption.CUSTOM] == -1)
             viewModelScope.launch { alertDialogChannel.send(true) }
     }
 
@@ -163,7 +181,6 @@ class TimerSetupViewModel @Inject constructor(
     }
 
 
-
     private fun updateState(timerItems: List<TimerItem>) {
         timerItemsFlowCounter++
 
@@ -178,12 +195,14 @@ class TimerSetupViewModel @Inject constructor(
             updateDisplayedNumber()
         }
     }
+
     private fun updateDisplayedNumber() {
         val newDisplayedNumber = state.value.possibleNumbers[0]
         _state.update {
             it.copy(displayedNumber = newDisplayedNumber)
         }
     }
+
     private fun updateSelectedNumbers(timerItems: List<TimerItem>) {
         val selectedNumbers = timerItems.map { it.selectedNumbers }.flatten()
         val newPossibleNumbers = (1..99).toList().toMutableList()

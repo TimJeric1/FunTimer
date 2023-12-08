@@ -99,6 +99,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.4")
 
 
+    // datastore preferences
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 
 
 }

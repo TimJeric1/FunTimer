@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.retryWhen
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -38,7 +37,6 @@ class TimerSetupViewModel @Inject constructor(
     private val timerItemsFlow = timerRepository.getAllTimerItemsStream()
         .retryWhen { cause, attempt -> return@retryWhen shouldRetry(cause, attempt) }
         .onEach { updateState(it) }
-        .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
     private val userPreferencesFlow = userPreferencesRepository.userPreferencesFlow
 

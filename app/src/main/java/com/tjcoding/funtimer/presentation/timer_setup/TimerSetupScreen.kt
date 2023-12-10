@@ -52,7 +52,7 @@ fun TimerSetupScreenRoot(
         modifier = modifier,
         onEvent = viewModel::onEvent,
         state = viewModel.state.collectAsStateWithLifecycle().value,
-        alertDialogEventFlow = viewModel.shouldShowDialogStream
+        shouldShowDialogStream = viewModel.shouldShowDialogStream
     )
 }
 
@@ -63,7 +63,7 @@ fun TimerSetupScreen(
     modifier: Modifier = Modifier,
     state: TimerSetupState = TimerSetupState(),
     onEvent: (TimerSetupEvent) -> Unit = {},
-    alertDialogEventFlow: Flow<Boolean> = flowOf(false)
+    shouldShowDialogStream: Flow<Boolean> = flowOf(false)
 ) {
 
 
@@ -77,7 +77,7 @@ fun TimerSetupScreen(
         radioOptions = state.durations.values.map { if(it == -1) "custom" else "$it min" }
     }
 
-    ObserveAsEvents(flow = alertDialogEventFlow) {shouldShowDialog ->
+    ObserveAsEvents(stream = shouldShowDialogStream) { shouldShowDialog ->
         openDialog.value = shouldShowDialog
     }
     Column(
@@ -176,12 +176,12 @@ fun TimerSetupScreen(
 }
 
 @Composable
-private fun <T> ObserveAsEvents(flow: Flow<T>, onEvent: (T) -> Unit) {
+private fun <T> ObserveAsEvents(stream: Flow<T>, onEvent: (T) -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(flow, lifecycleOwner.lifecycle) {
+    LaunchedEffect(stream, lifecycleOwner.lifecycle) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             withContext(Dispatchers.Main.immediate) {
-                flow.collect(onEvent)
+                stream.collect(onEvent)
             }
         }
     }

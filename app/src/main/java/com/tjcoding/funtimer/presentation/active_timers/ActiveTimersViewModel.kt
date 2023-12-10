@@ -21,17 +21,17 @@ class ActiveTimersViewModel @Inject constructor(
 
     private val timerItemsStream = repository.getAllTimerItemsStream()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-    private val _historyState = MutableStateFlow(ActiveTimersState())
-    val historyState = combine(_historyState, timerItemsStream) { historyState, timerItems -> historyState.copy(timerItems = timerItems) }
+    private val _state = MutableStateFlow(ActiveTimersState())
+    val state = combine(_state, timerItemsStream) { historyState, timerItems -> historyState.copy(timerItems = timerItems) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ActiveTimersState())
 
     fun onEvent(event: ActiveTimersEvent){
         when(event){
-            is ActiveTimersEvent.onCardLongClick -> {
+            is ActiveTimersEvent.OnCardLongClick -> {
                 viewModelScope.launch {
                     repository.deleteTimerItem(event.timerItem)
-                    alarmScheduler.cancel(event.timerItem)
                 }
+                alarmScheduler.cancel(event.timerItem)
             }
         }
     }

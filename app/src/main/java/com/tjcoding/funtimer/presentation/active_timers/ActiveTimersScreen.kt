@@ -24,7 +24,7 @@ fun ActiveTimersScreenRoot(
     viewModel: ActiveTimersViewModel = hiltViewModel()
 ) {
     ActiveTimersScreen(
-        state = viewModel.historyState.collectAsStateWithLifecycle().value,
+        state = viewModel.state.collectAsStateWithLifecycle().value,
         onEvent = viewModel::onEvent,
         modifier = modifier
     )
@@ -47,7 +47,7 @@ fun ActiveTimersScreen(
                 TimerCard(modifier = Modifier.combinedClickable(
                     onClick = {},
                     onLongClick = {
-                        onEvent(ActiveTimersEvent.onCardLongClick(timerItem))
+                        onEvent(ActiveTimersEvent.OnCardLongClick(timerItem))
                     }
                 ),
                     numbers = timerItem.selectedNumbers,

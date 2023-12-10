@@ -42,11 +42,10 @@ class TimerSetupViewModel @Inject constructor(
         state.copy(
             durations = state.durations + (DurationOption.CUSTOM to userPreference.customDuration)
         )
-    }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TimerSetupState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TimerSetupState())
 
-    private val alertDialogChannel = Channel<Boolean>()
-    val alertDialogChannelStream = alertDialogChannel.receiveAsFlow()
+    private val shouldShowDialogChannel = Channel<Boolean>()
+    val shouldShowDialogStream = shouldShowDialogChannel.receiveAsFlow()
 
 
     fun onEvent(event: TimerSetupEvent) {
@@ -80,11 +79,16 @@ class TimerSetupViewModel @Inject constructor(
             }
 
             is TimerSetupEvent.OnDurationRadioButtonLongClick -> {
-                if (event.index == 2) viewModelScope.launch { alertDialogChannel.send(true) }
+                onDurationRadioButtonLongClick(event)
             }
         }
 
 
+    }
+
+    private fun onDurationRadioButtonLongClick(event: TimerSetupEvent.OnDurationRadioButtonLongClick) {
+        val customDurationRadioButtonIsClicked = event.index == 2
+        if (customDurationRadioButtonIsClicked) viewModelScope.launch { showAlertDialog() }
     }
 
     private fun onCustomDurationPicked(duration: Int) {
@@ -134,7 +138,11 @@ class TimerSetupViewModel @Inject constructor(
 
     private fun onCustomDurationSelected() {
         if (state.value.durations[DurationOption.CUSTOM] == -1)
-            viewModelScope.launch { alertDialogChannel.send(true) }
+            viewModelScope.launch { showAlertDialog() }
+    }
+
+    private suspend fun showAlertDialog() {
+        shouldShowDialogChannel.send(true)
     }
 
 

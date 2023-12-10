@@ -52,7 +52,7 @@ fun TimerSetupScreenRoot(
         modifier = modifier,
         onEvent = viewModel::onEvent,
         state = viewModel.state.collectAsStateWithLifecycle().value,
-        alertDialogEventFlow = viewModel.alertDialogChannelStream
+        alertDialogEventFlow = viewModel.shouldShowDialogStream
     )
 }
 

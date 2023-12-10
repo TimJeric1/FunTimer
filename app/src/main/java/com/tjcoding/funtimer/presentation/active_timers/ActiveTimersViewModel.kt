@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private const val TAG = "HistoryViewModel"
 @HiltViewModel
 class ActiveTimersViewModel @Inject constructor(
     private val repository: TimerRepository,
@@ -20,10 +19,10 @@ class ActiveTimersViewModel @Inject constructor(
 ): ViewModel() {
 
 
-    private val timerItemsFlow = repository.getAllTimerItemsStream()
+    private val timerItemsStream = repository.getAllTimerItemsStream()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _historyState = MutableStateFlow(ActiveTimersState())
-    val historyState = combine(_historyState, timerItemsFlow) { historyState, timerItems -> historyState.copy(timerItems = timerItems) }
+    val historyState = combine(_historyState, timerItemsStream) { historyState, timerItems -> historyState.copy(timerItems = timerItems) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ActiveTimersState())
 
     fun onEvent(event: ActiveTimersEvent){

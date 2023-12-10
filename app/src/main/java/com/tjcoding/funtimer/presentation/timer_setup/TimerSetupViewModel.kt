@@ -31,14 +31,14 @@ class TimerSetupViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private var timerItemsFlowCounter = 0
-    private val timerItemsFlow = timerRepository.getAllTimerItemsStream()
+    private var timerItemsStreamCounter = 0
+    private val timerItemsStream = timerRepository.getAllTimerItemsStream()
         .onEach { updateState(it) }
 
-    private val userPreferencesFlow = userPreferencesRepository.userPreferencesFlow
+    private val userPreferencesStream = userPreferencesRepository.userPreferencesStream
 
     private val _state = MutableStateFlow(TimerSetupState())
-    val state = combine(_state, timerItemsFlow, userPreferencesFlow) { state, _, userPreference ->
+    val state = combine(_state, timerItemsStream, userPreferencesStream) { state, _, userPreference ->
         state.copy(
             durations = state.durations + (DurationOption.CUSTOM to userPreference.customDuration)
         )
@@ -46,7 +46,7 @@ class TimerSetupViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TimerSetupState())
 
     private val alertDialogChannel = Channel<Boolean>()
-    val alertDialogChannelFlow = alertDialogChannel.receiveAsFlow()
+    val alertDialogChannelStream = alertDialogChannel.receiveAsFlow()
 
 
     fun onEvent(event: TimerSetupEvent) {
@@ -177,11 +177,11 @@ class TimerSetupViewModel @Inject constructor(
 
 
     private fun updateState(timerItems: List<TimerItem>) {
-        timerItemsFlowCounter++
+        timerItemsStreamCounter++
 
         updateSelectedNumbers(timerItems)
 
-        val shouldUpdateDisplayedNumber = timerItemsFlowCounter <= 1
+        val shouldUpdateDisplayedNumber = timerItemsStreamCounter <= 1
 
         // updates the displayed number only when user navigates to the screen or opens the app
         // this is used because otherwise if alarm fires when user is on this screen the displayed

@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserPreferencesRepository {
 
-    val userPreferencesFlow: Flow<UserPreferences>
+    val userPreferencesStream: Flow<UserPreferences>
 
     suspend fun updateCustomDuration(customDuration: Int)
 

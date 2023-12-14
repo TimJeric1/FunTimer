@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Card
@@ -27,7 +26,6 @@ fun TimerCard(
 ) {
     Card(
         modifier = modifier
-            .size(width = 180.dp, height = 180.dp),
     ) {
             Column(
                 modifier = Modifier.fillMaxSize(),

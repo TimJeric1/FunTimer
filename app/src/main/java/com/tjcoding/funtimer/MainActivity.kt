@@ -57,6 +57,7 @@ class MainActivity : ComponentActivity() {
             AskNotificationsPermission(context = LocalContext.current)
             AskFullscreenIntentPermission(context = LocalContext.current)
             AskExemptionPermission(context = LocalContext.current)
+            
 
             FunTimerTheme {
                 // A surface container using the 'background' color from the theme

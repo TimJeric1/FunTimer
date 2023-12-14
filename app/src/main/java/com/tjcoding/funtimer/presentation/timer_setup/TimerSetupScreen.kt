@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.AlertDialogDefaults
@@ -25,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tjcoding.funtimer.presentation.timer_setup.components.NumberSelector
@@ -72,7 +74,8 @@ fun TimerSetupScreen(
     val pickerState = rememberPickerState()
     val openDialog = remember { mutableStateOf(false) }
     var radioOptions = state.durations.values.map { if(it == -1) "custom" else "$it min" }
-
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val screenHeight = LocalConfiguration.current.screenHeightDp
     LaunchedEffect(key1 = state.durations.values) {
         radioOptions = state.durations.values.map { if(it == -1) "custom" else "$it min" }
     }
@@ -126,6 +129,7 @@ fun TimerSetupScreen(
             }
         }
         TimerCard(
+            modifier = Modifier.width(screenWidth.dp*0.5f-12.dp).height(screenHeight.dp * 0.25f - 6.dp),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
             onNumberBoxClick = { number: Int -> onEvent(TimerSetupEvent.OnSelectedNumberClick(number)) }

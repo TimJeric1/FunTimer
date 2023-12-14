@@ -34,6 +34,7 @@ class TimerSetupViewModel @Inject constructor(
     private var timerItemsStreamCounter = 0
     private val timerItemsStream = timerRepository.getAllTimerItemsStream()
         .onEach { updateState(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     private val userPreferencesStream = userPreferencesRepository.userPreferencesStream
 

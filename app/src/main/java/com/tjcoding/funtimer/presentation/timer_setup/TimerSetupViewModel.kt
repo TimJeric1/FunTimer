@@ -34,11 +34,13 @@ class TimerSetupViewModel @Inject constructor(
     private var timerItemsStreamCounter = 0
     private val timerItemsStream = timerRepository.getAllTimerItemsStream()
         .onEach { updateState(it) }
+        // it has to be statein otherwise it won't replay the last value on back navigation
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     private val userPreferencesStream = userPreferencesRepository.userPreferencesStream
 
     private val _state = MutableStateFlow(TimerSetupState())
+    // it has to combine timerItemStream in order for the timerItemsStream to have a collector
     val state = combine(_state, timerItemsStream, userPreferencesStream) { state, _, userPreference ->
         state.copy(
             durations = state.durations + (DurationOption.CUSTOM to userPreference.customDuration)

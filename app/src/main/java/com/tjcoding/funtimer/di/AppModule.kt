@@ -1,6 +1,7 @@
 package com.tjcoding.funtimer.di
 
 import android.app.Application
+import android.content.pm.ApplicationInfo
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
@@ -71,6 +72,13 @@ class AppModule {
                 produceFile = { appContext.preferencesDataStoreFile(USER_PREFERENCES) }
             )
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideIsInDebugMode(app: Application): Boolean {
+        val context = app.applicationContext
+        return (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
     }
 
 

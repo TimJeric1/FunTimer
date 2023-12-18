@@ -11,4 +11,6 @@ sealed interface TimerSetupEvent {
     data class OnSelectedNumberClick(val number: Int): TimerSetupEvent
 
     data class OnCustomDurationPicked(val duration: Int): TimerSetupEvent
+
+    data object OnLayoutViewButtonClick: TimerSetupEvent
 }

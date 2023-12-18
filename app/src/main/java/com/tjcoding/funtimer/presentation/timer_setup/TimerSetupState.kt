@@ -1,14 +1,18 @@
 package com.tjcoding.funtimer.presentation.timer_setup
 
+import android.util.Log
+private const val TAG = "TimerSetupState"
+
 data class TimerSetupState(
     val displayedNumber: Int = 1,
-    val selectedNumbers: List<Int> = ArrayList<Int>(100),
+    val selectedNumbers: List<Int> = ArrayList(100),
     val possibleNumbers: List<Int> = (1..99).toList(),
-    val durationOption: DurationOption = DurationOption.THIRTY_MINUTES,
-    val durations: Map<DurationOption, Int> = mapOf(DurationOption.THIRTY_MINUTES to 30, DurationOption.SIXTY_MINUTES to 60, DurationOption.CUSTOM to -1)
+    val selectedDurationOption: DurationOption = DurationOption.THIRTY_MINUTES,
+    val displayedDurations: Map<DurationOption, Int> = mapOf(DurationOption.THIRTY_MINUTES to 30, DurationOption.SIXTY_MINUTES to 60, DurationOption.CUSTOM to -1),
+    val selectedLayoutView: LayoutView = LayoutView.STANDARD
 ){
     fun getDuration(): Int {
-        return durationOption.toDuration(durations)
+        return selectedDurationOption.toDuration(displayedDurations)
     }
     fun getDurationInTimeFormat(): String {
         val duration = getDuration()
@@ -33,7 +37,7 @@ enum class DurationOption {
 }
 
 fun DurationOption.toDuration(durations: Map<DurationOption, Int>): Int{
-    val duration = durations.get(this)
+    val duration = durations[this]
     if(duration != null) return duration
     return durations.values.first()
 }
@@ -44,3 +48,21 @@ fun DurationOption.toIndex(): Int{
         DurationOption.CUSTOM -> 2
     }
 }
+enum class LayoutView {
+    STANDARD, ALTERNATIVE;
+
+
+    companion object {
+        fun fromString(value: String) : LayoutView {
+            return when(value) {
+                "STANDARD" -> STANDARD
+                "ALTERNATIVE" -> ALTERNATIVE
+                else -> {
+                    Log.w(TAG, "Supplied invalid string for LayoutView.fromString()")
+                    STANDARD
+                }
+            }
+        }
+    }
+}
+

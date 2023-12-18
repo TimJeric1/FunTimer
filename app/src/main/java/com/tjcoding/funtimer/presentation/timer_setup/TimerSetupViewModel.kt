@@ -34,16 +34,17 @@ class TimerSetupViewModel @Inject constructor(
     private var timerItemsStreamCounter = 0
     private val timerItemsStream = timerRepository.getAllTimerItemsStream()
         .onEach { updateState(it) }
-        // it has to be statein otherwise it won't replay the last value on back navigation
+        // it has to be .statein otherwise it won't replay the last value on back navigation
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     private val userPreferencesStream = userPreferencesRepository.userPreferencesStream
 
     private val _state = MutableStateFlow(TimerSetupState())
     // it has to combine timerItemStream in order for the timerItemsStream to have a collector
-    val state = combine(_state, timerItemsStream, userPreferencesStream) { state, _, userPreference ->
+    val state = combine(_state, timerItemsStream, userPreferencesStream) { state, _, userPreferences ->
         state.copy(
-            durations = state.durations + (DurationOption.CUSTOM to userPreference.customDuration)
+            displayedDurations = state.displayedDurations + (DurationOption.CUSTOM to userPreferences.customDuration),
+            selectedLayoutView = userPreferences.selectedLayoutView
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TimerSetupState())
 
@@ -84,9 +85,18 @@ class TimerSetupViewModel @Inject constructor(
             is TimerSetupEvent.OnDurationRadioButtonLongClick -> {
                 onDurationRadioButtonLongClick(event)
             }
+            TimerSetupEvent.OnLayoutViewButtonClick -> {
+                onLayoutViewButtonClick()
+            }
         }
 
 
+    }
+
+    private fun onLayoutViewButtonClick() {
+        viewModelScope.launch {
+            userPreferencesRepository.updateSelectedLayoutView(if (state.value.selectedLayoutView == LayoutView.STANDARD) LayoutView.ALTERNATIVE else LayoutView.STANDARD)
+        }
     }
 
     private fun onDurationRadioButtonLongClick(event: TimerSetupEvent.OnDurationRadioButtonLongClick) {
@@ -96,7 +106,7 @@ class TimerSetupViewModel @Inject constructor(
 
     private fun onCustomDurationPicked(duration: Int) {
         viewModelScope.launch {
-            userPreferencesRepository.updateCustomDuration(duration)
+            userPreferencesRepository.updateSelectedCustomDuration(duration)
         }
     }
 
@@ -132,15 +142,15 @@ class TimerSetupViewModel @Inject constructor(
     }
 
     private fun onDurationRadioButtonClick(newDuration: DurationOption) {
-        if (state.value.durationOption == newDuration) return
+        if (state.value.selectedDurationOption == newDuration) return
         _state.update {
-            it.copy(durationOption = newDuration)
+            it.copy(selectedDurationOption = newDuration)
         }
         if (newDuration == DurationOption.CUSTOM) onCustomDurationSelected()
     }
 
     private fun onCustomDurationSelected() {
-        if (state.value.durations[DurationOption.CUSTOM] == -1)
+        if (state.value.displayedDurations[DurationOption.CUSTOM] == -1)
             viewModelScope.launch { showAlertDialog() }
     }
 

@@ -160,10 +160,13 @@ fun TimerSetupScreen(
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                        val items = (5..999 step 5).toList()
+                        val startIndex = if(items.indexOf(state.durations[DurationOption.CUSTOM]) == -1) 0 else items.indexOf(state.durations[DurationOption.CUSTOM])
                         Picker(
                             modifier = Modifier.fillMaxWidth(0.25f),
                             state = pickerState,
-                            items = (5..999 step 5).toList().map { it.toString() })
+                            items = items.map { it.toString() },
+                            startIndex = startIndex)
                         Text(text = "min")
                     }
                     Spacer(modifier = Modifier.height(24.dp))

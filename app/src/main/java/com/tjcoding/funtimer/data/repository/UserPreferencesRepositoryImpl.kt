@@ -22,7 +22,7 @@ class UserPreferencesRepositoryImpl(
         val CUSTOM_DURATION = intPreferencesKey("custom_duration")
     }
 
-    override val userPreferencesFlow: Flow<UserPreferences> = dataStore.data
+    override val userPreferencesStream: Flow<UserPreferences> = dataStore.data
         .retryWhen { cause, attempt -> shouldRetry(cause, attempt)}
         .catch { exception ->
             if(exception is IOException) emit(emptyPreferences())

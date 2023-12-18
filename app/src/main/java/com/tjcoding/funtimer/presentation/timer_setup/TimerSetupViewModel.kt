@@ -31,22 +31,22 @@ class TimerSetupViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private var timerItemsFlowCounter = 0
-    private val timerItemsFlow = timerRepository.getAllTimerItemsStream()
+    private var timerItemsStreamCounter = 0
+    private val timerItemsStream = timerRepository.getAllTimerItemsStream()
         .onEach { updateState(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    private val userPreferencesFlow = userPreferencesRepository.userPreferencesFlow
+    private val userPreferencesStream = userPreferencesRepository.userPreferencesStream
 
     private val _state = MutableStateFlow(TimerSetupState())
-    val state = combine(_state, timerItemsFlow, userPreferencesFlow) { state, _, userPreference ->
+    val state = combine(_state, timerItemsStream, userPreferencesStream) { state, _, userPreference ->
         state.copy(
             durations = state.durations + (DurationOption.CUSTOM to userPreference.customDuration)
         )
-    }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TimerSetupState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TimerSetupState())
 
-    private val alertDialogChannel = Channel<Boolean>()
-    val alertDialogChannelFlow = alertDialogChannel.receiveAsFlow()
+    private val shouldShowDialogChannel = Channel<Boolean>()
+    val shouldShowDialogStream = shouldShowDialogChannel.receiveAsFlow()
 
 
     fun onEvent(event: TimerSetupEvent) {
@@ -80,11 +80,16 @@ class TimerSetupViewModel @Inject constructor(
             }
 
             is TimerSetupEvent.OnDurationRadioButtonLongClick -> {
-                if (event.index == 2) viewModelScope.launch { alertDialogChannel.send(true) }
+                onDurationRadioButtonLongClick(event)
             }
         }
 
 
+    }
+
+    private fun onDurationRadioButtonLongClick(event: TimerSetupEvent.OnDurationRadioButtonLongClick) {
+        val customDurationRadioButtonIsClicked = event.index == 2
+        if (customDurationRadioButtonIsClicked) viewModelScope.launch { showAlertDialog() }
     }
 
     private fun onCustomDurationPicked(duration: Int) {
@@ -134,7 +139,11 @@ class TimerSetupViewModel @Inject constructor(
 
     private fun onCustomDurationSelected() {
         if (state.value.durations[DurationOption.CUSTOM] == -1)
-            viewModelScope.launch { alertDialogChannel.send(true) }
+            viewModelScope.launch { showAlertDialog() }
+    }
+
+    private suspend fun showAlertDialog() {
+        shouldShowDialogChannel.send(true)
     }
 
 
@@ -177,11 +186,11 @@ class TimerSetupViewModel @Inject constructor(
 
 
     private fun updateState(timerItems: List<TimerItem>) {
-        timerItemsFlowCounter++
+        timerItemsStreamCounter++
 
         updateSelectedNumbers(timerItems)
 
-        val shouldUpdateDisplayedNumber = timerItemsFlowCounter <= 1
+        val shouldUpdateDisplayedNumber = timerItemsStreamCounter <= 1
 
         // updates the displayed number only when user navigates to the screen or opens the app
         // this is used because otherwise if alarm fires when user is on this screen the displayed

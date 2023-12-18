@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.AlertDialogDefaults
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tjcoding.funtimer.presentation.timer_setup.components.NumberSelector
@@ -53,7 +55,7 @@ fun TimerSetupScreenRoot(
         modifier = modifier,
         onEvent = viewModel::onEvent,
         state = viewModel.state.collectAsStateWithLifecycle().value,
-        alertDialogEventFlow = viewModel.alertDialogChannelFlow
+        shouldShowDialogStream = viewModel.shouldShowDialogStream
     )
 }
 
@@ -64,7 +66,7 @@ fun TimerSetupScreen(
     modifier: Modifier = Modifier,
     state: TimerSetupState = TimerSetupState(),
     onEvent: (TimerSetupEvent) -> Unit = {},
-    alertDialogEventFlow: Flow<Boolean> = flowOf(false)
+    shouldShowDialogStream: Flow<Boolean> = flowOf(false)
 ) {
 
 
@@ -73,12 +75,13 @@ fun TimerSetupScreen(
     val pickerState = rememberPickerState()
     val openDialog = remember { mutableStateOf(false) }
     var radioOptions = state.durations.values.map { if(it == -1) "custom" else "$it min" }
-
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val screenHeight = LocalConfiguration.current.screenHeightDp
     LaunchedEffect(key1 = state.durations.values) {
         radioOptions = state.durations.values.map { if(it == -1) "custom" else "$it min" }
     }
 
-    ObserveAsEvents(flow = alertDialogEventFlow) {shouldShowDialog ->
+    ObserveAsEvents(stream = shouldShowDialogStream) { shouldShowDialog ->
         openDialog.value = shouldShowDialog
     }
     Column(
@@ -127,6 +130,7 @@ fun TimerSetupScreen(
             }
         }
         TimerCard(
+            modifier = Modifier.width(screenWidth.dp*0.5f-12.dp).height(screenHeight.dp * 0.25f - 6.dp),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
             onNumberBoxClick = { number: Int -> onEvent(TimerSetupEvent.OnSelectedNumberClick(number)) }
@@ -177,12 +181,12 @@ fun TimerSetupScreen(
 }
 
 @Composable
-private fun <T> ObserveAsEvents(flow: Flow<T>, onEvent: (T) -> Unit) {
+private fun <T> ObserveAsEvents(stream: Flow<T>, onEvent: (T) -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(flow, lifecycleOwner.lifecycle) {
+    LaunchedEffect(stream, lifecycleOwner.lifecycle) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             withContext(Dispatchers.Main.immediate) {
-                flow.collect(onEvent)
+                stream.collect(onEvent)
             }
         }
     }

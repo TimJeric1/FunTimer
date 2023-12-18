@@ -9,11 +9,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -57,7 +54,6 @@ class MainActivity : ComponentActivity() {
             AskNotificationsPermission(context = LocalContext.current)
             AskFullscreenIntentPermission(context = LocalContext.current)
             AskExemptionPermission(context = LocalContext.current)
-            
 
             FunTimerTheme {
                 // A surface container using the 'background' color from the theme
@@ -69,23 +65,27 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     Scaffold(
                         topBar = {
-                            Column() {
-                                TopAppBar(title = {
-                                    Text(text = "Fun Timer")
-                                },
-                                    actions = {
-                                        Icon(
-                                            imageVector = Icons.Default.Settings,
-                                            contentDescription = "Settings icon"
-                                        )
-                                    })
-                            }
+                            TopAppBar(title = {
+                                Text(text = "Fun Timer")
+                            })
                         },
                         bottomBar = { BottomNavigationBar(navController) }
                     ) { contentPadding ->
                         NavHost(navController = navController, startDestination = "timer") {
-                            composable("timer") { TimerSetupScreenRoot(modifier = Modifier.padding(contentPadding)) }
-                            composable("history") { ActiveTimersScreenRoot(modifier = Modifier.padding(contentPadding)) }
+                            composable("timer") {
+                                TimerSetupScreenRoot(
+                                    modifier = Modifier.padding(
+                                        contentPadding
+                                    )
+                                )
+                            }
+                            composable("history") {
+                                ActiveTimersScreenRoot(
+                                    modifier = Modifier.padding(
+                                        contentPadding
+                                    )
+                                )
+                            }
                             /*...*/
                         }
                     }
@@ -113,7 +113,7 @@ class MainActivity : ComponentActivity() {
                             // Pop up to the start destination of the graph to
                             // avoid building up a large stack of destinations
                             // on the back stack as users select items
-                            popUpTo(navController.graph.id){
+                            popUpTo(navController.graph.id) {
                                 inclusive = true
                             }
                             // Avoid multiple copies of the same destination when
@@ -144,7 +144,7 @@ class MainActivity : ComponentActivity() {
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
                 hasNotificationPermission = isGranted
-                if(!isGranted){
+                if (!isGranted) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                         shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)
                 }
@@ -152,7 +152,7 @@ class MainActivity : ComponentActivity() {
         )
         LaunchedEffect(key1 = hasNotificationPermission) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if(!hasNotificationPermission) {
+                if (!hasNotificationPermission) {
                     permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
             }
@@ -176,7 +176,7 @@ class MainActivity : ComponentActivity() {
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
                 hasFullscreenIntentPermission = isGranted
-                if(!isGranted){
+                if (!isGranted) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                         shouldShowRequestPermissionRationale(Manifest.permission.USE_FULL_SCREEN_INTENT)
                 }
@@ -184,7 +184,7 @@ class MainActivity : ComponentActivity() {
         )
         LaunchedEffect(key1 = hasFullscreenIntentPermission) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if(!hasFullscreenIntentPermission) {
+                if (!hasFullscreenIntentPermission) {
                     permissionLauncher.launch(Manifest.permission.USE_FULL_SCREEN_INTENT)
                 }
             }
@@ -208,7 +208,7 @@ class MainActivity : ComponentActivity() {
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
                 hasExemptionPermission = isGranted
-                if(!isGranted){
+                if (!isGranted) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
                         shouldShowRequestPermissionRationale(Manifest.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED)
                 }
@@ -216,14 +216,13 @@ class MainActivity : ComponentActivity() {
         )
         LaunchedEffect(key1 = hasExemptionPermission) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                if(!hasExemptionPermission) {
+                if (!hasExemptionPermission) {
                     permissionLauncher.launch(Manifest.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED)
                 }
             }
         }
 
     }
-
 
 
 }

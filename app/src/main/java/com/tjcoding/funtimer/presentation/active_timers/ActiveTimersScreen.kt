@@ -4,10 +4,15 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -32,34 +37,55 @@ fun ActiveTimersScreenRoot(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 @Preview
 fun ActiveTimersScreen(
     modifier: Modifier = Modifier,
-    state: ActiveTimersState = ActiveTimersState(timerItems = listOf(TimerItem(listOf(1,2,3), LocalDateTime.now()))),
+    state: ActiveTimersState = ActiveTimersState(
+        timerItems = listOf(
+            TimerItem(
+                listOf(1, 2, 3),
+                LocalDateTime.now()
+            )
+        )
+    ),
     onEvent: (ActiveTimersEvent) -> Unit = {}
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
 
-    LazyVerticalGrid(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(12.dp),
-        columns = GridCells.Fixed(2),
-        content = {
-            items(state.timerItems) { timerItem ->
-                TimerCard(modifier = Modifier
-                    .size(screenHeight.dp*0.25f)
-                    .combinedClickable(
-                    onClick = {},
-                    onLongClick = {
-                        onEvent(ActiveTimersEvent.OnCardLongClick(timerItem))
-                    }
-                ),
-                    numbers = timerItem.selectedNumbers,
-                    time = getDuration(timerItem.time))
-            }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = "Fun Timer")
+                },
+            )
         },
-    )
+    ) { paddingValues ->
+        LazyVerticalGrid(
+            modifier = modifier
+                .padding(paddingValues = paddingValues)
+                .fillMaxSize(),
+            contentPadding = PaddingValues(12.dp),
+            columns = GridCells.Fixed(2),
+            content = {
+                items(state.timerItems) { timerItem ->
+                    TimerCard(modifier = Modifier
+                        .size(screenHeight.dp * 0.25f)
+                        .combinedClickable(
+                            onClick = {},
+                            onLongClick = {
+                                onEvent(ActiveTimersEvent.OnCardLongClick(timerItem))
+                            }
+                        ),
+                        numbers = timerItem.selectedNumbers,
+                        time = getDuration(timerItem.time))
+                }
+            },
+        )
+    }
+
 }
 

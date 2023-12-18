@@ -11,15 +11,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,7 +40,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -61,34 +57,29 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
                     val navController = rememberNavController()
-                    Scaffold(
-                        topBar = {
-                            TopAppBar(title = {
-                                Text(text = "Fun Timer")
-                            })
-                        },
-                        bottomBar = { BottomNavigationBar(navController) }
-                    ) { contentPadding ->
-                        NavHost(navController = navController, startDestination = "timer") {
-                            composable("timer") {
-                                TimerSetupScreenRoot(
-                                    modifier = Modifier.padding(
-                                        contentPadding
+                        Scaffold(
+                            bottomBar = { BottomNavigationBar(navController) }
+                        ) { contentPadding ->
+                            NavHost(navController = navController, startDestination = Screen.TimerSetupScreen.route) {
+                                composable(Screen.TimerSetupScreen.route) {
+                                    TimerSetupScreenRoot(
+                                        modifier = Modifier.padding(
+                                            contentPadding
+                                        )
                                     )
-                                )
-                            }
-                            composable("history") {
-                                ActiveTimersScreenRoot(
-                                    modifier = Modifier.padding(
-                                        contentPadding
+                                }
+                                composable(Screen.ActiveTimersScreen.route) {
+                                    ActiveTimersScreenRoot(
+                                        modifier = Modifier.padding(
+                                            contentPadding
+
+                                        )
                                     )
-                                )
+                                }
+                                /*...*/
                             }
-                            /*...*/
                         }
-                    }
                 }
             }
         }
@@ -98,8 +89,8 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun BottomNavigationBar(navController: NavController) {
         val screens = listOf(
-            Screen.Timer,
-            Screen.History,
+            Screen.TimerSetupScreen,
+            Screen.ActiveTimersScreen,
         )
         NavigationBar {
             val navBackStackEntry by navController.currentBackStackEntryAsState()

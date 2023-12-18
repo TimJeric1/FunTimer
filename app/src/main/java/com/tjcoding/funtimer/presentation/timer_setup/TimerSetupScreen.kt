@@ -112,6 +112,9 @@ fun TimerSetupScreen(
             },
             onLongClick = {index ->
                 onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick(index = index))
+            },
+            onDoubleClick = {index ->
+                onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick(index = index))
             }
         )
         Row(

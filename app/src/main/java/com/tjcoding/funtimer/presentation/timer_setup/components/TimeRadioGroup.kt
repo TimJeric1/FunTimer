@@ -20,7 +20,8 @@ fun TimeRadioGroup(
     radioOptions: List<String>,
     selectedOption: Int,
     onOptionSelected: (Int) -> Unit,
-    onLongClick: (Int) -> Unit
+    onLongClick: (Int) -> Unit,
+    onDoubleClick: (Int) -> Unit
 ) {
     Row(
         Modifier
@@ -32,7 +33,8 @@ fun TimeRadioGroup(
             Column(
                 Modifier.combinedClickable(
                     onClick = {onOptionSelected(index)},
-                    onLongClick = {onLongClick(index)}
+                    onLongClick = {onLongClick(index)},
+                    onDoubleClick = {onDoubleClick(index)}
                 ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

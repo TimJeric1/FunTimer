@@ -58,28 +58,28 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                        Scaffold(
-                            bottomBar = { BottomNavigationBar(navController) }
-                        ) { contentPadding ->
-                            NavHost(navController = navController, startDestination = Screen.TimerSetupScreen.route) {
-                                composable(Screen.TimerSetupScreen.route) {
-                                    TimerSetupScreenRoot(
-                                        modifier = Modifier.padding(
-                                            contentPadding
-                                        )
+                    Scaffold(
+                        bottomBar = { BottomNavigationBar(navController) }
+                    ) { contentPadding ->
+                        NavHost(navController = navController, startDestination = Screen.TimerSetupScreen.route) {
+                            composable(Screen.TimerSetupScreen.route) {
+                                TimerSetupScreenRoot(
+                                    modifier = Modifier.padding(
+                                        contentPadding
                                     )
-                                }
-                                composable(Screen.ActiveTimersScreen.route) {
-                                    ActiveTimersScreenRoot(
-                                        modifier = Modifier.padding(
-                                            contentPadding
-
-                                        )
-                                    )
-                                }
-                                /*...*/
+                                )
                             }
+                            composable(Screen.ActiveTimersScreen.route) {
+                                ActiveTimersScreenRoot(
+                                    modifier = Modifier.padding(
+                                        contentPadding
+
+                                    )
+                                )
+                            }
+                            /*...*/
                         }
+                    }
                 }
             }
         }

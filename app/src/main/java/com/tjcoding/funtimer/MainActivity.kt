@@ -49,7 +49,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             AskNotificationsPermission(context = LocalContext.current)
             AskFullscreenIntentPermission(context = LocalContext.current)
-            AskExemptionPermission(context = LocalContext.current)
 
             FunTimerTheme {
                 // A surface container using the 'background' color from the theme
@@ -183,37 +182,7 @@ class MainActivity : ComponentActivity() {
 
     }
 
-    @Composable
-    fun AskExemptionPermission(context: Context) {
-        var hasExemptionPermission by remember {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                mutableStateOf(
-                    ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED
-                    ) == PackageManager.PERMISSION_GRANTED
-                )
-            } else mutableStateOf(true)
-        }
-        val permissionLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted ->
-                hasExemptionPermission = isGranted
-                if (!isGranted) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-                        shouldShowRequestPermissionRationale(Manifest.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED)
-                }
-            }
-        )
-        LaunchedEffect(key1 = hasExemptionPermission) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                if (!hasExemptionPermission) {
-                    permissionLauncher.launch(Manifest.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED)
-                }
-            }
-        }
 
-    }
 
 
 }

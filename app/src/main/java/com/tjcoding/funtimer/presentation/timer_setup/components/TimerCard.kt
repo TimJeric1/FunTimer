@@ -14,40 +14,66 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 
 @Composable
+@Preview
 fun TimerCard(
     modifier: Modifier = Modifier,
-    numbers: List<Int>,
-    time: String,
-    onNumberBoxClick: (Int) -> Unit = {  }
+    numbers: List<Int> = listOf(1, 2, 3),
+    time: String = "30:00",
+    extraTime: String = "2:00",
+    onNumberBoxClick: (Int) -> Unit = { }
 ) {
     Card(
         modifier = modifier
     ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceAround
+        ) {
+            Icon(
+                modifier = Modifier.padding(top = 4.dp),
+                imageVector = Icons.Outlined.Timer,
+                contentDescription = null
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center,
+            ) {
+                NumbersLayout(
+                    selectedNumbers = numbers,
+                    onClick = onNumberBoxClick,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceAround
             ) {
-                Icon(modifier = Modifier.padding(top = 4.dp), imageVector = Icons.Outlined.Timer, contentDescription = null)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(8f),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    NumbersLayout(selectedNumbers = numbers, onClick = onNumberBoxClick, modifier = Modifier.fillMaxSize())
-                }
                 Text(
-                    modifier = Modifier.weight(2f),
                     text = time
                 )
+                Text(
+                    text = "ET: $extraTime",
+                    style = TextStyle(
+                        fontSize = 11.sp
+                    )
+                )
             }
+
+
         }
     }
+}
 
 
 

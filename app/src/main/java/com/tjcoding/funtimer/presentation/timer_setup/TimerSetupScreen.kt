@@ -4,36 +4,26 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ViewCompact
 import androidx.compose.material.icons.filled.ViewCompactAlt
-import androidx.compose.material3.AlertDialogDefaults
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -47,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.tjcoding.funtimer.presentation.timer_setup.components.Picker
+import com.tjcoding.funtimer.presentation.timer_setup.components.PickerAlertDialog
 import com.tjcoding.funtimer.presentation.timer_setup.components.PickerState
 import com.tjcoding.funtimer.presentation.timer_setup.components.rememberPickerState
 import kotlinx.coroutines.Dispatchers
@@ -66,7 +56,8 @@ fun TimerSetupScreenRoot(
         modifier = modifier,
         onEvent = viewModel::onEvent,
         state = viewModel.state.collectAsStateWithLifecycle().value,
-        shouldShowDialogStream = viewModel.shouldShowDialogStream
+        shouldShowCustomTimePickerDialogStream = viewModel.shouldShowCustomTimePickerDialogStream,
+        shouldShowExtraTimePickerDialogStream = viewModel.shouldShowExtraTimePickerDialogStream
     )
 }
 
@@ -77,12 +68,14 @@ fun TimerSetupScreen(
     modifier: Modifier = Modifier,
     state: TimerSetupState = TimerSetupState(),
     onEvent: (TimerSetupEvent) -> Unit = {},
-    shouldShowDialogStream: Flow<Boolean> = flowOf(false)
+    shouldShowCustomTimePickerDialogStream: Flow<Boolean> = flowOf(false),
+    shouldShowExtraTimePickerDialogStream: Flow<Boolean> = flowOf(false)
+
 ) {
 
 
-    val pickerState = rememberPickerState()
-    val shouldOpenDialog = remember { mutableStateOf(false) }
+    val shouldShowCustomTimePickerDialog = remember { mutableStateOf(false) }
+    val shouldShowExtraTimePickerDialog = remember { mutableStateOf(false) }
     var radioOptions = state.displayedDurations.values.map { if (it == -1) "custom" else "$it min" }
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val screenHeight = LocalConfiguration.current.screenHeightDp
@@ -90,9 +83,13 @@ fun TimerSetupScreen(
         radioOptions = state.displayedDurations.values.map { if (it == -1) "custom" else "$it min" }
     }
 
-    ObserveAsEvents(stream = shouldShowDialogStream) { shouldShowDialog ->
-        shouldOpenDialog.value = shouldShowDialog
+    ObserveAsEvents(stream = shouldShowCustomTimePickerDialogStream) { shouldShowCustomTimePickerDialogNew ->
+        shouldShowCustomTimePickerDialog.value = shouldShowCustomTimePickerDialogNew
     }
+    ObserveAsEvents(stream = shouldShowExtraTimePickerDialogStream) { shouldShowExtraTimePickerDialogNew ->
+        shouldShowExtraTimePickerDialog.value = shouldShowExtraTimePickerDialogNew
+    }
+
 
     Scaffold(
         topBar = {
@@ -100,85 +97,58 @@ fun TimerSetupScreen(
                 Text(text = "Fun Timer")
             },
                 actions = {
-                    IconButton(onClick = { onEvent(TimerSetupEvent.OnLayoutViewButtonClick) }) {
+                    IconButton(onClick = { onEvent(TimerSetupEvent.OnLayoutViewIconClick) }) {
                         Icon(
-                            imageVector = if(state.selectedLayoutView == LayoutView.STANDARD) Icons.Default.ViewCompact else Icons.Default.ViewCompactAlt,
+                            imageVector = if (state.selectedLayoutView == LayoutView.STANDARD) Icons.Default.ViewCompact else Icons.Default.ViewCompactAlt,
                             contentDescription = "layout view icon"
                         )
+                    }
+                    IconButton(onClick = { onEvent(TimerSetupEvent.OnExtraTimeIconClick) }) {
+                        Text(text = "ET")
                     }
 
                 })
         },
     ) { paddingValues ->
         if (state.selectedLayoutView == LayoutView.STANDARD)
-            StandardLayout(modifier, paddingValues, screenWidth, screenHeight, state, onEvent, radioOptions)
+            StandardLayout(
+                modifier,
+                paddingValues,
+                screenWidth,
+                screenHeight,
+                state,
+                onEvent,
+                radioOptions
+            )
         else
-            AlternativeLayout(modifier, paddingValues, screenWidth, screenHeight, state, onEvent, radioOptions)
-        if (shouldOpenDialog.value) {
-            customAlertDialog(state, pickerState, onEvent, shouldOpenDialog)
+            AlternativeLayout(
+                modifier,
+                paddingValues,
+                screenWidth,
+                screenHeight,
+                state,
+                onEvent,
+                radioOptions
+            )
+        if (shouldShowCustomTimePickerDialog.value) {
+            CustomTimePickerAlertDialog(
+                state = state,
+                pickerState = rememberPickerState(),
+                onEvent = onEvent,
+                onDismissRequest = { shouldShowCustomTimePickerDialog.value = false })
+        }
+        if (shouldShowExtraTimePickerDialog.value) {
+            ExtraTimePickerAlertDialog(
+                state = state,
+                pickerState = rememberPickerState(),
+                onEvent = onEvent,
+                onDismissRequest = { shouldShowExtraTimePickerDialog.value = false })
         }
     }
 
 
 }
 
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun customAlertDialog(
-    state: TimerSetupState,
-    pickerState: PickerState,
-    onEvent: (TimerSetupEvent) -> Unit,
-    openDialog: MutableState<Boolean>
-) {
-    BasicAlertDialog(
-        onDismissRequest = {}
-    ) {
-        Surface(
-            modifier = Modifier
-                .wrapContentWidth()
-                .wrapContentHeight(),
-            shape = MaterialTheme.shapes.large,
-            tonalElevation = AlertDialogDefaults.TonalElevation
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                horizontalAlignment = CenterHorizontally
-            ) {
-                Text(
-                    text = "Input your custom time",
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    val items = (5..999 step 5).toList()
-                    val startIndex =
-                        if (items.indexOf(state.displayedDurations[DurationOption.CUSTOM]) == -1) 0 else items.indexOf(
-                            state.displayedDurations[DurationOption.CUSTOM]
-                        )
-                    Picker(
-                        modifier = Modifier.fillMaxWidth(0.25f),
-                        state = pickerState,
-                        items = items.map { it.toString() },
-                        startIndex = startIndex
-                    )
-                    Text(text = "min")
-                }
-                Spacer(modifier = Modifier.height(24.dp))
-                TextButton(
-                    onClick = {
-                        onEvent(TimerSetupEvent.OnCustomDurationPicked(pickerState.selectedItem.toInt()))
-                        openDialog.value = false
-                    },
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text("Confirm")
-                }
-            }
-        }
-    }
-}
 
 @Composable
 private fun StandardLayout(
@@ -247,6 +217,7 @@ private fun StandardLayout(
                 .height(screenHeight.dp * 0.25f - 6.dp),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
+            extraTime = state.getExtraTimeInTimeFormat(),
             onNumberBoxClick = { number: Int -> onEvent(TimerSetupEvent.OnSelectedNumberClick(number)) }
         )
 
@@ -277,6 +248,7 @@ private fun AlternativeLayout(
                 .height(screenHeight.dp * 0.25f - 6.dp),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
+            extraTime = state.getExtraTimeInTimeFormat(),
             onNumberBoxClick = { number: Int -> onEvent(TimerSetupEvent.OnSelectedNumberClick(number)) }
         )
         NumberSelector(
@@ -326,6 +298,50 @@ private fun AlternativeLayout(
 
     }
 }
+
+@Composable
+fun CustomTimePickerAlertDialog(
+    state: TimerSetupState,
+    pickerState: PickerState,
+    onEvent: (TimerSetupEvent) -> Unit,
+    onDismissRequest: () -> Unit
+) {
+    val items = (5..999 step 5).toList()
+    val startIndex =
+        if (items.indexOf(state.displayedDurations[DurationOption.CUSTOM]) == -1) 0 else items.indexOf(
+            state.displayedDurations[DurationOption.CUSTOM]
+        )
+    PickerAlertDialog(
+        pickerState = pickerState,
+        onConfirmRequest = { pickedItem ->
+            onEvent(TimerSetupEvent.OnCustomDurationPicked(pickedItem.toInt()))
+        },
+        onDismissRequest = onDismissRequest,
+        items = items.map { it.toString() },
+        startIndex = startIndex
+    )
+
+}
+
+@Composable
+fun ExtraTimePickerAlertDialog(
+    state: TimerSetupState,
+    pickerState: PickerState,
+    onEvent: (TimerSetupEvent) -> Unit,
+    onDismissRequest: () -> Unit
+) {
+    val items = (1..10).toList()
+    PickerAlertDialog(
+        pickerState = pickerState,
+        onConfirmRequest = { pickedItem ->
+            onEvent(TimerSetupEvent.OnExtraTimePicked(pickedItem.toInt()))
+        },
+        onDismissRequest = onDismissRequest,
+        items = items.map { it.toString() },
+        startIndex = items.indexOf(state.selectedExtraTime)
+    )
+}
+
 
 @Composable
 private fun <T> ObserveAsEvents(stream: Flow<T>, onEvent: (T) -> Unit) {

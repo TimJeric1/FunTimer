@@ -9,7 +9,8 @@ data class TimerSetupState(
     val possibleNumbers: List<Int> = (1..99).toList(),
     val selectedDurationOption: DurationOption = DurationOption.THIRTY_MINUTES,
     val displayedDurations: Map<DurationOption, Int> = mapOf(DurationOption.THIRTY_MINUTES to 30, DurationOption.SIXTY_MINUTES to 60, DurationOption.CUSTOM to -1),
-    val selectedLayoutView: LayoutView = LayoutView.STANDARD
+    val selectedLayoutView: LayoutView = LayoutView.STANDARD,
+    val selectedExtraTime: Int = 2
 ){
     fun getDuration(): Int {
         return selectedDurationOption.toDuration(displayedDurations)
@@ -17,6 +18,10 @@ data class TimerSetupState(
     fun getDurationInTimeFormat(): String {
         val duration = getDuration()
         return "$duration:00"
+    }
+
+    fun getExtraTimeInTimeFormat(): String {
+        return "$selectedExtraTime:00"
     }
 }
 

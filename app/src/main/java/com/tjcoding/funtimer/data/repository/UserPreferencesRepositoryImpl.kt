@@ -23,6 +23,7 @@ class UserPreferencesRepositoryImpl(
     private object PreferencesKeys {
         val SELECTED_CUSTOM_DURATION = intPreferencesKey("selected_custom_duration")
         val SELECTED_LAYOUT_VIEW = stringPreferencesKey("selected_layout_view")
+        val SELECTED_EXTRA_TIME = intPreferencesKey("selected_extra_time")
     }
 
     override val userPreferencesStream: Flow<UserPreferences> = dataStore.data
@@ -34,7 +35,8 @@ class UserPreferencesRepositoryImpl(
         .map { preferences ->
             val customDuration = preferences[PreferencesKeys.SELECTED_CUSTOM_DURATION] ?: -1
             val selectedLayoutView = LayoutView.fromString(preferences[PreferencesKeys.SELECTED_LAYOUT_VIEW] ?: "")
-            UserPreferences(customDuration = customDuration, selectedLayoutView = selectedLayoutView)
+            val selectedExtraTime = preferences[PreferencesKeys.SELECTED_EXTRA_TIME] ?: 2
+            UserPreferences(customDuration = customDuration, selectedLayoutView = selectedLayoutView, selectedExtraTime = selectedExtraTime)
         }
     
 
@@ -47,6 +49,12 @@ class UserPreferencesRepositoryImpl(
     override suspend fun updateSelectedLayoutView(selectedLayoutView: LayoutView) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.SELECTED_LAYOUT_VIEW] = selectedLayoutView.toString()
+        }
+    }
+
+    override suspend fun updateSelectedExtraTime(selectedExtraTime: Int) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SELECTED_EXTRA_TIME] = selectedExtraTime
         }
     }
 }

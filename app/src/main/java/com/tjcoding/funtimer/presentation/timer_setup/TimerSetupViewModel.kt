@@ -45,12 +45,16 @@ class TimerSetupViewModel @Inject constructor(
     val state = combine(_state, timerItemsStream, userPreferencesStream) { state, _, userPreferences ->
         state.copy(
             displayedDurations = state.displayedDurations + (DurationOption.CUSTOM to userPreferences.customDuration),
-            selectedLayoutView = userPreferences.selectedLayoutView
+            selectedLayoutView = userPreferences.selectedLayoutView,
+            selectedExtraTime = userPreferences.selectedExtraTime
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TimerSetupState())
 
-    private val shouldShowDialogChannel = Channel<Boolean>()
-    val shouldShowDialogStream = shouldShowDialogChannel.receiveAsFlow()
+    private val shouldShowCustomTimePickerDialogChannel = Channel<Boolean>()
+    val shouldShowCustomTimePickerDialogStream = shouldShowCustomTimePickerDialogChannel.receiveAsFlow()
+
+    private val shouldShowExtraTimePickerDialogChannel = Channel<Boolean>()
+    val shouldShowExtraTimePickerDialogStream = shouldShowExtraTimePickerDialogChannel.receiveAsFlow()
 
 
     fun onEvent(event: TimerSetupEvent) {
@@ -82,16 +86,28 @@ class TimerSetupViewModel @Inject constructor(
             is TimerSetupEvent.OnCustomDurationPicked -> {
                 onCustomDurationPicked(event.duration)
             }
-
-            is TimerSetupEvent.OnDurationRadioButtonLongClick -> {
-                onDurationRadioButtonLongClick(event)
+            is TimerSetupEvent.OnExtraTimePicked -> {
+                onExtraTimePicked(event.extraTime)
             }
-            TimerSetupEvent.OnLayoutViewButtonClick -> {
+            is TimerSetupEvent.OnDurationRadioButtonLongClick -> {
+                onDurationRadioButtonLongClick(event.index)
+            }
+
+            TimerSetupEvent.OnLayoutViewIconClick -> {
                 onLayoutViewButtonClick()
+            }
+            TimerSetupEvent.OnExtraTimeIconClick -> {
+                onExtraTimeButtonClick()
             }
         }
 
 
+    }
+
+    private fun onExtraTimeButtonClick() {
+        viewModelScope.launch {
+            showExtraTimePickerDialog()
+        }
     }
 
     private fun onLayoutViewButtonClick() {
@@ -100,14 +116,20 @@ class TimerSetupViewModel @Inject constructor(
         }
     }
 
-    private fun onDurationRadioButtonLongClick(event: TimerSetupEvent.OnDurationRadioButtonLongClick) {
-        val customDurationRadioButtonIsClicked = event.index == 2
-        if (customDurationRadioButtonIsClicked) viewModelScope.launch { showAlertDialog() }
+    private fun onDurationRadioButtonLongClick(index: Int) {
+        val customDurationRadioButtonIsClicked = index == 2
+        if (customDurationRadioButtonIsClicked) viewModelScope.launch { showCustomTimePickerDialog() }
     }
 
     private fun onCustomDurationPicked(duration: Int) {
         viewModelScope.launch {
             userPreferencesRepository.updateSelectedCustomDuration(duration)
+        }
+    }
+
+    private fun onExtraTimePicked(extraTime: Int) {
+        viewModelScope.launch {
+            userPreferencesRepository.updateSelectedExtraTime(extraTime)
         }
     }
 
@@ -152,11 +174,14 @@ class TimerSetupViewModel @Inject constructor(
 
     private fun onCustomDurationSelected() {
         if (state.value.displayedDurations[DurationOption.CUSTOM] == -1)
-            viewModelScope.launch { showAlertDialog() }
+            viewModelScope.launch { showCustomTimePickerDialog() }
     }
 
-    private suspend fun showAlertDialog() {
-        shouldShowDialogChannel.send(true)
+    private suspend fun showCustomTimePickerDialog() {
+        shouldShowCustomTimePickerDialogChannel.send(true)
+    }
+    private suspend fun showExtraTimePickerDialog() {
+        shouldShowExtraTimePickerDialogChannel.send(true)
     }
 
 

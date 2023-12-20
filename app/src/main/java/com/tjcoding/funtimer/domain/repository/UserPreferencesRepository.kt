@@ -12,4 +12,6 @@ interface UserPreferencesRepository {
 
     suspend fun updateSelectedLayoutView(selectedLayoutView: LayoutView)
 
+    suspend fun updateSelectedExtraTime(selectedExtraTime: Int)
+
 }

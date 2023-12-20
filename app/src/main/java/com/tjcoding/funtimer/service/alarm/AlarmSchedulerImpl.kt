@@ -17,9 +17,10 @@ class AlarmSchedulerImpl(
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("TIMER_ITEM", timerItem)
         }
+
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            timerItem.time.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
+            timerItem.alarmTriggerTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
             PendingIntent.getBroadcast(
                 context,
                 timerItem.hashCode(),

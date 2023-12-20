@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import java.time.LocalDateTime
 
 @Entity
-data class TimeEntity (
+data class TriggerTimeEntity (
     @PrimaryKey val id: Int,
-    val time: LocalDateTime,
+    val triggerTime: LocalDateTime,
 )

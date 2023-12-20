@@ -81,7 +81,7 @@ fun ActiveTimersScreen(
                             }
                         ),
                         numbers = timerItem.selectedNumbers,
-                        time = getDuration(timerItem.time))
+                        time = getDuration(timerItem.alarmTriggerTime))
                 }
             },
         )

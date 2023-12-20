@@ -151,7 +151,7 @@ class TimerSetupViewModel @Inject constructor(
         val timerDuration = state.value.getDuration()
         val timerItem = TimerItem(
             selectedNumbers = state.value.selectedNumbers,
-            time = if (isInDebugMode) LocalDateTime.now()
+            alarmTriggerTime = if (isInDebugMode) LocalDateTime.now()
                 .plusSeconds(timerDuration.toLong()) else LocalDateTime.now()
                 .plusMinutes(timerDuration.toLong())
         )

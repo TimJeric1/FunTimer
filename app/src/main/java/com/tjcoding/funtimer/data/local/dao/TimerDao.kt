@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.tjcoding.funtimer.data.local.entity.SelectedNumberEntity
-import com.tjcoding.funtimer.data.local.entity.TimeEntity
+import com.tjcoding.funtimer.data.local.entity.TriggerTimeEntity
 import kotlinx.coroutines.flow.Flow
 
 
@@ -17,16 +17,16 @@ abstract class TimerDao {
 
     @Query(
         "SELECT * FROM SelectedNumberEntity t1" +
-                " INNER JOIN TimeEntity t2" +
+                " INNER JOIN TriggerTimeEntity t2" +
                 " ON t1.timeItemId = t2.id"
     )
-    abstract fun getAllTimerItemsAsMapsStream(): Flow<Map<TimeEntity, List<SelectedNumberEntity>>>
+    abstract fun getAllTimerItemsAsMapsStream(): Flow<Map<TriggerTimeEntity, List<SelectedNumberEntity>>>
 
-    @Insert(TimeEntity::class, onConflict = OnConflictStrategy.IGNORE)
-    protected abstract suspend fun insertTimeEntity(timeEntity: TimeEntity)
+    @Insert(TriggerTimeEntity::class, onConflict = OnConflictStrategy.IGNORE)
+    protected abstract suspend fun insertTimeEntity(timeEntity: TriggerTimeEntity)
 
-    @Delete(TimeEntity::class)
-    abstract suspend fun deleteTimeEntity(timeEntity: TimeEntity)
+    @Delete(TriggerTimeEntity::class)
+    abstract suspend fun deleteTimeEntity(timeEntity: TriggerTimeEntity)
 
     @Insert(SelectedNumberEntity::class, onConflict = OnConflictStrategy.IGNORE)
     protected abstract suspend fun insertSelectedNumberEntities(selectedNumberEntities: List<SelectedNumberEntity>)
@@ -35,7 +35,7 @@ abstract class TimerDao {
     protected abstract suspend fun deleteSelectedNumberEntities(selectedNumberEntities: List<SelectedNumberEntity>)
 
     @Transaction
-    open suspend fun insertTimerItemAsPair(timerItemPair: Pair<TimeEntity, List<SelectedNumberEntity>>) {
+    open suspend fun insertTimerItemAsPair(timerItemPair: Pair<TriggerTimeEntity, List<SelectedNumberEntity>>) {
         insertTimeEntity(timerItemPair.first)
         insertSelectedNumberEntities(timerItemPair.second)
     }

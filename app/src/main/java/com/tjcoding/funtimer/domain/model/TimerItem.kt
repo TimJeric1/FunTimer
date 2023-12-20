@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 @Parcelize
 data class TimerItem(
     val selectedNumbers: List<Int>,
-    val time: LocalDateTime,
+    val alarmTriggerTime: LocalDateTime,
     ) : Parcelable {
     override fun hashCode(): Int {
         return selectedNumbers[0]
@@ -15,7 +15,7 @@ data class TimerItem(
 
     override fun equals(other: Any?): Boolean {
         val otherTimerItem = (other as TimerItem)
-        return (this.time == otherTimerItem.time && this.selectedNumbers == otherTimerItem.selectedNumbers)
+        return (this.alarmTriggerTime == otherTimerItem.alarmTriggerTime && this.selectedNumbers == otherTimerItem.selectedNumbers)
     }
 
 

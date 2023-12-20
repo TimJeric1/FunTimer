@@ -1,14 +1,14 @@
 package com.tjcoding.funtimer.data.mapper
 
 import com.tjcoding.funtimer.data.local.entity.SelectedNumberEntity
-import com.tjcoding.funtimer.data.local.entity.TimeEntity
+import com.tjcoding.funtimer.data.local.entity.TriggerTimeEntity
 import com.tjcoding.funtimer.domain.model.TimerItem
 
 
-fun TimerItem.toEntitiesPair(): Pair<TimeEntity, List<SelectedNumberEntity>>{
-    val timerItemEntity = TimeEntity(
+fun TimerItem.toEntitiesPair(): Pair<TriggerTimeEntity, List<SelectedNumberEntity>>{
+    val timerItemEntity = TriggerTimeEntity(
         id = this.hashCode(),
-        time = time,
+        triggerTime = alarmTriggerTime,
     )
     val selectedNumberEntities = selectedNumbers.map {
         SelectedNumberEntity(
@@ -19,7 +19,7 @@ fun TimerItem.toEntitiesPair(): Pair<TimeEntity, List<SelectedNumberEntity>>{
     return Pair(timerItemEntity, selectedNumberEntities)
 }
 
-fun Pair<TimeEntity, List<SelectedNumberEntity>>.toTimerItem(): TimerItem {
+fun Pair<TriggerTimeEntity, List<SelectedNumberEntity>>.toTimerItem(): TimerItem {
     val timerItemEntity = this.first
     val selectedNumberEntities = this.second
 
@@ -27,7 +27,7 @@ fun Pair<TimeEntity, List<SelectedNumberEntity>>.toTimerItem(): TimerItem {
 
     return TimerItem(
         selectedNumbers = selectedNumbers,
-        time = timerItemEntity.time
+        alarmTriggerTime = timerItemEntity.triggerTime
     )
 }
 

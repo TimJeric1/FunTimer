@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 @Entity(
     foreignKeys = [
         ForeignKey(
-            entity = TriggerTimeEntity::class,
+            entity = AlarmTriggerTimeEntity::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("timeItemId"),
             onDelete = ForeignKey.CASCADE

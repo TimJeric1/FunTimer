@@ -45,8 +45,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideAlarmScheduler(app: Application): AlarmScheduler {
-        return AlarmSchedulerImpl(app.applicationContext)
+    fun provideAlarmScheduler(app: Application, isInDebugMode: Boolean): AlarmScheduler {
+        return AlarmSchedulerImpl(app.applicationContext, isInDebugMode)
     }
 
     @Provides

@@ -46,7 +46,8 @@ fun ActiveTimersScreen(
         timerItems = listOf(
             TimerItem(
                 listOf(1, 2, 3),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                2
             )
         )
     ),
@@ -81,7 +82,8 @@ fun ActiveTimersScreen(
                             }
                         ),
                         numbers = timerItem.selectedNumbers,
-                        time = getDuration(timerItem.alarmTriggerTime))
+                        time = getDuration(timerItem.alarmTime),
+                        extraTime = "${timerItem.extraTime}:00")
                 }
             },
         )

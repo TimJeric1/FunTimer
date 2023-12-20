@@ -7,7 +7,9 @@ import java.time.LocalDateTime
 @Parcelize
 data class TimerItem(
     val selectedNumbers: List<Int>,
-    val alarmTriggerTime: LocalDateTime,
+    val alarmTime: LocalDateTime,
+    val extraTime: Int
+
     ) : Parcelable {
     override fun hashCode(): Int {
         return selectedNumbers[0]
@@ -15,11 +17,17 @@ data class TimerItem(
 
     override fun equals(other: Any?): Boolean {
         val otherTimerItem = (other as TimerItem)
-        return (this.alarmTriggerTime == otherTimerItem.alarmTriggerTime && this.selectedNumbers == otherTimerItem.selectedNumbers)
+        return (this.alarmTime == otherTimerItem.alarmTime && this.selectedNumbers == otherTimerItem.selectedNumbers)
     }
 
 
+    fun getAlarmTriggerTime(): LocalDateTime {
+       return alarmTime.plusMinutes(extraTime.toLong())
+    }
 
+    fun getAlarmTriggerTimeDebug(): LocalDateTime {
+        return alarmTime.plusSeconds(extraTime.toLong())
+    }
 }
 
 fun TimerItem.toMessage(): String {
@@ -30,3 +38,4 @@ fun TimerItem.toMessage(): String {
     if(message != "") message.dropLast(2)
     return message
 }
+

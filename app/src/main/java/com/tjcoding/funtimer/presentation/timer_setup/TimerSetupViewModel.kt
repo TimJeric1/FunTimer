@@ -151,9 +151,10 @@ class TimerSetupViewModel @Inject constructor(
         val timerDuration = state.value.getDuration()
         val timerItem = TimerItem(
             selectedNumbers = state.value.selectedNumbers,
-            alarmTriggerTime = if (isInDebugMode) LocalDateTime.now()
+            alarmTime = if (isInDebugMode) LocalDateTime.now()
                 .plusSeconds(timerDuration.toLong()) else LocalDateTime.now()
-                .plusMinutes(timerDuration.toLong())
+                .plusMinutes(timerDuration.toLong()),
+            extraTime = state.value.selectedExtraTime
         )
         viewModelScope.launch {
             timerRepository.insertTimerItem(timerItem)

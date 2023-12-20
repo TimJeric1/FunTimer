@@ -6,21 +6,29 @@ import android.content.Context
 import android.content.Intent
 import com.tjcoding.funtimer.domain.model.TimerItem
 import java.time.ZoneId
+import javax.inject.Inject
 
 
-class AlarmSchedulerImpl(
-    private val context: Context
+class AlarmSchedulerImpl @Inject constructor(
+    private val context: Context,
+    private val isInDebugMode: Boolean
 ) : AlarmScheduler {
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
+
+
+
+
 
     override fun schedule(timerItem: TimerItem) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("TIMER_ITEM", timerItem)
         }
 
+        val triggerAtMillis = if(isInDebugMode) timerItem.getAlarmTriggerTimeDebug().atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
+        else timerItem.getAlarmTriggerTime().atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            timerItem.alarmTriggerTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
+            triggerAtMillis,
             PendingIntent.getBroadcast(
                 context,
                 timerItem.hashCode(),

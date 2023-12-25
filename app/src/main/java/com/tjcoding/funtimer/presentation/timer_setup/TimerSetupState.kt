@@ -1,16 +1,24 @@
 package com.tjcoding.funtimer.presentation.timer_setup
 
 import android.util.Log
+import com.tjcoding.funtimer.utility.Util.DEFAULT_DISPLAYED_DURATIONS
+import com.tjcoding.funtimer.utility.Util.DEFAULT_DISPLAYED_NUMBER
+import com.tjcoding.funtimer.utility.Util.DEFAULT_DURATION_OPTION
+import com.tjcoding.funtimer.utility.Util.DEFAULT_POSSIBLE_NUMBERS
+import com.tjcoding.funtimer.utility.Util.DEFAULT_SELECTED_EXTRA_TIME
+import com.tjcoding.funtimer.utility.Util.DEFAULT_SELECTED_LAYOUT_VIEW
+import com.tjcoding.funtimer.utility.Util.DEFAULT_SELECTED_NUMBERS
+
 private const val TAG = "TimerSetupState"
 
 data class TimerSetupState(
-    val displayedNumber: Int = 1,
-    val selectedNumbers: List<Int> = ArrayList(100),
-    val possibleNumbers: List<Int> = (1..99).toList(),
-    val selectedDurationOption: DurationOption = DurationOption.THIRTY_MINUTES,
-    val displayedDurations: Map<DurationOption, Int> = mapOf(DurationOption.THIRTY_MINUTES to 30, DurationOption.SIXTY_MINUTES to 60, DurationOption.CUSTOM to -1),
-    val selectedLayoutView: LayoutView = LayoutView.STANDARD,
-    val selectedExtraTime: Int = 2
+    val displayedNumber: Int = DEFAULT_DISPLAYED_NUMBER,
+    val selectedNumbers: List<Int> = DEFAULT_SELECTED_NUMBERS,
+    val possibleNumbers: List<Int> = DEFAULT_POSSIBLE_NUMBERS,
+    val selectedDurationOption: DurationOption = DEFAULT_DURATION_OPTION,
+    val displayedDurations: Map<DurationOption, Int> = DEFAULT_DISPLAYED_DURATIONS,
+    val selectedLayoutView: LayoutView = DEFAULT_SELECTED_LAYOUT_VIEW,
+    val selectedExtraTime: Int = DEFAULT_SELECTED_EXTRA_TIME
 ){
     fun getDuration(): Int {
         return selectedDurationOption.toDuration(displayedDurations)
@@ -46,7 +54,7 @@ fun DurationOption.toDuration(durations: Map<DurationOption, Int>): Int{
     if(duration != null) return duration
     return durations.values.first()
 }
-fun DurationOption.toIndex(): Int{
+fun DurationOption. toIndex(): Int{
     return when(this){
         DurationOption.THIRTY_MINUTES -> 0
         DurationOption.SIXTY_MINUTES -> 1

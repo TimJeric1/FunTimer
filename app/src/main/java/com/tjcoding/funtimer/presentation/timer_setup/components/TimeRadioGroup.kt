@@ -31,14 +31,14 @@ fun TimeRadioGroup(
     ) {
         radioOptions.forEachIndexed { index, text ->
             Column(
-                Modifier.combinedClickable(
-                    onClick = {onOptionSelected(index)},
-                    onLongClick = {onLongClick(index)},
-                    onDoubleClick = {onDoubleClick(index)}
-                ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 RadioButton(
+                    modifier = Modifier.combinedClickable(
+                        onClick = {onOptionSelected(index)},
+                        onLongClick = {onLongClick(index)},
+                        onDoubleClick = {onDoubleClick(index)},
+                    ),
                     selected = (index == selectedOption),
                     onClick = null, // null recommended for accessibility with screenreaders
                 )

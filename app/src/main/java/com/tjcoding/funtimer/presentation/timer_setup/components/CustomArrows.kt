@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
                 val point1 = Offset(canvasWidth-strokeWidth, 0f)
                 val point2 = Offset(canvasWidth-strokeWidth, canvasHeight)
-                val point3 = Offset(canvasWidth / 5, canvasHeight / 2)
+                val point3 = Offset(0f, canvasHeight / 2)
 
                 val path = Path()
 
@@ -63,7 +63,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
                 val point1 = Offset(0f+strokeWidth, 0f)
                 val point2 = Offset(0f+strokeWidth, canvasHeight)
-                val point3 = Offset((canvasWidth - canvasWidth / 5), canvasHeight / 2)
+                val point3 = Offset(canvasWidth, canvasHeight / 2)
 
                 val path = Path()
 

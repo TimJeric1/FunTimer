@@ -44,7 +44,7 @@ class TimerSetupViewModel @Inject constructor(
     // it has to combine timerItemStream in order for the timerItemsStream to have a collector
     val state = combine(_state, timerItemsStream, userPreferencesStream) { state, _, userPreferences ->
         state.copy(
-            displayedDurations = state.displayedDurations + (DurationOption.CUSTOM to userPreferences.customDuration),
+            displayedDurations = userPreferences.customDurations,
             selectedLayoutView = userPreferences.selectedLayoutView,
             selectedExtraTime = userPreferences.selectedExtraTime
         )
@@ -89,8 +89,8 @@ class TimerSetupViewModel @Inject constructor(
             is TimerSetupEvent.OnExtraTimePicked -> {
                 onExtraTimePicked(event.extraTime)
             }
-            is TimerSetupEvent.OnDurationRadioButtonLongClick -> {
-                onDurationRadioButtonLongClick(event.index)
+            TimerSetupEvent.OnDurationRadioButtonLongClick -> {
+                onDurationRadioButtonLongClick()
             }
 
             TimerSetupEvent.OnLayoutViewIconClick -> {
@@ -116,14 +116,13 @@ class TimerSetupViewModel @Inject constructor(
         }
     }
 
-    private fun onDurationRadioButtonLongClick(index: Int) {
-        val customDurationRadioButtonIsClicked = index == 2
-        if (customDurationRadioButtonIsClicked) viewModelScope.launch { showCustomTimePickerDialog() }
+    private fun onDurationRadioButtonLongClick() {
+        viewModelScope.launch { showCustomTimePickerDialog() }
     }
 
     private fun onCustomDurationPicked(duration: Int) {
         viewModelScope.launch {
-            userPreferencesRepository.updateSelectedCustomDuration(duration)
+            userPreferencesRepository.updateSelectedCustomDurations(selectedCustomDuration = duration, index = state.value.selectedDurationOption.toIndex())
         }
     }
 

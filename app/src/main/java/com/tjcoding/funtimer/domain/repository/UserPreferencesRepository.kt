@@ -8,7 +8,7 @@ interface UserPreferencesRepository {
 
     val userPreferencesStream: Flow<UserPreferences>
 
-    suspend fun updateSelectedCustomDuration(selectedCustomDuration: Int)
+    suspend fun updateSelectedCustomDurations(selectedCustomDuration: Int, index: Int)
 
     suspend fun updateSelectedLayoutView(selectedLayoutView: LayoutView)
 

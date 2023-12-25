@@ -6,9 +6,14 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.tjcoding.funtimer.domain.model.UserPreferences
 import com.tjcoding.funtimer.domain.repository.UserPreferencesRepository
+import com.tjcoding.funtimer.presentation.timer_setup.DurationOption
 import com.tjcoding.funtimer.presentation.timer_setup.LayoutView
+import com.tjcoding.funtimer.presentation.timer_setup.toIndex
+import com.tjcoding.funtimer.utility.Util.DEFAULT_DISPLAYED_DURATIONS
+import com.tjcoding.funtimer.utility.Util.DEFAULT_SELECTED_EXTRA_TIME
 import com.tjcoding.funtimer.utility.Util.shouldRetry
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -21,9 +26,9 @@ class UserPreferencesRepositoryImpl(
 ): UserPreferencesRepository {
 
     private object PreferencesKeys {
-        val SELECTED_CUSTOM_DURATION = intPreferencesKey("selected_custom_duration")
         val SELECTED_LAYOUT_VIEW = stringPreferencesKey("selected_layout_view")
         val SELECTED_EXTRA_TIME = intPreferencesKey("selected_extra_time")
+        val SELECTED_CUSTOM_DURATIONS = stringSetPreferencesKey("selected_custom_durations")
     }
 
     override val userPreferencesStream: Flow<UserPreferences> = dataStore.data
@@ -33,16 +38,24 @@ class UserPreferencesRepositoryImpl(
             else throw exception
         }
         .map { preferences ->
-            val customDuration = preferences[PreferencesKeys.SELECTED_CUSTOM_DURATION] ?: -1
+            val customDurationsList = preferences[PreferencesKeys.SELECTED_CUSTOM_DURATIONS]?.map { it.toInt() } ?: DEFAULT_DISPLAYED_DURATIONS.values.toList()
+            val customDurations = mapOf(
+                DurationOption.THIRTY_MINUTES to customDurationsList[DurationOption.THIRTY_MINUTES.toIndex()],
+                DurationOption.SIXTY_MINUTES to customDurationsList[DurationOption.SIXTY_MINUTES.toIndex()],
+                DurationOption.CUSTOM to customDurationsList[DurationOption.CUSTOM.toIndex()],
+            )
             val selectedLayoutView = LayoutView.fromString(preferences[PreferencesKeys.SELECTED_LAYOUT_VIEW] ?: "")
-            val selectedExtraTime = preferences[PreferencesKeys.SELECTED_EXTRA_TIME] ?: 2
-            UserPreferences(customDuration = customDuration, selectedLayoutView = selectedLayoutView, selectedExtraTime = selectedExtraTime)
+            val selectedExtraTime = preferences[PreferencesKeys.SELECTED_EXTRA_TIME] ?: DEFAULT_SELECTED_EXTRA_TIME
+            UserPreferences(customDurations = customDurations, selectedLayoutView = selectedLayoutView, selectedExtraTime = selectedExtraTime)
         }
     
 
-    override suspend fun updateSelectedCustomDuration(selectedCustomDuration: Int) {
+    override suspend fun updateSelectedCustomDurations(selectedCustomDuration: Int, index: Int) {
         dataStore.edit { preferences ->
-            preferences[PreferencesKeys.SELECTED_CUSTOM_DURATION] = selectedCustomDuration
+            val selectedCustomDurations = preferences[PreferencesKeys.SELECTED_CUSTOM_DURATIONS]?.toList() ?: DEFAULT_DISPLAYED_DURATIONS.values.map { it.toString() }
+            val newSelectedCustomDurations = selectedCustomDurations.toMutableList()
+            newSelectedCustomDurations[index] = selectedCustomDuration.toString()
+            preferences[PreferencesKeys.SELECTED_CUSTOM_DURATIONS] = newSelectedCustomDurations.toSet()
         }
     }
 

@@ -183,17 +183,25 @@ private fun StandardLayout(
             onOptionSelected = { index ->
                 onEvent(
                     TimerSetupEvent.OnDurationRadioButtonClick(
-                        duration = DurationOption.indexToDurationOption(
-                            index
-                        )
+                        duration = DurationOption.indexToDurationOption(index)
                     )
                 )
             },
             onLongClick = { index ->
-                onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick(index = index))
+                onEvent(
+                    TimerSetupEvent.OnDurationRadioButtonClick(
+                        duration = DurationOption.indexToDurationOption(index)
+                    )
+                )
+                onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick)
             },
             onDoubleClick = { index ->
-                onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick(index = index))
+                onEvent(
+                    TimerSetupEvent.OnDurationRadioButtonClick(
+                        duration = DurationOption.indexToDurationOption(index)
+                    )
+                )
+                onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick)
             }
         )
         Row(
@@ -266,17 +274,25 @@ private fun AlternativeLayout(
             onOptionSelected = { index ->
                 onEvent(
                     TimerSetupEvent.OnDurationRadioButtonClick(
-                        duration = DurationOption.indexToDurationOption(
-                            index
-                        )
+                        duration = DurationOption.indexToDurationOption(index)
                     )
                 )
             },
             onLongClick = { index ->
-                onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick(index = index))
+                onEvent(
+                    TimerSetupEvent.OnDurationRadioButtonClick(
+                        duration = DurationOption.indexToDurationOption(index)
+                    )
+                )
+                onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick)
             },
             onDoubleClick = { index ->
-                onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick(index = index))
+                onEvent(
+                    TimerSetupEvent.OnDurationRadioButtonClick(
+                        duration = DurationOption.indexToDurationOption(index)
+                    )
+                )
+                onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick)
             }
         )
         Row(
@@ -308,8 +324,8 @@ fun CustomTimePickerAlertDialog(
 ) {
     val items = (5..999 step 5).toList()
     val startIndex =
-        if (items.indexOf(state.displayedDurations[DurationOption.CUSTOM]) == -1) 0 else items.indexOf(
-            state.displayedDurations[DurationOption.CUSTOM]
+        if (items.indexOf(state.displayedDurations[state.selectedDurationOption]) == -1) 0 else items.indexOf(
+            state.displayedDurations[state.selectedDurationOption]
         )
     PickerAlertDialog(
         pickerState = pickerState,

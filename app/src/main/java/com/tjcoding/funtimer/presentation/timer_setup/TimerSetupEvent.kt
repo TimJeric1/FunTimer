@@ -4,7 +4,7 @@ sealed interface TimerSetupEvent {
     data object OnLeftFilledArrowClick: TimerSetupEvent
     data object OnRightFilledArrowClick: TimerSetupEvent
     data class OnDurationRadioButtonClick(val duration: DurationOption): TimerSetupEvent
-    data class OnDurationRadioButtonLongClick(val index: Int): TimerSetupEvent
+    data object OnDurationRadioButtonLongClick: TimerSetupEvent
     data object OnAddButtonClick: TimerSetupEvent
     data object OnSaveButtonClick: TimerSetupEvent
 

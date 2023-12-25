@@ -2,17 +2,22 @@ package com.tjcoding.funtimer.presentation.timer_setup.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -35,9 +40,16 @@ fun TimeRadioGroup(
             ) {
                 RadioButton(
                     modifier = Modifier.combinedClickable(
-                        onClick = {onOptionSelected(index)},
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = rememberRipple(
+                            bounded = false,
+                            // this is copied from radioButton implementation
+                            radius = 20.dp
+                        ),
+                        onClick = { onOptionSelected(index) },
                         onLongClick = {onLongClick(index)},
                         onDoubleClick = {onDoubleClick(index)},
+                        role = Role.RadioButton
                     ),
                     selected = (index == selectedOption),
                     onClick = null, // null recommended for accessibility with screenreaders

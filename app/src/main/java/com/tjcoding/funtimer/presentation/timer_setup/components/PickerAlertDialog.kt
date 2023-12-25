@@ -29,7 +29,8 @@ fun PickerAlertDialog(
     onConfirmRequest: (String) -> Unit,
     onDismissRequest: () -> Unit,
     items: List<String>,
-    startIndex: Int
+    startIndex: Int,
+    titleText: String
 ) {
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Surface(
@@ -44,7 +45,7 @@ fun PickerAlertDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Input your custom time",
+                    text = titleText,
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 Row(

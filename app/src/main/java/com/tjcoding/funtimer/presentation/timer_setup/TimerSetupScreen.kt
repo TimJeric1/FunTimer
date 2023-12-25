@@ -318,7 +318,8 @@ fun CustomTimePickerAlertDialog(
         },
         onDismissRequest = onDismissRequest,
         items = items.map { it.toString() },
-        startIndex = startIndex
+        startIndex = startIndex,
+        titleText = "Input your custom time"
     )
 
 }
@@ -338,7 +339,8 @@ fun ExtraTimePickerAlertDialog(
         },
         onDismissRequest = onDismissRequest,
         items = items.map { it.toString() },
-        startIndex = items.indexOf(state.selectedExtraTime)
+        startIndex = items.indexOf(state.selectedExtraTime),
+        titleText = "Input your extra time"
     )
 }
 

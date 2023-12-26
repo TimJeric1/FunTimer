@@ -1,4 +1,4 @@
-package com.tjcoding.funtimer.presentation.timer_setup.components
+package com.tjcoding.funtimer.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +18,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tjcoding.funtimer.presentation.timer_setup.components.NumbersLayout
 
 
 @Composable
@@ -26,7 +27,7 @@ fun TimerCard(
     modifier: Modifier = Modifier,
     numbers: List<Int> = listOf(1, 2, 3),
     time: String = "30:00",
-    extraTime: String = "2:00",
+    extraTime: String? = "2:00",
     onNumberBoxClick: (Int) -> Unit = { }
 ) {
     Card(
@@ -62,12 +63,14 @@ fun TimerCard(
                 Text(
                     text = time
                 )
-                Text(
-                    text = "ET: $extraTime",
-                    style = TextStyle(
-                        fontSize = 11.sp
+                if(extraTime != null) {
+                    Text(
+                        text = "ET: $extraTime",
+                        style = TextStyle(
+                            fontSize = 11.sp
+                        )
                     )
-                )
+                }
             }
 
 

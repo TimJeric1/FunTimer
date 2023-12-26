@@ -31,7 +31,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tjcoding.funtimer.presentation.timer_setup.components.NumberSelector
 import com.tjcoding.funtimer.presentation.timer_setup.components.TimeRadioGroup
-import com.tjcoding.funtimer.presentation.timer_setup.components.TimerCard
+import com.tjcoding.funtimer.presentation.components.TimerCard
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle

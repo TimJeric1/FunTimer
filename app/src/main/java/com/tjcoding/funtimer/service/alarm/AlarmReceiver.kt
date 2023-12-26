@@ -33,7 +33,7 @@ class AlarmReceiver : BroadcastReceiver() {
             intent?.getParcelableExtra("TIMER_ITEM") ?: return
         }
         goAsync {
-            timerRepository.deleteTimerItem(timerItem)
+            timerRepository.updateTimerItem(timerItem.copy(hasTriggered = true))
         }
         val serviceIntent = Intent(context, AlarmService::class.java)
         serviceIntent.action = FIRE_ALARM_ACTION

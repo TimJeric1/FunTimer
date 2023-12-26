@@ -9,7 +9,8 @@ fun TimerItem.toEntitiesPair(): Pair<AlarmTriggerTimeEntity, List<SelectedNumber
     val timerItemEntity = AlarmTriggerTimeEntity(
         id = this.hashCode(),
         alarmTime = alarmTime,
-        extraTime = extraTime
+        extraTime = extraTime,
+        hasTriggered = hasTriggered
     )
     val selectedNumberEntities = selectedNumbers.map {
         SelectedNumberEntity(
@@ -29,7 +30,8 @@ fun Pair<AlarmTriggerTimeEntity, List<SelectedNumberEntity>>.toTimerItem(): Time
     return TimerItem(
         selectedNumbers = selectedNumbers,
         alarmTime = timerItemEntity.alarmTime,
-        extraTime = timerItemEntity.extraTime
+        extraTime = timerItemEntity.extraTime,
+        hasTriggered = timerItemEntity.hasTriggered
     )
 }
 

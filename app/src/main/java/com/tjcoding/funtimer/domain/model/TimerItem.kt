@@ -8,8 +8,8 @@ import java.time.LocalDateTime
 data class TimerItem(
     val selectedNumbers: List<Int>,
     val alarmTime: LocalDateTime,
-    val extraTime: Int
-
+    val extraTime: Int,
+    val hasTriggered: Boolean
     ) : Parcelable {
     override fun hashCode(): Int {
         return selectedNumbers[0]
@@ -17,7 +17,10 @@ data class TimerItem(
 
     override fun equals(other: Any?): Boolean {
         val otherTimerItem = (other as TimerItem)
-        return (this.alarmTime == otherTimerItem.alarmTime && this.selectedNumbers == otherTimerItem.selectedNumbers)
+        return (this.alarmTime == otherTimerItem.alarmTime &&
+                this.selectedNumbers == otherTimerItem.selectedNumbers &&
+                this.extraTime == otherTimerItem.extraTime &&
+                this.hasTriggered == otherTimerItem.hasTriggered)
     }
 
 

@@ -2,13 +2,8 @@ package com.tjcoding.funtimer.presentation.active_timers
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,8 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.tjcoding.funtimer.domain.model.TimerItem
-import com.tjcoding.funtimer.presentation.timer_setup.components.TimerCard
+import com.tjcoding.funtimer.presentation.components.TimerCard
+import com.tjcoding.funtimer.presentation.components.CustomItemsVerticalGrid
 import com.tjcoding.funtimer.utility.Util.getDuration
 import java.time.LocalDateTime
 
@@ -37,23 +32,22 @@ fun ActiveTimersScreenRoot(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
 fun ActiveTimersScreen(
     modifier: Modifier = Modifier,
     state: ActiveTimersState = ActiveTimersState(
-        timerItems = listOf(
-            TimerItem(
+        activeTimerItemsUi = listOf(
+            ActiveTimerItemUi(
                 listOf(1, 2, 3),
                 LocalDateTime.now(),
-                2
+                2,
             )
         )
     ),
     onEvent: (ActiveTimersEvent) -> Unit = {}
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp
 
 
     Scaffold(
@@ -65,29 +59,36 @@ fun ActiveTimersScreen(
             )
         },
     ) { paddingValues ->
-        LazyVerticalGrid(
-            modifier = modifier
-                .padding(paddingValues = paddingValues)
-                .fillMaxSize(),
-            contentPadding = PaddingValues(12.dp),
-            columns = GridCells.Fixed(2),
-            content = {
-                items(state.timerItems) { timerItem ->
-                    TimerCard(modifier = Modifier
-                        .size(screenHeight.dp * 0.25f)
-                        .combinedClickable(
-                            onClick = {},
-                            onLongClick = {
-                                onEvent(ActiveTimersEvent.OnCardLongClick(timerItem))
-                            }
-                        ),
-                        numbers = timerItem.selectedNumbers,
-                        time = getDuration(timerItem.alarmTime),
-                        extraTime = "${timerItem.extraTime}:00")
-                }
-            },
+        TimerCardsVerticalGrid(
+            modifier.padding(paddingValues),
+            state.activeTimerItemsUi,
+            onLongClick = { activeTimerItemsUi -> onEvent(ActiveTimersEvent.OnCardLongClick(activeTimerItemsUi)) },
         )
     }
 
 }
+
+@Composable
+@OptIn(ExperimentalFoundationApi::class)
+private fun TimerCardsVerticalGrid(
+    modifier: Modifier,
+    activeTimeItemsUi: List<ActiveTimerItemUi>,
+    onLongClick: (ActiveTimerItemUi) -> Unit,
+) {
+    val screenHeight = LocalConfiguration.current.screenHeightDp
+    CustomItemsVerticalGrid(modifier = modifier, items = activeTimeItemsUi) { activeTimerItemsUi ->
+        TimerCard(modifier = Modifier
+            .size(screenHeight.dp * 0.25f)
+            .combinedClickable(
+                onClick = {},
+                onLongClick = { onLongClick(activeTimerItemsUi) }
+            ),
+            numbers = activeTimerItemsUi.selectedNumbers,
+            time = getDuration(activeTimerItemsUi.alarmTime),
+            extraTime = "${activeTimerItemsUi.extraTime}:00")
+    }
+
+}
+
+
 

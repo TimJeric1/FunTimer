@@ -5,7 +5,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface TimerRepository {
 
-    fun getAllTimerItemsStream(): Flow<List<TimerItem>>
+    fun getAllNotTriggeredTimerItemsStream(): Flow<List<TimerItem>>
     suspend fun insertTimerItem(timerItem: TimerItem)
+
+    suspend fun updateTimerItem(timerItem: TimerItem)
+
     suspend fun deleteTimerItem(timerItem: TimerItem)
 }

@@ -33,7 +33,7 @@ class TimerSetupViewModel @Inject constructor(
 
 
     private var timerItemsStreamCounter = 0
-    private val timerItemsStream = timerRepository.getAllTimerItemsStream()
+    private val timerItemsStream = timerRepository.getAllNotTriggeredTimerItemsStream()
         .onEach { updateState(it) }
         // it has to be .statein otherwise it won't replay the last value on back navigation
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -153,7 +153,8 @@ class TimerSetupViewModel @Inject constructor(
             alarmTime = if (isInDebugMode) LocalDateTime.now()
                 .plusSeconds(timerDuration.toLong()) else LocalDateTime.now()
                 .plusMinutes(timerDuration.toLong()),
-            extraTime = state.value.selectedExtraTime
+            extraTime = state.value.selectedExtraTime,
+            hasTriggered = false
         )
         viewModelScope.launch {
             timerRepository.insertTimerItem(timerItem)

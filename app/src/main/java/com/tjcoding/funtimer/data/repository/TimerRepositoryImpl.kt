@@ -18,11 +18,11 @@ class TimerRepositoryImpl(
     private val timerDao: TimerDao,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : TimerRepository {
-    override fun getAllTimerItemsStream(): Flow<List<TimerItem>> {
+    override fun getAllNotTriggeredTimerItemsStream(): Flow<List<TimerItem>> {
         // no need for flowOn(Dispatchers.IO) because room automatically does that.
         // flowOn(Dispatchers.Default) is used for cpu intensive tasks
         // and it applies the Dispatcher for all operations that come before it (in this case the .map function and .getAllTimerItemsMap function).
-        return timerDao.getAllTimerItemsAsMapsStream()
+        return timerDao.getAllNotTriggeredTimerItemsAsMapsStream()
             .retryWhen { cause, attempt -> Util.shouldRetry(cause, attempt) }
             .map { timerItemMap -> timerItemMap.map { it.toPair().toTimerItem() } }
             .flowOn(defaultDispatcher)
@@ -33,9 +33,14 @@ class TimerRepositoryImpl(
         timerDao.insertTimerItemAsPair(timerItem.toEntitiesPair())
     }
 
-    override suspend fun deleteTimerItem(timerItem: TimerItem) {
+    override suspend fun updateTimerItem(timerItem: TimerItem) {
         // no need for withContext(Dispatcher.io) because room automatically does that
+        timerDao.updateTimerItemAsPair(timerItem.toEntitiesPair())
+    }
+
+    override suspend fun deleteTimerItem(timerItem: TimerItem) {
         val timeEntity = timerItem.toEntitiesPair().first
+        // on delete cascading foreign key will also delete the appropriate selectedTimeEntities
         timerDao.deleteTimeEntity(timeEntity)
     }
 

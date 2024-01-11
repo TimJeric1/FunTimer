@@ -15,24 +15,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.tjcoding.funtimer.presentation.active_timers.ActiveTimerItemUi
-import com.tjcoding.funtimer.presentation.active_timers.ActiveTimersEvent
-import com.tjcoding.funtimer.presentation.active_timers.ActiveTimersState
-import com.tjcoding.funtimer.presentation.active_timers.ActiveTimersViewModel
 import com.tjcoding.funtimer.presentation.components.CustomItemsVerticalGrid
-import com.tjcoding.funtimer.presentation.components.TimerCard
-import com.tjcoding.funtimer.utility.Util
+import com.tjcoding.funtimer.presentation.components.PastTimerCard
 import java.time.LocalDateTime
 
 
 @Composable
 fun PastTimersScreenRoot(
     modifier: Modifier = Modifier,
-    viewModel: ActiveTimersViewModel = hiltViewModel()
+    viewModel: PastTimersViewModel = hiltViewModel()
 ) {
     PastTimersScreen(
         state = viewModel.state.collectAsStateWithLifecycle().value,
-        onEvent = viewModel::onEvent,
         modifier = modifier
     )
 }
@@ -42,16 +36,14 @@ fun PastTimersScreenRoot(
 @Preview
 fun PastTimersScreen(
     modifier: Modifier = Modifier,
-    state: ActiveTimersState = ActiveTimersState(
-        activeTimerItemsUi = listOf(
-            ActiveTimerItemUi(
+    state: PastTimersState = PastTimersState(
+        pastTimerItemsUi = listOf(
+            PastTimerItemUi(
                 listOf(1, 2, 3),
                 LocalDateTime.now(),
-                2
             )
         )
     ),
-    onEvent: (ActiveTimersEvent) -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -62,10 +54,10 @@ fun PastTimersScreen(
             )
         },
     ) { paddingValues ->
-        TimerCardsVerticalGrid(
+        PastTimerCardsVerticalGrid(
             modifier.padding(paddingValues),
-            state.activeTimerItemsUi,
-            onLongClick = { timerItem -> onEvent(ActiveTimersEvent.OnCardLongClick(timerItem)) },
+            state.pastTimerItemsUi,
+            onLongClick = {},
         )
     }
 
@@ -74,22 +66,23 @@ fun PastTimersScreen(
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-private fun TimerCardsVerticalGrid(
+private fun PastTimerCardsVerticalGrid(
     modifier: Modifier,
-    activeTimerItemsUi: List<ActiveTimerItemUi>,
-    onLongClick: (ActiveTimerItemUi) -> Unit,
+    pastTimerItemsUi: List<PastTimerItemUi>,
+    onLongClick: (PastTimerItemUi) -> Unit,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
-    CustomItemsVerticalGrid(modifier = modifier, items = activeTimerItemsUi) { activeTimerItemUi ->
-        TimerCard(modifier = Modifier
+    CustomItemsVerticalGrid(modifier = modifier, items = pastTimerItemsUi) { pastTimerItemUi ->
+        PastTimerCard(modifier = Modifier
             .size(screenHeight.dp * 0.25f)
             .combinedClickable(
                 onClick = {},
-                onLongClick = { onLongClick(activeTimerItemUi) }
+                onLongClick = { onLongClick(pastTimerItemUi) }
             ),
-            numbers = activeTimerItemUi.selectedNumbers,
-            time = Util.getDuration(activeTimerItemUi.alarmTime),
-            extraTime = "${activeTimerItemUi.extraTime}:00")
+            numbers = pastTimerItemUi.selectedNumbers,
+            time = "${pastTimerItemUi.triggerTime.hour}:${pastTimerItemUi.triggerTime.minute}",
+            extraTime = null,
+            )
     }
 
 }

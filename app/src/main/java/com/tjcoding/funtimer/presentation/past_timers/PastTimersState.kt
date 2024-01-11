@@ -4,7 +4,7 @@ import com.tjcoding.funtimer.domain.model.TimerItem
 import java.time.LocalDateTime
 
 data class PastTimersState(
-    var timerItems: List<PastTimerItemUi> = emptyList()
+    var pastTimerItemsUi: List<PastTimerItemUi> = emptyList()
 )
 
 

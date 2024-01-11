@@ -3,9 +3,12 @@ package com.tjcoding.funtimer.presentation.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Card
@@ -30,19 +33,89 @@ fun TimerCard(
     extraTime: String? = "2:00",
     onNumberBoxClick: (Int) -> Unit = { }
 ) {
-    Card(
-        modifier = modifier
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceAround
-        ) {
+
+    TimerCardSkeleton(modifier = modifier, numbers = numbers, onNumberBoxClick = onNumberBoxClick,
+        top = {
             Icon(
                 modifier = Modifier.padding(top = 4.dp),
                 imageVector = Icons.Outlined.Timer,
                 contentDescription = null
             )
+        }, bottom = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceAround
+            ) {
+                Text(
+                    text = time
+                )
+                if (extraTime != null) {
+                    Text(
+                        text = "ET: $extraTime",
+                        style = TextStyle(
+                            fontSize = 11.sp
+                        )
+                    )
+                }
+            }
+        })
+
+}
+
+@Composable
+@Preview
+fun PastTimerCard(
+    modifier: Modifier = Modifier,
+    numbers: List<Int> = listOf(1, 2, 3),
+    time: String = "30:00",
+    extraTime: String? = "2:00",
+    onNumberBoxClick: (Int) -> Unit = { }
+) {
+
+    TimerCardSkeleton(modifier = modifier, numbers = numbers, onNumberBoxClick = onNumberBoxClick,
+        top = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceAround
+            ) {
+                Icon(
+                    modifier = Modifier.padding(top = 4.dp),
+                    imageVector = Icons.Outlined.Timer,
+                    contentDescription = null
+                )
+                Spacer(modifier = modifier.height(12.dp))
+                Text(
+                    text = time,
+                    style = TextStyle(fontSize = 24.sp)
+                )
+            }
+
+        }, bottom = {
+            // to keep the same numbersLayout placement
+            Box(modifier = Modifier.size(68.dp))
+        }
+    )
+
+}
+
+
+@Composable
+private fun TimerCardSkeleton(
+    modifier: Modifier,
+    numbers: List<Int>,
+    onNumberBoxClick: (Int) -> Unit,
+    top: @Composable () -> Unit,
+    bottom: @Composable () -> Unit,
+) {
+    Card(modifier = modifier) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceAround
+        ) {
+            top()
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -55,25 +128,7 @@ fun TimerCard(
                     modifier = Modifier.fillMaxSize()
                 )
             }
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceAround
-            ) {
-                Text(
-                    text = time
-                )
-                if(extraTime != null) {
-                    Text(
-                        text = "ET: $extraTime",
-                        style = TextStyle(
-                            fontSize = 11.sp
-                        )
-                    )
-                }
-            }
-
-
+            bottom()
         }
     }
 }

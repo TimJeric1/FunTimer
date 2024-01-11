@@ -322,7 +322,7 @@ fun CustomTimePickerAlertDialog(
     onEvent: (TimerSetupEvent) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    val items = (5..999 step 5).toList()
+    val items = (5..100 step 5).toList()
     val startIndex =
         if (items.indexOf(state.displayedDurations[state.selectedDurationOption]) == -1) 0 else items.indexOf(
             state.displayedDurations[state.selectedDurationOption]

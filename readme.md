@@ -8,19 +8,19 @@
 
 | Add                                                                                | Change Layout                                                                                | Pick Custom Duration & Extra Time                                                                                  |
 |------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| ![](https://github.com/TimJeric1/FunTimer/tree/master/ScreenGifs/add.gif?raw=true) | ![](https://github.com/TimJeric1/FunTimer/tree/master/ScreenGifs/change_layout.gif?raw=true) | ![](https://github.com/TimJeric1/FunTimer/tree/master/ScreenGifs/pick_custom_duration_and_extra_time.gif?raw=true) |
+| ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/add.gif?raw=true) | ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/change_layout.gif?raw=true) | ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/pick_custom_duration_and_extra_time.gif?raw=true) |
 
 # <h1 align="center">Active Timers Screen ⏳</h1>
 
 | Delete                                                                                |
 |---------------------------------------------------------------------------------------| 
-| ![](https://github.com/TimJeric1/FunTimer/tree/master/ScreenGifs/delete.gif?raw=true) |
+| ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/delete.gif?raw=true) |
 
 # <h1 align="center">Notifications 📳</h1>
 
 | Standard                                                                                    | Fullscreen                                                                                             |
 |---------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
-| ![](https://github.com/TimJeric1/FunTimer/tree/master/ScreenGifs/notification.gif?raw=true) | ![](https://github.com/TimJeric1/FunTimer/tree/master/ScreenGifs/fullscreen_notification.gif?raw=true) |
+| ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/notification.gif?raw=true) | ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/fullscreen_notification.gif?raw=true) |
 
 <h2 align="center">Features⭐</h2>
 

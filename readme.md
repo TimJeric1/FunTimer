@@ -11,7 +11,7 @@
 |------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
 | ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/add.gif?raw=true) | ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/change_layout.gif?raw=true) | ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/pick_custom_duration_and_extra_time.gif?raw=true) |
     
-<div/>
+</div>
     
 # <h1 align="center">Active Timers Screen ⏳</h1>
 <div align="center">
@@ -20,7 +20,7 @@
 |---------------------------------------------------------------------------------------| 
 | ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/delete.gif?raw=true) |
 
-<div/>
+</div>
     
 # <h1 align="center">Notifications 📳</h1>
 <div align="center">
@@ -28,7 +28,7 @@
 | Standard                                                                                    | Fullscreen                                                                                             |
 |---------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
 | ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/notification.gif?raw=true) | ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/fullscreen_notification.gif?raw=true) |
-<div/>
+</div>
 <h2 align="center">Features⭐</h2>
 
 - Add and delete timers/alarms.

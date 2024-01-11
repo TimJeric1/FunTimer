@@ -1,8 +1,8 @@
-# <h1 align="center">⏱️ FunTimer</h1>
+# <h1 align="center">⏱️ FunTimer (In Development)</h1>
 
 <p align="center">FunTimer offers a practical solution for the time-conscious environment of water parks. This app serves as a user-friendly Alarm/Timer tool, specifically crafted to manage entry times efficiently. In the context of water parks, visitors receive armbands with unique numbers upon entry and  FunTimer empowers park staff to set timers for each visitor based on their armband number, streamlining the entire process.</>
 
-# <h1 align="center">🖼 Preview (in development) </h1>
+# <h1 align="center">🖼 Preview </h1>
 
 # <h1 align="center">Timer Setup Screen 📝</h1>
 <div align="center">

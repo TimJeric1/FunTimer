@@ -26,7 +26,7 @@ class AlarmNotificationsImpl @Inject constructor() : AlarmNotifications {
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.baseline_pool_24)
-            .setContentTitle("Aquapark Alarm")
+            .setContentTitle("Funtimer Alarm")
             .setContentText("End of playtime for numbers ${timerItem.toMessage()}")
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -101,7 +101,7 @@ class AlarmNotificationsImpl @Inject constructor() : AlarmNotifications {
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.baseline_pool_24)
-            .setContentTitle("Missed Aquapark alarm")
+            .setContentTitle("Missed FunTimer alarm")
             .setContentText("End of playtime for numbers ${timerItem.toMessage()}")
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setPriority(NotificationCompat.PRIORITY_LOW)

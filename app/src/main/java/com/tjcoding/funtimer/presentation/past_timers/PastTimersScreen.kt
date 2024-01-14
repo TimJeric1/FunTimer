@@ -33,21 +33,9 @@ fun PastTimersScreenRoot(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
 fun PastTimersScreen(
     modifier: Modifier = Modifier,
-    state: PastTimersState = PastTimersState(
-        pastTimerItems = listOf(
-            PastTimerItem(
-                listOf(1, 2, 3),
-                LocalDateTime.now(),
-            ),
-            PastTimerItem(
-                listOf(5,6,7,8,9,10,11,12,13,14),
-                LocalDateTime.now().minusHours(1)
-            )
-        )
-    ),
+    state: PastTimersState,
 ) {
     Scaffold(
         topBar = {
@@ -85,7 +73,36 @@ private fun PastTimerCardsVerticalGrid(
             ),
             numbers = pastTimerItem.selectedNumbers,
             time = "${pastTimerItem.triggerTime.hour}:${pastTimerItem.triggerTime.minute}",
+            onNumberBoxClick = {}
             )
     }
 
+}
+
+@Composable
+@Preview
+private fun PastTimersScreenPreview() {
+    PastTimersScreen(
+        modifier = Modifier,
+        state = PastTimersState(
+            pastTimerItems = listOf(
+                PastTimerItem(
+                    listOf(1, 2, 3),
+                    LocalDateTime.now(),
+                ),
+                PastTimerItem(
+                    listOf(5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
+                    LocalDateTime.now().minusHours(1)
+                ),
+                PastTimerItem(
+                    listOf(5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
+                    LocalDateTime.now().minusHours(1)
+                ),
+                PastTimerItem(
+                    listOf(5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
+                    LocalDateTime.now().minusHours(1)
+                ),
+            )
+        )
+    )
 }

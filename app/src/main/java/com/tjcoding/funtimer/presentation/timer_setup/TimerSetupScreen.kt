@@ -63,13 +63,12 @@ fun TimerSetupScreenRoot(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
 fun TimerSetupScreen(
     modifier: Modifier = Modifier,
-    state: TimerSetupState = TimerSetupState(),
-    onEvent: (TimerSetupEvent) -> Unit = {},
-    shouldShowCustomTimePickerDialogStream: Flow<Boolean> = flowOf(false),
-    shouldShowExtraTimePickerDialogStream: Flow<Boolean> = flowOf(false)
+    state: TimerSetupState,
+    onEvent: (TimerSetupEvent) -> Unit,
+    shouldShowCustomTimePickerDialogStream: Flow<Boolean>,
+    shouldShowExtraTimePickerDialogStream: Flow<Boolean>,
 
 ) {
 
@@ -375,5 +374,15 @@ private fun <T> ObserveAsEvents(stream: Flow<T>, onEvent: (T) -> Unit) {
 
 
 
-
+@Composable
+@Preview
+private fun TimerSetupScreenPreview() {
+    TimerSetupScreen(
+        modifier = Modifier,
+        state = TimerSetupState(),
+        onEvent = {},
+        shouldShowCustomTimePickerDialogStream = flowOf(false),
+        shouldShowExtraTimePickerDialogStream = flowOf(false)
+    )
+}
 

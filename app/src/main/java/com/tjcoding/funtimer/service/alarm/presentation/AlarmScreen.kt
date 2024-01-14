@@ -1,6 +1,5 @@
 package com.tjcoding.funtimer.service.alarm.presentation
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -36,19 +35,28 @@ import com.tjcoding.funtimer.presentation.timer_setup.components.BigNumbersGrid
 import com.tjcoding.funtimer.service.alarm.presentation.components.SwipeableButton
 import com.tjcoding.funtimer.ui.theme.Typography
 
-
-
 @Composable
 @PreviewLightDark
+private fun AlarmScreenPreview() {
+    AlarmScreen(
+        numbers = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18),
+        onDismiss = {},
+        onMute = {}
+    )
+}
+
+@Composable
 fun AlarmScreen(
-    numbers: List<Int> = listOf(1, 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),
-    onDismiss: () -> Unit = {},
-    onMute: () -> Unit = {}
+    numbers: List<Int>,
+    onDismiss: () -> Unit,
+    onMute: () -> Unit
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
-    Scaffold(Modifier.background(color = if(isSystemInDarkTheme()) Color.LightGray else Color.White)) { paddingValues ->
+    Scaffold(
+        modifier = Modifier.background(color = if (isSystemInDarkTheme()) Color.LightGray else Color.White)
+    ) { paddingValues ->
         Column(
-            Modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .background(color = if (isSystemInDarkTheme()) Color.DarkGray else Color.White),
@@ -61,7 +69,7 @@ fun AlarmScreen(
                 Icon(
                     imageVector = Icons.Default.Pool,
                     contentDescription = "App icon",
-                    tint = if(isSystemInDarkTheme()) Color.LightGray else Color.DarkGray,
+                    tint = if (isSystemInDarkTheme()) Color.LightGray else Color.DarkGray,
                     modifier = Modifier.size(128.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -70,7 +78,7 @@ fun AlarmScreen(
                     style = Typography.displayMedium,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.W400,
-                    color = if(isSystemInDarkTheme()) Color.LightGray else Color.DarkGray
+                    color = if (isSystemInDarkTheme()) Color.LightGray else Color.DarkGray
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 BigNumbersGrid(
@@ -90,14 +98,21 @@ fun AlarmScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Icon(modifier = Modifier.size(64.dp), imageVector = Icons.AutoMirrored.Filled.VolumeOff,  tint = if(isSystemInDarkTheme()) Color.LightGray.copy(alpha = 0.25f) else Color.LightGray,contentDescription = "Volume Off")
+                Icon(
+                    modifier = Modifier.size(64.dp),
+                    imageVector = Icons.AutoMirrored.Filled.VolumeOff,
+                    tint = if (isSystemInDarkTheme()) Color.LightGray.copy(alpha = 0.25f) else Color.LightGray,
+                    contentDescription = "Volume Off"
+                )
                 SwipeableButton(onLeftSwipeAction = onMute, onRightSwipeAction = onDismiss)
-                Icon(modifier = Modifier.size(64.dp), imageVector = Icons.Filled.Close, tint = if(isSystemInDarkTheme()) Color.LightGray.copy(alpha = 0.25f) else Color.LightGray,contentDescription = "Close")
+                Icon(
+                    modifier = Modifier.size(64.dp),
+                    imageVector = Icons.Filled.Close,
+                    tint = if (isSystemInDarkTheme()) Color.LightGray.copy(alpha = 0.25f) else Color.LightGray,
+                    contentDescription = "Close"
+                )
             }
-            Spacer(modifier = Modifier.height((screenHeight*0.15).dp))
-
+            Spacer(modifier = Modifier.height((screenHeight * 0.15).dp))
         }
     }
 }
-
-

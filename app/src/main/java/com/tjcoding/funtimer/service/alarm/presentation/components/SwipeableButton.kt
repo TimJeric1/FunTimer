@@ -58,11 +58,10 @@ enum class SwipeLocations {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-@Preview
 fun SwipeableButton(
     modifier: Modifier = Modifier,
-    onLeftSwipeAction: () -> Unit = {},
-    onRightSwipeAction: () -> Unit = {}
+    onLeftSwipeAction: () -> Unit,
+    onRightSwipeAction: () -> Unit
 ) {
     val density = LocalDensity.current
     val buttonSize = 64.dp
@@ -93,9 +92,9 @@ fun SwipeableButton(
     var areArrowsVisible by remember {
         mutableStateOf(false)
     }
-    
+
     val arrowsAlpha by animateFloatAsState(
-        targetValue =  if(areArrowsVisible) 100f else 0f ,
+        targetValue = if (areArrowsVisible) 100f else 0f,
         animationSpec = spring(),
         label = "alpha"
     )
@@ -103,9 +102,9 @@ fun SwipeableButton(
 
     LaunchedEffect(key1 = stateHorizontal.currentValue) {
         areArrowsVisible = stateHorizontal.currentValue == SwipeLocations.MIDDLE
-        if(stateHorizontal.currentValue == SwipeLocations.MIDDLE) return@LaunchedEffect
-        if(stateHorizontal.currentValue == SwipeLocations.LEFT) onLeftSwipeAction()
-        if(stateHorizontal.currentValue == SwipeLocations.RIGHT) onRightSwipeAction()
+        if (stateHorizontal.currentValue == SwipeLocations.MIDDLE) return@LaunchedEffect
+        if (stateHorizontal.currentValue == SwipeLocations.LEFT) onLeftSwipeAction()
+        if (stateHorizontal.currentValue == SwipeLocations.RIGHT) onRightSwipeAction()
         stateHorizontal.animateTo(targetValue = SwipeLocations.MIDDLE)
     }
 
@@ -116,12 +115,13 @@ fun SwipeableButton(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
-            LeftMovingArrow(
-                modifier = Modifier
-                    .width(48.dp)
-                    .height(16.dp)
-                    .alpha(arrowsAlpha)
-            )
+        LeftMovingArrow(
+            modifier = Modifier
+                .width(48.dp)
+                .height(16.dp)
+                .alpha(arrowsAlpha),
+            strokeWidth = 6f
+        )
         Spacer(modifier = Modifier.padding(4.dp))
         Box {
             Canvas(modifier = Modifier.size(buttonSize)) {
@@ -176,12 +176,13 @@ fun SwipeableButton(
         }
 
         Spacer(modifier = Modifier.padding(4.dp))
-            RightMovingArrow(
-                modifier = Modifier
-                    .width(48.dp)
-                    .height(16.dp)
-                    .alpha(arrowsAlpha)
-            )
+        RightMovingArrow(
+            modifier = Modifier
+                .width(48.dp)
+                .height(16.dp)
+                .alpha(arrowsAlpha),
+            strokeWidth = 6f
+        )
 
     }
 
@@ -189,10 +190,9 @@ fun SwipeableButton(
 
 
 @Composable
-@Preview
 fun RightMovingArrow(
     modifier: Modifier = Modifier,
-    strokeWidth: Float = 6f
+    strokeWidth: Float,
 ) {
 
     val isDarkModeOn = isSystemInDarkTheme()
@@ -246,10 +246,9 @@ fun RightMovingArrow(
 }
 
 @Composable
-@Preview
 fun LeftMovingArrow(
     modifier: Modifier = Modifier,
-    strokeWidth: Float = 6f
+    strokeWidth: Float,
 ) {
 
     val isDarkModeOn = isSystemInDarkTheme()
@@ -302,6 +301,33 @@ fun LeftMovingArrow(
     }
 }
 
+@Composable
+@Preview
+private fun SwipeableButtonPreview() {
+    SwipeableButton(
+        modifier = Modifier,
+        onLeftSwipeAction = {},
+        onRightSwipeAction = {},
+    )
+}
+
+@Composable
+@Preview
+private fun LeftMovingArrowPreview() {
+    LeftMovingArrow(
+        modifier = Modifier,
+        strokeWidth = 6f,
+    )
+}
+
+@Composable
+@Preview
+private fun RightMovingArrowPreview() {
+    RightMovingArrow(
+        modifier = Modifier,
+        strokeWidth = 6f,
+    )
+}
 
 //@Composable
 //@Preview

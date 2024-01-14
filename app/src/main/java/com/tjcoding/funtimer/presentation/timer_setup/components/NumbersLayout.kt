@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-@Preview
 fun NumbersGrid(
     modifier: Modifier = Modifier,
     selectedNumbers: List<Int> = listOf(9, 10,15,23,47),
@@ -78,10 +77,10 @@ fun NumbersGrid(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-@Preview
 fun BigNumbersGrid(
     modifier: Modifier = Modifier,
     selectedNumbers: List<Int> = listOf(9, 10),
+    maxItemsInEachRow: Int = 4,
     onClick: (Int) -> Unit = {},
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
     verticalArrangement: Arrangement.Vertical = Arrangement.Center
@@ -90,7 +89,7 @@ fun BigNumbersGrid(
         modifier = modifier,
         verticalArrangement = verticalArrangement,
         horizontalArrangement = horizontalArrangement,
-        maxItemsInEachRow = 4
+        maxItemsInEachRow = maxItemsInEachRow
     ) {
         for (number in selectedNumbers) {
             if (number < 10) {
@@ -133,4 +132,30 @@ fun BigNumbersGrid(
             }
         }
     }
+}
+
+@Composable
+@Preview
+private fun NumbersGridPreview() {
+    NumbersGrid(
+        modifier = Modifier,
+    selectedNumbers = listOf(9, 10,15,23,47),
+    maxItemsInEachRow = 4,
+    onClick = {},
+    horizontalArrangement = Arrangement.Center,
+    verticalArrangement = Arrangement.Center,
+    )
+}
+
+@Composable
+@Preview
+private fun BigNumbersGridPreview() {
+    BigNumbersGrid(
+        modifier = Modifier,
+        selectedNumbers = listOf(9,10,15,23,47),
+        maxItemsInEachRow = 4,
+        onClick = {},
+        horizontalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center,
+    )
 }

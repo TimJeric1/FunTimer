@@ -20,13 +20,10 @@ import androidx.compose.ui.unit.sp
 
 
 @Composable
-@Preview
 fun NumberBox(
     modifier: Modifier = Modifier,
-    number: Int = 29,
-    spanStyle: SpanStyle = SpanStyle(
-        fontSize = 14.sp,
-    )
+    number: Int,
+    spanStyle: SpanStyle,
 ) {
 
     val annotatedString = buildAnnotatedString {
@@ -53,4 +50,15 @@ fun NumberBox(
             textAlign = TextAlign.Left,
         )
     }
+}
+
+@Composable
+@Preview
+private fun NumberBoxPreview() {
+    NumberBox(
+        number = 29,
+        spanStyle = SpanStyle(
+            fontSize = 14.sp,
+        )
+    )
 }

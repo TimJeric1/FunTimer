@@ -23,17 +23,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tjcoding.funtimer.presentation.timer_setup.components.NumbersGrid
 
-
 @Composable
 @Preview
+private fun TimerCardPreview() {
+    TimerCard(
+        numbers = listOf(1, 2, 3, 11, 12, 13),
+        time = "30:00",
+        extraTime = "2:00",
+        onNumberBoxClick = {}
+    )
+}
+
+@Composable
 fun TimerCard(
     modifier: Modifier = Modifier,
-    numbers: List<Int> = listOf(1, 2, 3,11,12,13),
-    time: String = "30:00",
-    extraTime: String? = "2:00",
-    onNumberBoxClick: (Int) -> Unit = { }
+    numbers: List<Int>,
+    time: String,
+    extraTime: String?,
+    onNumberBoxClick: (Int) -> Unit
 ) {
-
     BasicTimerCard(modifier = modifier, numbers = numbers, onNumberBoxClick = onNumberBoxClick,
         top = {
             Icon(
@@ -60,18 +68,25 @@ fun TimerCard(
                 }
             }
         })
-
 }
 
 @Composable
 @Preview
+private fun PastTimerCardPreview() {
+    PastTimerCard(
+        numbers = listOf(1, 2, 3),
+        time = "30:00",
+        onNumberBoxClick = {}
+    )
+}
+
+@Composable
 fun PastTimerCard(
     modifier: Modifier = Modifier,
-    numbers: List<Int> = listOf(1, 2, 3),
-    time: String = "30:00",
-    onNumberBoxClick: (Int) -> Unit = { }
+    numbers: List<Int>,
+    time: String,
+    onNumberBoxClick: (Int) -> Unit
 ) {
-
     BasicTimerCard(modifier = modifier, numbers = numbers, onNumberBoxClick = onNumberBoxClick,
         top = {
             Column(
@@ -96,9 +111,7 @@ fun PastTimerCard(
             Box(modifier = Modifier.size(68.dp))
         }
     )
-
 }
-
 
 @Composable
 private fun BasicTimerCard(
@@ -131,5 +144,3 @@ private fun BasicTimerCard(
         }
     }
 }
-
-

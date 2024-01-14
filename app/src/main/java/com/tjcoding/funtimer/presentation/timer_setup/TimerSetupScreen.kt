@@ -168,6 +168,7 @@ private fun StandardLayout(
     ) {
 
         NumberSelector(
+            modifier = Modifier.fillMaxWidth(0.7f),
             displayedNumber = state.displayedNumber,
             onLeftFilledArrowClick = {
                 onEvent(TimerSetupEvent.OnLeftFilledArrowClick)

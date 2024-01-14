@@ -19,7 +19,7 @@ class ActiveTimersViewModel @Inject constructor(
 ): ViewModel() {
 
 
-    private val timerItemsStream = repository.getAllNotTriggeredTimerItemsStream()
+    private val timerItemsStream = repository.getAllActiveTimerItemsStream()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _state = MutableStateFlow(ActiveTimersState())
     val state = combine(_state, timerItemsStream) { state, timerItems -> state.copy(activeTimerItems = timerItems.map { it.toActiveTimerItem() }) }

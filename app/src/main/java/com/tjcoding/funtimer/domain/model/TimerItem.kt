@@ -3,6 +3,7 @@ package com.tjcoding.funtimer.domain.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 @Parcelize
 data class TimerItem(
@@ -12,7 +13,7 @@ data class TimerItem(
     val hasTriggered: Boolean
     ) : Parcelable {
     override fun hashCode(): Int {
-        return selectedNumbers[0]
+        return alarmTime.atZone(ZoneId.systemDefault()).toEpochSecond().toInt() + extraTime
     }
 
     override fun equals(other: Any?): Boolean {

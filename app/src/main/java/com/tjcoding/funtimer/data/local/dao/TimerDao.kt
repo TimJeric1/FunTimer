@@ -24,6 +24,14 @@ abstract class TimerDao {
     )
     abstract fun getAllNotTriggeredTimerItemsAsMapsStream(): Flow<Map<AlarmTriggerTimeEntity, List<SelectedNumberEntity>>>
 
+    @Query(
+        "SELECT * FROM SelectedNumberEntity t1" +
+                " INNER JOIN AlarmTriggerTimeEntity t2" +
+                " ON t1.timeItemId = t2.id" +
+                " WHERE t2.hasTriggered = 1"
+    )
+    abstract fun getAllTriggeredTimerItemsAsMapsStream(): Flow<Map<AlarmTriggerTimeEntity, List<SelectedNumberEntity>>>
+
 
     @Delete
     abstract suspend fun deleteTimeEntity(timeEntity: AlarmTriggerTimeEntity)

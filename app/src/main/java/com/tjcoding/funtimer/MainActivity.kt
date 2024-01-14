@@ -33,6 +33,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.tjcoding.funtimer.presentation.active_timers.ActiveTimersScreenRoot
+import com.tjcoding.funtimer.presentation.past_timers.PastTimersScreenRoot
 import com.tjcoding.funtimer.utility.navigation.Screen
 import com.tjcoding.funtimer.presentation.timer_setup.TimerSetupScreenRoot
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
@@ -72,7 +73,13 @@ class MainActivity : ComponentActivity() {
                                 ActiveTimersScreenRoot(
                                     modifier = Modifier.padding(
                                         contentPadding
-
+                                    )
+                                )
+                            }
+                            composable(Screen.PastTimersScreen.route) {
+                                PastTimersScreenRoot(
+                                    modifier = Modifier.padding(
+                                        contentPadding
                                     )
                                 )
                             }
@@ -90,6 +97,7 @@ class MainActivity : ComponentActivity() {
         val screens = listOf(
             Screen.TimerSetupScreen,
             Screen.ActiveTimersScreen,
+            Screen.PastTimersScreen
         )
         NavigationBar {
             val navBackStackEntry by navController.currentBackStackEntryAsState()

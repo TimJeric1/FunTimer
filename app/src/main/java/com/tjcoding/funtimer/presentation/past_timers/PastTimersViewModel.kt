@@ -16,7 +16,7 @@ class PastTimersViewModel @Inject constructor(
 ): ViewModel() {
 
 
-    private val timerItemsStream = repository.getAllNotTriggeredTimerItemsStream()
+    private val timerItemsStream = repository.getAllTriggeredTimerItemsStream()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _state = MutableStateFlow(PastTimersState())
     val state = combine(

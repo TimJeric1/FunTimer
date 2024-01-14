@@ -18,7 +18,19 @@ class TimerRepositoryImpl(
     private val timerDao: TimerDao,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : TimerRepository {
-    override fun getAllNotTriggeredTimerItemsStream(): Flow<List<TimerItem>> {
+
+
+    override fun getAllTriggeredTimerItemsStream(): Flow<List<TimerItem>> {
+        // no need for flowOn(Dispatchers.IO) because room automatically does that.
+        // flowOn(Dispatchers.Default) is used for cpu intensive tasks
+        // and it applies the Dispatcher for all operations that come before it (in this case the .map function and .getAllTimerItemsMap function).
+        return timerDao.getAllTriggeredTimerItemsAsMapsStream()
+            .retryWhen { cause, attempt -> Util.shouldRetry(cause, attempt) }
+            .map { timerItemMap -> timerItemMap.map { it.toPair().toTimerItem() } }
+            .flowOn(defaultDispatcher)
+    }
+    
+    override fun getAllActiveTimerItemsStream(): Flow<List<TimerItem>> {
         // no need for flowOn(Dispatchers.IO) because room automatically does that.
         // flowOn(Dispatchers.Default) is used for cpu intensive tasks
         // and it applies the Dispatcher for all operations that come before it (in this case the .map function and .getAllTimerItemsMap function).

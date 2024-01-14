@@ -16,7 +16,9 @@ import androidx.room.PrimaryKey
     ]
 )
 data class SelectedNumberEntity(
-    @PrimaryKey val selectedNumber: Int,
+
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val selectedNumber: Int,
     @ColumnInfo(index = true)
     val timeItemId: Int,
 )

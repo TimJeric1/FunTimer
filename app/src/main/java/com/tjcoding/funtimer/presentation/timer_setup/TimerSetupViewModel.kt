@@ -33,7 +33,7 @@ class TimerSetupViewModel @Inject constructor(
 
 
     private var timerItemsStreamCounter = 0
-    private val timerItemsStream = timerRepository.getAllNotTriggeredTimerItemsStream()
+    private val timerItemsStream = timerRepository.getAllActiveTimerItemsStream()
         .onEach { updateState(it) }
         // it has to be .statein otherwise it won't replay the last value on back navigation
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())

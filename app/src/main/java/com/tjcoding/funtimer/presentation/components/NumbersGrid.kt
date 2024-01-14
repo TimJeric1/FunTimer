@@ -1,4 +1,4 @@
-package com.tjcoding.funtimer.presentation.timer_setup.components
+package com.tjcoding.funtimer.presentation.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme

@@ -37,10 +37,14 @@ fun PastTimersScreenRoot(
 fun PastTimersScreen(
     modifier: Modifier = Modifier,
     state: PastTimersState = PastTimersState(
-        pastTimerItemsUi = listOf(
-            PastTimerItemUi(
+        pastTimerItems = listOf(
+            PastTimerItem(
                 listOf(1, 2, 3),
                 LocalDateTime.now(),
+            ),
+            PastTimerItem(
+                listOf(5,6,7,8,9,10,11,12,13,14),
+                LocalDateTime.now().minusHours(1)
             )
         )
     ),
@@ -56,7 +60,7 @@ fun PastTimersScreen(
     ) { paddingValues ->
         PastTimerCardsVerticalGrid(
             modifier.padding(paddingValues),
-            state.pastTimerItemsUi,
+            state.pastTimerItems,
             onLongClick = {},
         )
     }
@@ -68,20 +72,19 @@ fun PastTimersScreen(
 @OptIn(ExperimentalFoundationApi::class)
 private fun PastTimerCardsVerticalGrid(
     modifier: Modifier,
-    pastTimerItemsUi: List<PastTimerItemUi>,
-    onLongClick: (PastTimerItemUi) -> Unit,
+    pastTimerItems: List<PastTimerItem>,
+    onLongClick: (PastTimerItem) -> Unit,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
-    CustomItemsVerticalGrid(modifier = modifier, items = pastTimerItemsUi) { pastTimerItemUi ->
+    CustomItemsVerticalGrid(modifier = modifier, items = pastTimerItems) { pastTimerItem ->
         PastTimerCard(modifier = Modifier
             .size(screenHeight.dp * 0.25f)
             .combinedClickable(
                 onClick = {},
-                onLongClick = { onLongClick(pastTimerItemUi) }
+                onLongClick = { onLongClick(pastTimerItem) }
             ),
-            numbers = pastTimerItemUi.selectedNumbers,
-            time = "${pastTimerItemUi.triggerTime.hour}:${pastTimerItemUi.triggerTime.minute}",
-            extraTime = null,
+            numbers = pastTimerItem.selectedNumbers,
+            time = "${pastTimerItem.triggerTime.hour}:${pastTimerItem.triggerTime.minute}",
             )
     }
 

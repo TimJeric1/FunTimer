@@ -22,7 +22,7 @@ class PastTimersViewModel @Inject constructor(
     val state = combine(
         _state,
         timerItemsStream
-    ) { state, timerItems -> state.copy(pastTimerItemsUi = timerItems.map { it.toPastTimerItemUi() }) }
+    ) { state, timerItems -> state.copy(pastTimerItems = timerItems.map { it.toPastTimerItem() }) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PastTimersState())
 
 }

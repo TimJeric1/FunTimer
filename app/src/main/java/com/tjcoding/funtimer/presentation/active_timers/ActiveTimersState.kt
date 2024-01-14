@@ -4,24 +4,24 @@ import com.tjcoding.funtimer.domain.model.TimerItem
 import java.time.LocalDateTime
 
 data class ActiveTimersState(
-    var activeTimerItemsUi: List<ActiveTimerItemUi> = emptyList()
+    var activeTimerItems: List<ActiveTimerItem> = emptyList()
 )
 
-data class ActiveTimerItemUi(
+data class ActiveTimerItem(
     val selectedNumbers: List<Int>,
     val alarmTime: LocalDateTime,
     val extraTime: Int,
 )
 
-fun TimerItem.toActiveTimerItemUi(): ActiveTimerItemUi {
-    return ActiveTimerItemUi(
+fun TimerItem.toActiveTimerItem(): ActiveTimerItem {
+    return ActiveTimerItem(
         selectedNumbers = this.selectedNumbers,
         alarmTime = this.alarmTime,
         extraTime = this.extraTime,
     )
 }
 
-fun ActiveTimerItemUi.toTimerItem(): TimerItem {
+fun ActiveTimerItem.toTimerItem(): TimerItem {
     return TimerItem(
         selectedNumbers = this.selectedNumbers,
         alarmTime = this.alarmTime,

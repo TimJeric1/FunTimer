@@ -4,17 +4,17 @@ import com.tjcoding.funtimer.domain.model.TimerItem
 import java.time.LocalDateTime
 
 data class PastTimersState(
-    var pastTimerItemsUi: List<PastTimerItemUi> = emptyList()
+    var pastTimerItems: List<PastTimerItem> = emptyList()
 )
 
 
-data class PastTimerItemUi (
+data class PastTimerItem (
     val selectedNumbers: List<Int>,
     val triggerTime: LocalDateTime
 )
 
-fun TimerItem.toPastTimerItemUi(): PastTimerItemUi {
-    return PastTimerItemUi(
+fun TimerItem.toPastTimerItem(): PastTimerItem {
+    return PastTimerItem(
         selectedNumbers = this.selectedNumbers,
         triggerTime = this.alarmTime.plusMinutes(this.extraTime.toLong())
     )

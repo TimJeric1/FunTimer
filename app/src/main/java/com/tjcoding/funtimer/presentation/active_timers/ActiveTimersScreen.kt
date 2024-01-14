@@ -38,9 +38,9 @@ fun ActiveTimersScreenRoot(
 fun ActiveTimersScreen(
     modifier: Modifier = Modifier,
     state: ActiveTimersState = ActiveTimersState(
-        activeTimerItemsUi = listOf(
-            ActiveTimerItemUi(
-                listOf(1, 2, 3),
+        activeTimerItems = listOf(
+            ActiveTimerItem(
+                listOf(1, 2, 3,4,5,6,10,15),
                 LocalDateTime.now(),
                 2,
             )
@@ -48,8 +48,6 @@ fun ActiveTimersScreen(
     ),
     onEvent: (ActiveTimersEvent) -> Unit = {}
 ) {
-
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -61,31 +59,30 @@ fun ActiveTimersScreen(
     ) { paddingValues ->
         TimerCardsVerticalGrid(
             modifier.padding(paddingValues),
-            state.activeTimerItemsUi,
-            onLongClick = { activeTimerItemsUi -> onEvent(ActiveTimersEvent.OnCardLongClick(activeTimerItemsUi)) },
+            state.activeTimerItems,
+            onCardLongClick = { activeTimerItems -> onEvent(ActiveTimersEvent.OnCardLongClick(activeTimerItems)) },
         )
     }
-
 }
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
 private fun TimerCardsVerticalGrid(
     modifier: Modifier,
-    activeTimeItemsUi: List<ActiveTimerItemUi>,
-    onLongClick: (ActiveTimerItemUi) -> Unit,
+    activeTimerItems: List<ActiveTimerItem>,
+    onCardLongClick: (ActiveTimerItem) -> Unit,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
-    CustomItemsVerticalGrid(modifier = modifier, items = activeTimeItemsUi) { activeTimerItemsUi ->
+    CustomItemsVerticalGrid(modifier = modifier, items = activeTimerItems) { activeTimerItem ->
         TimerCard(modifier = Modifier
             .size(screenHeight.dp * 0.25f)
             .combinedClickable(
                 onClick = {},
-                onLongClick = { onLongClick(activeTimerItemsUi) }
+                onLongClick = { onCardLongClick(activeTimerItem) }
             ),
-            numbers = activeTimerItemsUi.selectedNumbers,
-            time = getDuration(activeTimerItemsUi.alarmTime),
-            extraTime = "${activeTimerItemsUi.extraTime}:00")
+            numbers = activeTimerItem.selectedNumbers,
+            time = getDuration(activeTimerItem.alarmTime),
+            extraTime = "${activeTimerItem.extraTime}:00")
     }
 
 }

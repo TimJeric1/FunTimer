@@ -21,20 +21,20 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tjcoding.funtimer.presentation.timer_setup.components.NumbersLayout
+import com.tjcoding.funtimer.presentation.timer_setup.components.NumbersGrid
 
 
 @Composable
 @Preview
 fun TimerCard(
     modifier: Modifier = Modifier,
-    numbers: List<Int> = listOf(1, 2, 3),
+    numbers: List<Int> = listOf(1, 2, 3,11,12,13),
     time: String = "30:00",
     extraTime: String? = "2:00",
     onNumberBoxClick: (Int) -> Unit = { }
 ) {
 
-    TimerCardSkeleton(modifier = modifier, numbers = numbers, onNumberBoxClick = onNumberBoxClick,
+    BasicTimerCard(modifier = modifier, numbers = numbers, onNumberBoxClick = onNumberBoxClick,
         top = {
             Icon(
                 modifier = Modifier.padding(top = 4.dp),
@@ -69,11 +69,10 @@ fun PastTimerCard(
     modifier: Modifier = Modifier,
     numbers: List<Int> = listOf(1, 2, 3),
     time: String = "30:00",
-    extraTime: String? = "2:00",
     onNumberBoxClick: (Int) -> Unit = { }
 ) {
 
-    TimerCardSkeleton(modifier = modifier, numbers = numbers, onNumberBoxClick = onNumberBoxClick,
+    BasicTimerCard(modifier = modifier, numbers = numbers, onNumberBoxClick = onNumberBoxClick,
         top = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -85,10 +84,10 @@ fun PastTimerCard(
                     imageVector = Icons.Outlined.Timer,
                     contentDescription = null
                 )
-                Spacer(modifier = modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = time,
-                    style = TextStyle(fontSize = 24.sp)
+                    style = TextStyle(fontSize = 14.sp)
                 )
             }
 
@@ -102,12 +101,12 @@ fun PastTimerCard(
 
 
 @Composable
-private fun TimerCardSkeleton(
-    modifier: Modifier,
+private fun BasicTimerCard(
+    modifier: Modifier = Modifier,
     numbers: List<Int>,
     onNumberBoxClick: (Int) -> Unit,
-    top: @Composable () -> Unit,
-    bottom: @Composable () -> Unit,
+    top: @Composable () -> Unit = {},
+    bottom: @Composable () -> Unit = {},
 ) {
     Card(modifier = modifier) {
         Column(
@@ -122,7 +121,7 @@ private fun TimerCardSkeleton(
                     .weight(1f),
                 contentAlignment = Alignment.Center,
             ) {
-                NumbersLayout(
+                NumbersGrid(
                     selectedNumbers = numbers,
                     onClick = onNumberBoxClick,
                     modifier = Modifier.fillMaxSize()
@@ -132,7 +131,5 @@ private fun TimerCardSkeleton(
         }
     }
 }
-
-
 
 

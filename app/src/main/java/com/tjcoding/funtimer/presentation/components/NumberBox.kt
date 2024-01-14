@@ -4,6 +4,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,7 +46,7 @@ fun NumberBox(
                     if (isSystemInDarkTheme()) Color.LightGray else Color.DarkGray
                 ), shape = RoundedCornerShape(6.dp)
             ),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = annotatedString,
@@ -56,9 +59,17 @@ fun NumberBox(
 @Preview
 private fun NumberBoxPreview() {
     NumberBox(
-        number = 29,
-        spanStyle = SpanStyle(
-            fontSize = 14.sp,
+        modifier = Modifier
+            .padding(
+                vertical = 2.dp,
+                horizontal = 4.dp
+            )
+            .height(22.dp)
+            .width(26.dp),
+        number = 21,
+        SpanStyle(
+            fontSize = 12.sp,
+            color = if (isSystemInDarkTheme()) Color.LightGray else Color.DarkGray
         )
     )
 }

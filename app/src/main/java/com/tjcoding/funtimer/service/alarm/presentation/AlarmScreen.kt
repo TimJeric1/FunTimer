@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.tjcoding.funtimer.presentation.timer_setup.components.BigNumbersGrid
+import com.tjcoding.funtimer.presentation.components.BigNumbersGrid
 import com.tjcoding.funtimer.service.alarm.presentation.components.SwipeableButton
 import com.tjcoding.funtimer.ui.theme.Typography
 

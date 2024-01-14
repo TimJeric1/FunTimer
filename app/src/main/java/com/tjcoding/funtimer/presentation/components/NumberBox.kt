@@ -47,7 +47,7 @@ fun NumberBox(
     ) {
         Text(
             text = annotatedString,
-            textAlign = TextAlign.Left,
+            textAlign = TextAlign.Center,
         )
     }
 }

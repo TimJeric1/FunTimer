@@ -67,6 +67,7 @@ private fun PastTimerCardsVerticalGrid(
     CustomItemsVerticalGrid(modifier = modifier, items = pastTimerItems) { pastTimerItem ->
         PastTimerCard(modifier = Modifier
             .size(screenHeight.dp * 0.25f)
+            .padding(4.dp)
             .combinedClickable(
                 onClick = {},
                 onLongClick = { onLongClick(pastTimerItem) }

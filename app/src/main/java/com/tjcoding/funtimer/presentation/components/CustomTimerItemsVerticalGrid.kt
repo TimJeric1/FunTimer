@@ -23,5 +23,6 @@ fun <T> CustomItemsVerticalGrid(
                 uiItem(item)
             }
         },
+
     )
 }

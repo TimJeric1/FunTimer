@@ -73,7 +73,7 @@ private fun TimerCardsVerticalGrid(
     CustomItemsVerticalGrid(modifier = modifier, items = activeTimerItems) { activeTimerItem ->
         TimerCard(modifier = Modifier
             .size(screenHeight.dp * 0.25f)
-            .padding(2.dp)
+            .padding(4.dp)
             .combinedClickable(
                 onClick = {},
                 onLongClick = { onCardLongClick(activeTimerItem) }

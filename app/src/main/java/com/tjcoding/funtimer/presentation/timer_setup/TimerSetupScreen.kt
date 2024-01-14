@@ -220,8 +220,8 @@ private fun StandardLayout(
         }
         TimerCard(
             modifier = Modifier
-                .width(screenWidth.dp * 0.5f - 12.dp)
-                .height(screenHeight.dp * 0.25f - 6.dp),
+                .width(screenWidth.dp * 0.5f - 24.dp - 4.dp)
+                .height(screenHeight.dp * 0.25f - 6.dp - 4.dp),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
             extraTime = state.getExtraTimeInTimeFormat(),
@@ -251,8 +251,8 @@ private fun AlternativeLayout(
     ) {
         TimerCard(
             modifier = Modifier
-                .width(screenWidth.dp * 0.5f - 12.dp)
-                .height(screenHeight.dp * 0.25f - 6.dp),
+                .width(screenWidth.dp * 0.5f - 24.dp - 4.dp)
+                .height(screenHeight.dp * 0.25f - 6.dp - 4.dp),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
             extraTime = state.getExtraTimeInTimeFormat(),

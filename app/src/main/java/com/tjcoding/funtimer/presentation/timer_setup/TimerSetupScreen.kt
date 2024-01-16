@@ -382,7 +382,7 @@ private fun <T> ObserveAsEvents(stream: Flow<T>, onEvent: (T) -> Unit) {
 private fun TimerSetupScreenPreview() {
     FunTimerTheme {
         Surface(
-            tonalElevation = 5.dp
+            tonalElevation = 2.dp
         ) {
             TimerSetupScreen(
                 modifier = Modifier,

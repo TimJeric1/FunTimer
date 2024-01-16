@@ -6,17 +6,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tjcoding.funtimer.presentation.components.TimerCard
 import com.tjcoding.funtimer.presentation.components.CustomItemsVerticalGrid
+import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 import com.tjcoding.funtimer.utility.Util.formatToTimeRemaining
 import java.time.LocalDateTime
 
@@ -88,36 +90,43 @@ private fun TimerCardsVerticalGrid(
 }
 
 @Composable
-@Preview
+@PreviewLightDark
 private fun ActiveTimersScreenPreview() {
-    ActiveTimersScreen(
-        modifier = Modifier,
-        state = ActiveTimersState(
-            activeTimerItems = listOf(
-                ActiveTimerItem(
-                    listOf(1, 2, 3, 4, 5, 6, 10, 15),
-                    LocalDateTime.now(),
-                    2,
+    FunTimerTheme {
+        Surface(
+            tonalElevation = 2.dp
+        ) {
+            ActiveTimersScreen(
+                modifier = Modifier,
+                state = ActiveTimersState(
+                    activeTimerItems = listOf(
+                        ActiveTimerItem(
+                            listOf(1, 2, 3, 4, 5, 6, 10, 15),
+                            LocalDateTime.now(),
+                            2,
+                        ),
+                        ActiveTimerItem(
+                            listOf(1, 2, 3, 4, 5, 6, 10, 15),
+                            LocalDateTime.now(),
+                            2,
+                        ),
+                        ActiveTimerItem(
+                            listOf(1, 2, 3, 4, 5, 6, 10, 15),
+                            LocalDateTime.now(),
+                            2,
+                        ),
+                        ActiveTimerItem(
+                            listOf(1, 2, 3, 4, 5, 6, 10, 15),
+                            LocalDateTime.now(),
+                            2,
+                        )
+                    )
                 ),
-                ActiveTimerItem(
-                    listOf(1, 2, 3, 4, 5, 6, 10, 15),
-                    LocalDateTime.now(),
-                    2,
-                ),
-                ActiveTimerItem(
-                    listOf(1, 2, 3, 4, 5, 6, 10, 15),
-                    LocalDateTime.now(),
-                    2,
-                ),
-                ActiveTimerItem(
-                    listOf(1, 2, 3, 4, 5, 6, 10, 15),
-                    LocalDateTime.now(),
-                    2,
-                )
+                onEvent = {}
             )
-        ),
-        onEvent = {}
-    )
+        }
+    }
+
 }
 
 

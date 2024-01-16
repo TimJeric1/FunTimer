@@ -43,14 +43,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
-
-
-
         setContent {
-
-
 
             AskNotificationsPermission(context = LocalContext.current)
             AskFullscreenIntentPermission(context = LocalContext.current)
@@ -58,7 +51,7 @@ class MainActivity : ComponentActivity() {
             FunTimerTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    tonalElevation = 5.dp
+                    tonalElevation = 2.dp
                 ) {
                     val navController = rememberNavController()
                     Scaffold(
@@ -86,7 +79,6 @@ class MainActivity : ComponentActivity() {
                                     )
                                 )
                             }
-                            /*...*/
                         }
                     }
                 }

@@ -10,8 +10,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -118,27 +119,33 @@ fun BigNumbersGrid(
 }
 
 @Composable
-@Preview
+@PreviewLightDark
 private fun NumbersGridPreview() {
-    NumbersGrid(
-        modifier = Modifier,
-    selectedNumbers = listOf(9, 10,15,23,47),
-    maxItemsInEachRow = 4,
-    onClick = {},
-    horizontalArrangement = Arrangement.Center,
-    verticalArrangement = Arrangement.Center,
-    )
+    FunTimerTheme {
+        NumbersGrid(
+            modifier = Modifier,
+            selectedNumbers = listOf(9, 10,15,23,47),
+            maxItemsInEachRow = 4,
+            onClick = {},
+            horizontalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Center,
+        )
+    }
+
 }
 
 @Composable
-@Preview
+@PreviewLightDark
 private fun BigNumbersGridPreview() {
-    BigNumbersGrid(
-        modifier = Modifier,
-        selectedNumbers = listOf(9,10,15,23,47),
-        maxItemsInEachRow = 4,
-        onClick = {},
-        horizontalArrangement = Arrangement.Center,
-        verticalArrangement = Arrangement.Center,
-    )
+    FunTimerTheme {
+        BigNumbersGrid(
+            modifier = Modifier,
+            selectedNumbers = listOf(9,10,15,23,47),
+            maxItemsInEachRow = 4,
+            onClick = {},
+            horizontalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Center,
+        )
+    }
+
 }

@@ -60,7 +60,7 @@ fun AlarmScreen(
 
     FunTimerTheme {
         Surface(
-            tonalElevation = 5.dp
+            tonalElevation = 2.dp
         ) {
 
             Scaffold(

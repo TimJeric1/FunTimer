@@ -12,7 +12,6 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,8 +44,10 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 
@@ -65,7 +67,6 @@ fun SwipeableButton(
 ) {
     val density = LocalDensity.current
     val buttonSize = 64.dp
-    val isDarkModeOn = isSystemInDarkTheme()
 
     val translation = remember {
         Animatable(0f)
@@ -120,10 +121,12 @@ fun SwipeableButton(
                 .width(48.dp)
                 .height(16.dp)
                 .alpha(arrowsAlpha),
-            strokeWidth = 6f
+            strokeWidth = 6f,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.padding(4.dp))
         Box {
+            val circleColor = MaterialTheme.colorScheme.surfaceVariant
             Canvas(modifier = Modifier.size(buttonSize)) {
                 this.apply {
                     val radiusScale = lerp(
@@ -139,7 +142,7 @@ fun SwipeableButton(
                     val alpha =
                         lerp(1f, 0.2f, abs(stateHorizontal.requireOffset()) / buttonSize.toPx())
                     drawCircle(
-                        color = if (isDarkModeOn) Color.LightGray else Color.DarkGray,
+                        color = circleColor,
                         radius = buttonSize.value * radiusScale,
                         style = Stroke(width = width),
                         alpha = if (alpha < 0f) 0f else alpha
@@ -159,7 +162,7 @@ fun SwipeableButton(
                         this.alpha = newAlpha
                     }
                     .background(
-                        color = if (isSystemInDarkTheme()) Color.LightGray else Color.DarkGray,
+                        color = circleColor,
                         shape = CircleShape
                     )
                     .size(buttonSize)
@@ -169,7 +172,7 @@ fun SwipeableButton(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close",
-                    tint = if (isSystemInDarkTheme()) Color.DarkGray else Color.White,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -181,7 +184,8 @@ fun SwipeableButton(
                 .width(48.dp)
                 .height(16.dp)
                 .alpha(arrowsAlpha),
-            strokeWidth = 6f
+            strokeWidth = 6f,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
     }
@@ -193,10 +197,8 @@ fun SwipeableButton(
 fun RightMovingArrow(
     modifier: Modifier = Modifier,
     strokeWidth: Float,
+    color: Color
 ) {
-
-    val isDarkModeOn = isSystemInDarkTheme()
-
     val alpha = remember {
         Animatable(1f)
     }
@@ -221,7 +223,7 @@ fun RightMovingArrow(
         val canvasHeight = this.size.height
 
         val paint = Paint().apply {
-            color = if (isDarkModeOn) Color.White else Color.DarkGray
+            this.color = color
             style = PaintingStyle.Stroke
             this.strokeWidth = strokeWidth
             strokeJoin = StrokeJoin.Round
@@ -249,9 +251,8 @@ fun RightMovingArrow(
 fun LeftMovingArrow(
     modifier: Modifier = Modifier,
     strokeWidth: Float,
+    color: Color
 ) {
-
-    val isDarkModeOn = isSystemInDarkTheme()
 
     val alpha = remember {
         Animatable(1f)
@@ -277,7 +278,7 @@ fun LeftMovingArrow(
         val canvasHeight = this.size.height
 
         val paint = Paint().apply {
-            color = if (isDarkModeOn) Color.White else Color.DarkGray
+            this.color = color
             style = PaintingStyle.Stroke
             this.strokeWidth = strokeWidth
             strokeJoin = StrokeJoin.Round
@@ -302,31 +303,40 @@ fun LeftMovingArrow(
 }
 
 @Composable
-@Preview
+@PreviewLightDark
 private fun SwipeableButtonPreview() {
-    SwipeableButton(
-        modifier = Modifier,
-        onLeftSwipeAction = {},
-        onRightSwipeAction = {},
-    )
+    FunTimerTheme {
+        SwipeableButton(
+            modifier = Modifier,
+            onLeftSwipeAction = {},
+            onRightSwipeAction = {},
+        )
+    }
 }
 
 @Composable
 @Preview
 private fun LeftMovingArrowPreview() {
-    LeftMovingArrow(
-        modifier = Modifier,
-        strokeWidth = 6f,
-    )
+    FunTimerTheme {
+        LeftMovingArrow(
+            modifier = Modifier,
+            strokeWidth = 6f,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
 }
 
 @Composable
 @Preview
 private fun RightMovingArrowPreview() {
-    RightMovingArrow(
-        modifier = Modifier,
-        strokeWidth = 6f,
-    )
+    FunTimerTheme {
+        RightMovingArrow(
+            modifier = Modifier,
+            strokeWidth = 6f,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+
 }
 
 //@Composable

@@ -17,7 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tjcoding.funtimer.presentation.components.CustomItemsVerticalGrid
 import com.tjcoding.funtimer.presentation.components.PastTimerCard
-import com.tjcoding.funtimer.utility.Util.getDuration
+import com.tjcoding.funtimer.utility.Util.formatTo24HourAndMinute
 import java.time.LocalDateTime
 
 
@@ -74,7 +74,7 @@ private fun PastTimerCardsVerticalGrid(
                 onLongClick = { onLongClick(pastTimerItem) }
             ),
             numbers = pastTimerItem.selectedNumbers,
-            time = getDuration(pastTimerItem.triggerTime),
+            time = pastTimerItem.triggerTime.formatTo24HourAndMinute(),
             onNumberBoxClick = {}
             )
     }

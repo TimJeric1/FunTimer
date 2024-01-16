@@ -17,7 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tjcoding.funtimer.presentation.components.TimerCard
 import com.tjcoding.funtimer.presentation.components.CustomItemsVerticalGrid
-import com.tjcoding.funtimer.utility.Util.getDurationString
+import com.tjcoding.funtimer.utility.Util.formatToTimeRemaining
 import java.time.LocalDateTime
 
 @Composable
@@ -79,7 +79,7 @@ private fun TimerCardsVerticalGrid(
                 onLongClick = { onCardLongClick(activeTimerItem) }
             ),
             numbers = activeTimerItem.selectedNumbers,
-            time = getDurationString(activeTimerItem.alarmTime),
+            time = activeTimerItem.alarmTime.formatToTimeRemaining(),
             extraTime = "${activeTimerItem.extraTime}:00",
             onNumberBoxClick = {}
             )

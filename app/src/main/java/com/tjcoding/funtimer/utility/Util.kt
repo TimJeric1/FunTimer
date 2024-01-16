@@ -23,21 +23,20 @@ object Util {
         this.add(newNumber)
         this.sort()
     }
-    fun getDurationString(time: LocalDateTime): String {
-        val unixEndTime = time.atZone(ZoneId.systemDefault()).toEpochSecond()
+
+    fun LocalDateTime.formatTo24HourAndMinute(): String {
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        return this.format(formatter)
+    }
+
+
+    fun LocalDateTime.formatToTimeRemaining(): String{
+        val unixEndTime = this.atZone(ZoneId.systemDefault()).toEpochSecond()
         val duration =  unixEndTime - (System.currentTimeMillis() /1000)
         val localTime = if(duration >= 0) LocalTime.ofSecondOfDay(duration) else LocalTime.ofSecondOfDay(0)
         return localTime.format(DateTimeFormatter.ofPattern("mm:ss"))
     }
 
-    fun getDuration(time: LocalDateTime): String {
-
-        // Define the desired date-time format
-        val formatter = DateTimeFormatter.ofPattern("HH:mm")
-
-        // Format the LocalDateTime to a string
-        return time.format(formatter)
-    }
     suspend fun shouldRetry(cause: Throwable, attempt: Long): Boolean {
         if (attempt > 3) return false
         val currentDelay = 1000L * attempt

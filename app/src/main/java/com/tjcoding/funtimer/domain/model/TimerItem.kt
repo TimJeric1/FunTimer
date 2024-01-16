@@ -17,11 +17,7 @@ data class TimerItem(
     }
 
     override fun equals(other: Any?): Boolean {
-        val otherTimerItem = (other as TimerItem)
-        return (this.alarmTime == otherTimerItem.alarmTime &&
-                this.selectedNumbers == otherTimerItem.selectedNumbers &&
-                this.extraTime == otherTimerItem.extraTime &&
-                this.hasTriggered == otherTimerItem.hasTriggered)
+        return this.hashCode() == other.hashCode()
     }
 
 

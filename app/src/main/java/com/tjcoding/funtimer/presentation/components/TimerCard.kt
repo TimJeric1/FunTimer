@@ -18,19 +18,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 
 @Composable
-@Preview
+@PreviewLightDark
 private fun TimerCardPreview() {
-    TimerCard(
-        numbers = listOf(1, 2, 3, 11, 12, 13),
-        time = "30:00",
-        extraTime = "2:00",
-        onNumberBoxClick = {}
-    )
+    FunTimerTheme {
+        TimerCard(
+            numbers = listOf(1, 2, 3, 11, 12, 13),
+            time = "30:00",
+            extraTime = "2:00",
+            onNumberBoxClick = {}
+        )
+    }
+
 }
 
 @Composable
@@ -69,14 +73,18 @@ fun TimerCard(
         })
 }
 
+
 @Composable
-@Preview
+@PreviewLightDark
 private fun PastTimerCardPreview() {
-    PastTimerCard(
-        numbers = listOf(1, 2, 3),
-        time = "30:00",
-        onNumberBoxClick = {}
-    )
+    FunTimerTheme {
+        PastTimerCard(
+            numbers = listOf(1, 2, 3),
+            time = "30:00",
+            onNumberBoxClick = {}
+        )
+    }
+
 }
 
 @Composable
@@ -98,7 +106,7 @@ fun PastTimerCard(
                     imageVector = Icons.Outlined.Timer,
                     contentDescription = null
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = time,
                     style = TextStyle(fontSize = 14.sp)

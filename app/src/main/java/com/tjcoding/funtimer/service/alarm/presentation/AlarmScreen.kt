@@ -20,6 +20,7 @@ import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Pool
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,7 +34,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.tjcoding.funtimer.presentation.components.BigNumbersGrid
 import com.tjcoding.funtimer.service.alarm.presentation.components.SwipeableButton
-import com.tjcoding.funtimer.ui.theme.Typography
 
 @Composable
 @PreviewLightDark
@@ -75,7 +75,7 @@ fun AlarmScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "Time's up for numbers",
-                    style = Typography.displayMedium,
+                    style = MaterialTheme.typography.displayMedium,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.W400,
                     color = if (isSystemInDarkTheme()) Color.LightGray else Color.DarkGray

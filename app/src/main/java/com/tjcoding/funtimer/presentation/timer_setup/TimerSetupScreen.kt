@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -32,7 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.tjcoding.funtimer.presentation.timer_setup.components.NumberSelector
 import com.tjcoding.funtimer.presentation.timer_setup.components.TimeRadioGroup
 import com.tjcoding.funtimer.presentation.components.TimerCard
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -40,6 +41,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.tjcoding.funtimer.presentation.timer_setup.components.PickerAlertDialog
 import com.tjcoding.funtimer.presentation.timer_setup.components.PickerState
 import com.tjcoding.funtimer.presentation.timer_setup.components.rememberPickerState
+import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -376,14 +378,21 @@ private fun <T> ObserveAsEvents(stream: Flow<T>, onEvent: (T) -> Unit) {
 
 
 @Composable
-@Preview
+@PreviewLightDark
 private fun TimerSetupScreenPreview() {
-    TimerSetupScreen(
-        modifier = Modifier,
-        state = TimerSetupState(),
-        onEvent = {},
-        shouldShowCustomTimePickerDialogStream = flowOf(false),
-        shouldShowExtraTimePickerDialogStream = flowOf(false)
-    )
+    FunTimerTheme {
+        Surface(
+            tonalElevation = 5.dp
+        ) {
+            TimerSetupScreen(
+                modifier = Modifier,
+                state = TimerSetupState(),
+                onEvent = {},
+                shouldShowCustomTimePickerDialogStream = flowOf(false),
+                shouldShowExtraTimePickerDialogStream = flowOf(false)
+            )
+        }
+    }
+
 }
 

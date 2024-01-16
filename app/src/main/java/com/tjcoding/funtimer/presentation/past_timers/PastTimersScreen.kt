@@ -6,17 +6,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tjcoding.funtimer.presentation.components.CustomItemsVerticalGrid
 import com.tjcoding.funtimer.presentation.components.PastTimerCard
+import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 import com.tjcoding.funtimer.utility.Util.formatTo24HourAndMinute
 import java.time.LocalDateTime
 
@@ -82,29 +84,36 @@ private fun PastTimerCardsVerticalGrid(
 }
 
 @Composable
-@Preview
+@PreviewLightDark
 private fun PastTimersScreenPreview() {
-    PastTimersScreen(
-        modifier = Modifier,
-        state = PastTimersState(
-            pastTimerItems = listOf(
-                PastTimerItem(
-                    listOf(1, 2, 3),
-                    LocalDateTime.now(),
-                ),
-                PastTimerItem(
-                    listOf(5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
-                    LocalDateTime.now().minusHours(1)
-                ),
-                PastTimerItem(
-                    listOf(5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
-                    LocalDateTime.now().minusHours(1)
-                ),
-                PastTimerItem(
-                    listOf(5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
-                    LocalDateTime.now().minusHours(1)
-                ),
+    FunTimerTheme {
+        Surface(
+            tonalElevation = 5.dp
+        ) {
+            PastTimersScreen(
+                modifier = Modifier,
+                state = PastTimersState(
+                    pastTimerItems = listOf(
+                        PastTimerItem(
+                            listOf(1, 2, 3),
+                            LocalDateTime.now(),
+                        ),
+                        PastTimerItem(
+                            listOf(5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
+                            LocalDateTime.now().minusHours(1)
+                        ),
+                        PastTimerItem(
+                            listOf(5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
+                            LocalDateTime.now().minusHours(1)
+                        ),
+                        PastTimerItem(
+                            listOf(5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
+                            LocalDateTime.now().minusHours(1)
+                        ),
+                    )
+                )
             )
-        )
-    )
+        }
+    }
+
 }

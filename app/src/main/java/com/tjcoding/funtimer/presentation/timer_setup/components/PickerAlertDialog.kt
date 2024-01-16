@@ -19,7 +19,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,3 +76,21 @@ fun PickerAlertDialog(
         }
     }
 }
+
+
+
+@Composable
+@PreviewLightDark
+fun PickerAlertDialogPreview() {
+    FunTimerTheme {
+        PickerAlertDialog(
+            pickerState = rememberPickerState(),
+            onConfirmRequest = {},
+            onDismissRequest = {},
+            items = (5..100 step 5).toList().map { it.toString() },
+            startIndex = 0,
+            titleText = "Title Text"
+        )
+    }
+}
+

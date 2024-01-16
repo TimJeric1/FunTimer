@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
@@ -23,6 +24,8 @@ fun NumbersGrid(
     onClick: (Int) -> Unit = {},
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
     verticalArrangement: Arrangement.Vertical = Arrangement.Center,
+    boxTextColor : Color = MaterialTheme.colorScheme.onSurface,
+    boxBorderColor: Color = MaterialTheme.colorScheme.onSurfaceVariant
 ) {
     FlowRow(
         modifier = modifier,
@@ -44,7 +47,9 @@ fun NumbersGrid(
                         .height(22.dp)
                         .width(26.dp),
                     number = number,
-                    textStyle = MaterialTheme.typography.labelSmall
+                    textStyle = MaterialTheme.typography.labelSmall,
+                    textColor = boxTextColor,
+                    borderColor = boxBorderColor
                 )
             } else {
                 NumberBox(
@@ -59,7 +64,9 @@ fun NumbersGrid(
                         .height(22.dp)
                         .width(26.dp),
                     number = number,
-                    textStyle = MaterialTheme.typography.labelSmall
+                    textStyle = MaterialTheme.typography.labelSmall,
+                    textColor = boxTextColor,
+                    borderColor = boxBorderColor
                 )
             }
         }

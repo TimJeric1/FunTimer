@@ -12,15 +12,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 
 @Composable
@@ -45,7 +47,13 @@ fun TimerCard(
     extraTime: String?,
     onNumberBoxClick: (Int) -> Unit
 ) {
-    BasicTimerCard(modifier = modifier, numbers = numbers, onNumberBoxClick = onNumberBoxClick,
+    BasicTimerCard(modifier = modifier, numbers = numbers,
+        onNumberBoxClick = onNumberBoxClick,
+        cardColors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ),
+        boxBorderColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        boxTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
         top = {
             Icon(
                 modifier = Modifier.padding(top = 4.dp),
@@ -59,14 +67,13 @@ fun TimerCard(
                 verticalArrangement = Arrangement.SpaceAround
             ) {
                 Text(
-                    text = time
+                    text = time,
+                    style = MaterialTheme.typography.labelLarge
                 )
                 if (extraTime != null) {
                     Text(
                         text = "ET: $extraTime",
-                        style = TextStyle(
-                            fontSize = 11.sp
-                        )
+                        style = MaterialTheme.typography.labelSmall
                     )
                 }
             }
@@ -79,7 +86,7 @@ fun TimerCard(
 private fun PastTimerCardPreview() {
     FunTimerTheme {
         PastTimerCard(
-            numbers = listOf(1, 2, 3),
+            numbers = listOf(1, 2, 3, 11, 12, 13),
             time = "30:00",
             onNumberBoxClick = {}
         )
@@ -94,7 +101,14 @@ fun PastTimerCard(
     time: String,
     onNumberBoxClick: (Int) -> Unit
 ) {
-    BasicTimerCard(modifier = modifier, numbers = numbers, onNumberBoxClick = onNumberBoxClick,
+    BasicTimerCard(modifier = modifier,
+        numbers = numbers,
+        onNumberBoxClick = onNumberBoxClick,
+        cardColors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+        ),
+        boxTextColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        boxBorderColor = MaterialTheme.colorScheme.onTertiaryContainer,
         top = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -104,12 +118,14 @@ fun PastTimerCard(
                 Icon(
                     modifier = Modifier.padding(top = 4.dp),
                     imageVector = Icons.Outlined.Timer,
+                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
                     contentDescription = null
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = time,
-                    style = TextStyle(fontSize = 14.sp)
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer
                 )
             }
 
@@ -127,8 +143,14 @@ private fun BasicTimerCard(
     onNumberBoxClick: (Int) -> Unit,
     top: @Composable () -> Unit = {},
     bottom: @Composable () -> Unit = {},
+    cardColors: CardColors = CardDefaults.cardColors(),
+    boxTextColor : Color = MaterialTheme.colorScheme.onSurface,
+    boxBorderColor: Color = MaterialTheme.colorScheme.onSurfaceVariant
 ) {
-    Card(modifier = modifier) {
+    Card(
+        modifier = modifier,
+        colors = cardColors
+    ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -144,7 +166,9 @@ private fun BasicTimerCard(
                 NumbersGrid(
                     selectedNumbers = numbers,
                     onClick = onNumberBoxClick,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    boxBorderColor = boxBorderColor,
+                    boxTextColor = boxTextColor
                 )
             }
             bottom()

@@ -101,22 +101,22 @@ private fun ActiveTimersScreenPreview() {
                 state = ActiveTimersState(
                     activeTimerItems = listOf(
                         ActiveTimerItem(
-                            listOf(1, 2, 3, 4, 5, 6, 10, 15),
+                            listOf(1, 2, 3, 4, 5, 6, 10, 15,16,17),
                             LocalDateTime.now(),
                             2,
                         ),
                         ActiveTimerItem(
-                            listOf(1, 2, 3, 4, 5, 6, 10, 15),
+                            listOf(1, 2, 3, 4, 5, 6, 10, 15,16,17),
                             LocalDateTime.now(),
                             2,
                         ),
                         ActiveTimerItem(
-                            listOf(1, 2, 3, 4, 5, 6, 10, 15),
+                            listOf(1, 2, 3, 4, 5, 6, 10, 15,16,17),
                             LocalDateTime.now(),
                             2,
                         ),
                         ActiveTimerItem(
-                            listOf(1, 2, 3, 4, 5, 6, 10, 15),
+                            listOf(1, 2, 3, 4, 5, 6, 10, 15,16,17),
                             LocalDateTime.now(),
                             2,
                         )

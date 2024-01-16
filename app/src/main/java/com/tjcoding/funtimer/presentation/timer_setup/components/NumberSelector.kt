@@ -34,18 +34,21 @@ fun NumberSelector(
                 .clickable {
                     onLeftFilledArrowClick()
                 },
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.secondary
         )
         NumberBox(
             modifier = Modifier.height(55.dp).width(65.dp),
-            textStyle = MaterialTheme.typography.displayMedium, number = displayedNumber)
+            textStyle = MaterialTheme.typography.displayMedium, number = displayedNumber,
+            borderColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    textColor = MaterialTheme.colorScheme.onPrimaryContainer
+        )
         RightOutlinedArrow(
             modifier = Modifier
                 .size(48.dp)
                 .clickable {
                     onRightFilledArrowClick()
                 },
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.secondary
         )
 
     }

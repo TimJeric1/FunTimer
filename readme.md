@@ -28,9 +28,10 @@
 
 | View                                                                                |
 |---------------------------------------------------------------------------------------| 
-| ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/past.jpg?raw=true) |
+| <img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/past.jpg?raw=true" width="480"> |
 
 </div>
+
 
 # <h1 align="center">Notifications 📳</h1>
 <div align="center">

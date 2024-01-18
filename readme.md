@@ -5,16 +5,14 @@
 
 # <h1 align="center">🖼 Preview </h1>
 
-# # <h1 align="center">Timer Setup Screen 📝</h1>
+# <h1 align="center">Timer Setup Screen 📝</h1>
 <div align="center">
 
 | Add                                                                                | Change Layout                                                                                | Pick Custom Duration & Extra Time                                                                                  |
 |------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| <img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/add.gif?raw=true" width="480" height="480"> | <img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/change_layout.gif?raw=true" width="480" height="480"> | <img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/pick_custom_duration_and_extra_time.gif?raw=true" width="480" height="480"> |
+| ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/add.gif?raw=true) | ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/change_layout.gif?raw=true) | ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/pick_custom_duration_and_extra_time.gif?raw=true) |
 
 </div>
-
-
 
 # <h1 align="center">Active Timers Screen ⏳</h1>
 <div align="center">

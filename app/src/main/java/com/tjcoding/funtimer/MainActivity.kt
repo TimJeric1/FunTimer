@@ -67,7 +67,8 @@ class MainActivity : ComponentActivity() {
                     tonalElevation = 5.dp
                 ) {
 
-                    SystemBarsColor(color = MaterialTheme.colorScheme.surfaceColorAtElevation(NavigationBarDefaults.Elevation + 5.dp))
+                    NavigationBarColor(color = MaterialTheme.colorScheme.surfaceColorAtElevation(NavigationBarDefaults.Elevation + 5.dp))
+                    StatusBarColor(color = MaterialTheme.colorScheme.surfaceColorAtElevation(5.dp))
 
 
                     val navController = rememberNavController()
@@ -146,7 +147,22 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun SystemBarsColor(color: Color) {
+    fun NavigationBarColor(color: Color) {
+        val view = LocalView.current
+        val darkTheme = isSystemInDarkTheme()
+        val currentWindow = (view.context as? Activity)?.window
+            ?: throw Exception("Not in an activity - unable to get Window reference")
+
+        if (!view.isInEditMode) {
+            SideEffect {
+                (view.context as Activity).window.navigationBarColor = color.toArgb()
+                WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightNavigationBars = !darkTheme
+            }
+        }
+    }
+
+    @Composable
+    fun StatusBarColor(color: Color) {
         val view = LocalView.current
         val darkTheme = isSystemInDarkTheme()
         val currentWindow = (view.context as? Activity)?.window
@@ -155,9 +171,7 @@ class MainActivity : ComponentActivity() {
         if (!view.isInEditMode) {
             SideEffect {
                 (view.context as Activity).window.statusBarColor = color.toArgb()
-                (view.context as Activity).window.navigationBarColor = color.toArgb()
                 WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars = !darkTheme
-                WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightNavigationBars = !darkTheme
             }
         }
     }

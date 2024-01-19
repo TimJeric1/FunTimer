@@ -40,7 +40,6 @@
 </div>
 
 <h2 align="center">Features⭐</h2>
-<h2 align="center">Features⭐</h2>
 
 - Add and delete timers/alarms.
 - When screen is on, fire a notification alarm.

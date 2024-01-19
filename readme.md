@@ -26,9 +26,9 @@
 # <h1 align="center">Past Timers Screen ⌛</h1>
 <div align="center">
 
-| View                                                                                |
-|---------------------------------------------------------------------------------------| 
-| <img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/past.jpg?raw=true" width="47.9%"> |
+| View                                                                                        |
+|---------------------------------------------------------------------------------------------| 
+| <p align="center"><img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/past.jpg?raw=true" width="47.9%" style="display: block; margin: auto;"></p> |
 
 </div>
 

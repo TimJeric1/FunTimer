@@ -39,7 +39,7 @@ import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 private fun AlarmScreenPreview() {
     FunTimerTheme {
         Surface(
-            tonalElevation = 5.dp
+            tonalElevation = 2.dp
         ) {
             AlarmScreen(
                 numbers = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18),
@@ -58,74 +58,69 @@ fun AlarmScreen(
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
 
-    FunTimerTheme {
-        Surface(
-            tonalElevation = 2.dp
+
+    Scaffold(
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            Scaffold(
-            ) { paddingValues ->
-                Column(
+            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Pool,
+                    contentDescription = "App icon",
+                    modifier = Modifier.size(128.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Time's up for numbers",
+                    style = MaterialTheme.typography.displayMedium,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.W400,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                BigNumbersGrid(
+                    selectedNumbers = numbers,
+                    onClick = {},
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Pool,
-                            contentDescription = "App icon",
-                            modifier = Modifier.size(128.dp)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "Time's up for numbers",
-                            style = MaterialTheme.typography.displayMedium,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.W400,
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        BigNumbersGrid(
-                            selectedNumbers = numbers,
-                            onClick = {},
-                            modifier = Modifier
-                                .fillMaxWidth(0.8f)
-                                .heightIn(max = (screenHeight * 0.3).dp)
-                                .verticalScroll(rememberScrollState()),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalArrangement = Arrangement.Center
-                        )
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(64.dp),
-                            imageVector = Icons.AutoMirrored.Filled.VolumeOff,
-                            contentDescription = "Volume Off",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-
-                        )
-                        SwipeableButton(onLeftSwipeAction = onMute, onRightSwipeAction = onDismiss)
-                        Icon(
-                            modifier = Modifier.size(64.dp),
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "Close",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Spacer(modifier = Modifier.height((screenHeight * 0.15).dp))
-                }
+                        .fillMaxWidth(0.8f)
+                        .heightIn(max = (screenHeight * 0.3).dp)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalArrangement = Arrangement.Center
+                )
             }
+            Spacer(modifier = Modifier.weight(1f))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Icon(
+                    modifier = Modifier.size(64.dp),
+                    imageVector = Icons.AutoMirrored.Filled.VolumeOff,
+                    contentDescription = "Volume Off",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+
+                )
+                SwipeableButton(onLeftSwipeAction = onMute, onRightSwipeAction = onDismiss)
+                Icon(
+                    modifier = Modifier.size(64.dp),
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Close",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Spacer(modifier = Modifier.height((screenHeight * 0.15).dp))
         }
     }
-
 }
+
+
 
 

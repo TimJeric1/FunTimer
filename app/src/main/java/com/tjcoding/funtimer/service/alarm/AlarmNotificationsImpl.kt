@@ -5,6 +5,10 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.tjcoding.funtimer.R
@@ -21,11 +25,21 @@ import javax.inject.Inject
 class AlarmNotificationsImpl @Inject constructor() : AlarmNotifications {
 
     override fun showAlarmNotification(service: Service, timerItem: TimerItem) {
+        val nightModeFlags: Int = service.applicationContext.resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK
+        val isInDarkMode = when (nightModeFlags) {
+            Configuration.UI_MODE_NIGHT_YES -> true
+            Configuration.UI_MODE_NIGHT_NO -> false
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> false
+            else -> false
+        }
+
 
         val context = service.baseContext
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.baseline_pool_24)
+            .setColor(if(isInDarkMode) darkColorScheme().primary.toArgb() else lightColorScheme().primary.toArgb())
             .setContentTitle("Funtimer Alarm")
             .setContentText("End of playtime for numbers ${timerItem.toMessage()}")
             .setCategory(NotificationCompat.CATEGORY_ALARM)
@@ -36,6 +50,7 @@ class AlarmNotificationsImpl @Inject constructor() : AlarmNotifications {
             .setAutoCancel(false)
             .setWhen(0)
             .setDefaults(NotificationCompat.DEFAULT_LIGHTS)
+
 
 
         // Setup Dismiss Action
@@ -97,10 +112,20 @@ class AlarmNotificationsImpl @Inject constructor() : AlarmNotifications {
 
     override fun showMissedTimerItemNotification(context: Context, timerItem: TimerItem) {
 
+        val nightModeFlags: Int = context.resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK
+        val isInDarkMode = when (nightModeFlags) {
+            Configuration.UI_MODE_NIGHT_YES -> true
+            Configuration.UI_MODE_NIGHT_NO -> false
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> false
+            else -> false
+        }
+
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.baseline_pool_24)
+            .setColor(if(isInDarkMode) darkColorScheme().primary.toArgb() else lightColorScheme().primary.toArgb())
             .setContentTitle("Missed FunTimer alarm")
             .setContentText("End of playtime for numbers ${timerItem.toMessage()}")
             .setCategory(NotificationCompat.CATEGORY_REMINDER)

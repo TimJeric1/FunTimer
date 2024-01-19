@@ -1,4 +1,3 @@
-
 # <h1 align="center">⏱️ FunTimer (In Development)</h1>
 
 <p align="center">FunTimer offers a practical solution for the time-conscious environment of water parks. This app serves as a user-friendly Alarm/Timer tool, specifically crafted to manage entry times efficiently. In the context of water parks, visitors receive armbands with unique numbers upon entry and  FunTimer empowers park staff to set timers for each visitor based on their armband number, streamlining the entire process.</>
@@ -10,7 +9,7 @@
 
 | Add  | Change Layout| Pick Custom Duration & Extra Time  |
 |------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| <img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/add.gif?raw=true" width="100%"> | <img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/change_layout.gif?raw=true" width = "96.5%"> | <img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/pick_custom_duration_and_extra_time.gif?raw=true " width="95.1%"> |    
+| <img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/add.gif?raw=true"> | <img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/change_layout.gif?raw=true"> | <img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/pick_custom_duration_and_extra_time.gif?raw=true"> |    
 
 </div>
 
@@ -19,7 +18,7 @@
 
 | Delete                                                                                |
 |---------------------------------------------------------------------------------------| 
-| <img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/delete.gif?raw=true" width="98%"> | |
+| <img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/delete.gif?raw=true"> | |
 
 </div>
 
@@ -28,10 +27,9 @@
 
 | View                                                                                        |
 |---------------------------------------------------------------------------------------------| 
-| <p align="center"><img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/past.jpg?raw=true" width="47.9%" style="display: block; margin: auto;"></p> |
+| <p align="center"><img src="https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/past.jpg?raw=true" style="display: block; margin: auto;"></p> |
 
 </div>
-
 
 # <h1 align="center">Notifications 📳</h1>
 <div align="center">
@@ -40,6 +38,8 @@
 |---------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
 | ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/notification.gif?raw=true) | ![](https://github.com/TimJeric1/FunTimer/blob/master/ScreenGifs/fullscreen_notification.gif?raw=true) |
 </div>
+
+<h2 align="center">Features⭐</h2>
 <h2 align="center">Features⭐</h2>
 
 - Add and delete timers/alarms.

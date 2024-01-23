@@ -56,5 +56,9 @@ class TimerRepositoryImpl(
         timerDao.deleteTimeEntity(timeEntity)
     }
 
+    override suspend fun deleteAll() {
+        timerDao.deleteAll()
+    }
+
 
 }

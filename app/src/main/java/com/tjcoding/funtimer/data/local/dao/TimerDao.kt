@@ -33,6 +33,11 @@ abstract class TimerDao {
     abstract fun getAllTriggeredTimerItemsAsMapsStream(): Flow<Map<AlarmTriggerTimeEntity, List<SelectedNumberEntity>>>
 
 
+    // Because of foreign key in other table it will also delete all from SelectedNumberEntity
+    @Query("DELETE FROM AlarmTriggerTimeEntity")
+    abstract suspend fun deleteAll()
+
+
     @Delete
     abstract suspend fun deleteTimeEntity(timeEntity: AlarmTriggerTimeEntity)
 

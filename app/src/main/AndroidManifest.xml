@@ -45,6 +45,7 @@
         </activity>
 
         <receiver android:name=".service.alarm.AlarmReceiver"/>
+        <receiver android:name=".service.background_work.ClearDatabaseReceiver"/>
         <service
             android:name=".service.alarm.AlarmService"
             android:enabled="true"

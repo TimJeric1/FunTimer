@@ -37,6 +37,12 @@ object Util {
         return localTime.format(DateTimeFormatter.ofPattern("mm:ss"))
     }
 
+    fun Long.SecondsFormatTommss(): String {
+        val duration = this
+        val localTime = if(duration >= 0) LocalTime.ofSecondOfDay(duration) else LocalTime.ofSecondOfDay(0)
+        return localTime.format(DateTimeFormatter.ofPattern("mm:ss"))
+    }
+
     suspend fun shouldRetry(cause: Throwable, attempt: Long): Boolean {
         if (attempt > 3) return false
         val currentDelay = 1000L * attempt

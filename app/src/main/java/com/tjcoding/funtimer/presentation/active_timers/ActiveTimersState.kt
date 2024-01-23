@@ -9,13 +9,15 @@ data class ActiveTimersState(
 
 data class ActiveTimerItem(
     val selectedNumbers: List<Int>,
-    val alarmTime: LocalDateTime,
+    val triggerTime: LocalDateTime,
+    val alarmTime: Int,
     val extraTime: Int,
 )
 
 fun TimerItem.toActiveTimerItem(): ActiveTimerItem {
     return ActiveTimerItem(
         selectedNumbers = this.selectedNumbers,
+        triggerTime = this.triggerTime,
         alarmTime = this.alarmTime,
         extraTime = this.extraTime,
     )
@@ -24,6 +26,7 @@ fun TimerItem.toActiveTimerItem(): ActiveTimerItem {
 fun ActiveTimerItem.toTimerItem(): TimerItem {
     return TimerItem(
         selectedNumbers = this.selectedNumbers,
+        triggerTime = this.triggerTime,
         alarmTime = this.alarmTime,
         extraTime = this.extraTime,
         hasTriggered = false

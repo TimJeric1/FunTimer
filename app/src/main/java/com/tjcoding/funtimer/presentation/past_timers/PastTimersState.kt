@@ -16,6 +16,6 @@ data class PastTimerItem (
 fun TimerItem.toPastTimerItem(): PastTimerItem {
     return PastTimerItem(
         selectedNumbers = this.selectedNumbers,
-        triggerTime = this.alarmTime.plusMinutes(this.extraTime.toLong())
+        triggerTime = this.triggerTime
     )
 }

@@ -1,7 +1,6 @@
 package com.tjcoding.funtimer.di
 
 import android.app.Application
-import android.content.pm.ApplicationInfo
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
@@ -47,8 +46,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideAlarmScheduler(app: Application, isInDebugMode: Boolean): AlarmScheduler {
-        return AlarmSchedulerImpl(app.applicationContext, isInDebugMode)
+    fun provideAlarmScheduler(app: Application): AlarmScheduler {
+        return AlarmSchedulerImpl(app.applicationContext)
     }
 
     @Provides
@@ -81,14 +80,6 @@ class AppModule {
             )
         )
     }
-
-    @Provides
-    @Singleton
-    fun provideIsInDebugMode(app: Application): Boolean {
-        val context = app.applicationContext
-        return (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
-    }
-
 
 }
 

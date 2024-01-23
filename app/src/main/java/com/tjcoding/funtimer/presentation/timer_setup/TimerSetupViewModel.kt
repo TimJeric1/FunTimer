@@ -2,6 +2,7 @@ package com.tjcoding.funtimer.presentation.timer_setup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tjcoding.funtimer.BuildConfig
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.domain.repository.UserPreferencesRepository
@@ -28,7 +29,6 @@ class TimerSetupViewModel @Inject constructor(
     private val timerRepository: TimerRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
     private val alarmScheduler: AlarmScheduler,
-    private val isInDebugMode: Boolean
 ) : ViewModel() {
 
 
@@ -147,12 +147,15 @@ class TimerSetupViewModel @Inject constructor(
 
     private fun onSaveButtonClick() {
         if (state.value.selectedNumbers.isEmpty()) return
+
+        val isInDebugMode = BuildConfig.DEBUG
         val timerDuration = state.value.getDuration()
         val timerItem = TimerItem(
             selectedNumbers = state.value.selectedNumbers,
-            alarmTime = if (isInDebugMode) LocalDateTime.now()
-                .plusSeconds(timerDuration.toLong()) else LocalDateTime.now()
-                .plusMinutes(timerDuration.toLong()),
+            triggerTime = if (isInDebugMode) LocalDateTime.now()
+                .plusSeconds(timerDuration.toLong()).plusSeconds(state.value.selectedExtraTime.toLong()) else LocalDateTime.now()
+                .plusMinutes(timerDuration.toLong()).plusMinutes(state.value.selectedExtraTime.toLong()),
+            alarmTime = state.value.displayedDurations[state.value.selectedDurationOption]!!,
             extraTime = state.value.selectedExtraTime,
             hasTriggered = false
         )

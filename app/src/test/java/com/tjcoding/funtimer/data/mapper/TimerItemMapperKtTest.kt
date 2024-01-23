@@ -14,8 +14,9 @@ class TimerItemMapperKtTest {
         // Arrange
         val timerItem = TimerItem(
             selectedNumbers = listOf(1, 2, 3),
-            alarmTime = LocalDateTime.now(),
+            triggerTime = LocalDateTime.now(),
             extraTime = 5,
+            alarmTime = 30,
             hasTriggered = false
         )
 
@@ -24,7 +25,7 @@ class TimerItemMapperKtTest {
 
         // Assert
         assertEquals(timerItem.hashCode(), entitiesPair.first.id)
-        assertEquals(timerItem.alarmTime, entitiesPair.first.alarmTime)
+        assertEquals(timerItem.triggerTime, entitiesPair.first.triggerTime)
         assertEquals(timerItem.extraTime, entitiesPair.first.extraTime)
         assertEquals(timerItem.hasTriggered, entitiesPair.first.hasTriggered)
 
@@ -38,9 +39,9 @@ class TimerItemMapperKtTest {
     @Test
     fun `toTimerItem should convert Pair of entities to TimerItem`() {
         // Arrange
-        val alarmTime = LocalDateTime.now()
+        val triggerTime = LocalDateTime.now()
         val entitiesPair = Pair(
-            AlarmTriggerTimeEntity(1, alarmTime, 10, false),
+            AlarmTriggerTimeEntity(1, triggerTime,30, 10, false),
             listOf(
                 SelectedNumberEntity(selectedNumber = 1, timeItemId = 1),
                 SelectedNumberEntity(selectedNumber = 2, timeItemId = 1),
@@ -52,7 +53,7 @@ class TimerItemMapperKtTest {
         val timerItem = entitiesPair.toTimerItem()
 
         // Assert
-        assertEquals(entitiesPair.first.alarmTime, timerItem.alarmTime)
+        assertEquals(entitiesPair.first.triggerTime, timerItem.triggerTime)
         assertEquals(entitiesPair.first.extraTime, timerItem.extraTime)
         assertEquals(entitiesPair.first.hasTriggered, timerItem.hasTriggered)
 

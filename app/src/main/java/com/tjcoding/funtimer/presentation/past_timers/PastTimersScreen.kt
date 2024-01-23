@@ -67,8 +67,8 @@ private fun PastTimerCardsVerticalGrid(
     onLongClick: (PastTimerItem) -> Unit,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
-    CustomItemsVerticalGrid(modifier = modifier, items = pastTimerItems) { pastTimerItem ->
-        PastTimerCard(modifier = Modifier
+    CustomItemsVerticalGrid(modifier = modifier, items = pastTimerItems, key = { pastTimerItem ->  pastTimerItem.hashCode() }) { lazyListModifier,pastTimerItem ->
+        PastTimerCard(modifier = lazyListModifier
             .size(screenHeight.dp * 0.25f)
             .padding(4.dp)
             .combinedClickable(

@@ -37,4 +37,10 @@ class FakeTimerRepository: TimerRepository {
     override fun getAllTriggeredTimerItemsStream(): Flow<List<TimerItem>> {
         return timerItems.map { timerItems -> timerItems.filter { timerItem -> timerItem.hasTriggered == true } }
     }
+
+    override suspend fun deleteAll() {
+        timerItems.update {
+            emptyList()
+        }
+    }
 }

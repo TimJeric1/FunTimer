@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.tjcoding.funtimer.BuildConfig
 import com.tjcoding.funtimer.presentation.components.TimerCard
 import com.tjcoding.funtimer.presentation.components.CustomItemsVerticalGrid
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
@@ -70,38 +71,52 @@ fun ActiveTimersScreen(
 }
 
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
 private fun TimerCardsVerticalGrid(
+
     modifier: Modifier,
     activeTimerItems: List<ActiveTimerItem>,
     onCardLongClick: (ActiveTimerItem) -> Unit,
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp
-    CustomItemsVerticalGrid(modifier = modifier, items = activeTimerItems) { activeTimerItem ->
-        val millisInFutureTime = (activeTimerItem.alarmTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000 - System.currentTimeMillis())
+    CustomItemsVerticalGrid(modifier = modifier, items = activeTimerItems, key = { pastTimerItem ->  pastTimerItem.hashCode() }) { lazyListModifier, activeTimerItem ->
+        CountdownActiveTimerItem(lazyListModifier ,activeTimerItem, onCardLongClick)
+    }
 
-        val alarmTime = remember {
-            mutableLongStateOf(millisInFutureTime / 1000)
-        }
+}
+
+@Composable
+@OptIn(ExperimentalFoundationApi::class)
+private fun CountdownActiveTimerItem(
+    modifier: Modifier,
+    activeTimerItem: ActiveTimerItem,
+    onCardLongClick: (ActiveTimerItem) -> Unit
+) {
+    val screenHeight = LocalConfiguration.current.screenHeightDp
+    val isInDebugMode = BuildConfig.DEBUG
+
+
+    val millisInFutureTriggerTime = remember {(activeTimerItem.triggerTime.atZone(ZoneId.systemDefault())
+        .toEpochSecond() * 1000 - System.currentTimeMillis())}
+    val millisInFutureAlarmTime = remember { if(isInDebugMode) activeTimerItem.alarmTime * 1000L else activeTimerItem.alarmTime * 60 * 1000L}
+
+    if(millisInFutureTriggerTime >  millisInFutureAlarmTime) {
+
+        val millisInFutureExtraTime = remember { millisInFutureTriggerTime - millisInFutureAlarmTime }
+
+        val alarmTime = remember { mutableLongStateOf(millisInFutureAlarmTime / 1000) }
+        val extraTime = remember { mutableLongStateOf(millisInFutureExtraTime / 1000) }
+
         val timeCountDown = remember {
-            object : CountDownTimer(millisInFutureTime, 1000) {
+            object : CountDownTimer(millisInFutureAlarmTime, 1000) {
 
                 override fun onTick(millisUntilFinished: Long) {
                     alarmTime.longValue = (millisUntilFinished / 1000)
                 }
 
-                override fun onFinish() {
-
-                }
-            }.start()
-        }
-        val millisInFutureExtraTime = activeTimerItem.extraTime * 60 * 1000L
-
-        val extraTime = remember {
-            mutableLongStateOf(millisInFutureExtraTime / 1000)
+                override fun onFinish() {}
+            }
         }
 
-        val extraTimeCountDown = remember {
+        remember {
             object : CountDownTimer(millisInFutureExtraTime, 1000) {
 
                 override fun onTick(millisUntilFinished: Long) {
@@ -109,14 +124,12 @@ private fun TimerCardsVerticalGrid(
                 }
 
                 override fun onFinish() {
-
+                    timeCountDown.start()
                 }
             }.start()
         }
 
-
-
-        TimerCard(modifier = Modifier
+        TimerCard(modifier = modifier
             .size(screenHeight.dp * 0.25f)
             .padding(4.dp)
             .combinedClickable(
@@ -128,7 +141,33 @@ private fun TimerCardsVerticalGrid(
             extraTime = extraTime.longValue.SecondsFormatTommss(),
             onNumberBoxClick = {}
         )
+    } else {
+        val alarmTime = remember { mutableLongStateOf(millisInFutureTriggerTime / 1000) }
+
+        remember {
+            object : CountDownTimer(millisInFutureTriggerTime, 1000) {
+
+                override fun onTick(millisUntilFinished: Long) {
+                    alarmTime.longValue = (millisUntilFinished / 1000)
+                }
+
+                override fun onFinish() {}
+            }.start()
+        }
+        TimerCard(modifier = modifier
+            .size(screenHeight.dp * 0.25f)
+            .padding(4.dp)
+            .combinedClickable(
+                onClick = {},
+                onLongClick = { onCardLongClick(activeTimerItem) }
+            ),
+            numbers = activeTimerItem.selectedNumbers,
+            time = alarmTime.longValue.SecondsFormatTommss(),
+            extraTime = "00:00",
+            onNumberBoxClick = {}
+        )
     }
+
 
 }
 
@@ -144,24 +183,28 @@ private fun ActiveTimersScreenPreview() {
                 state = ActiveTimersState(
                     activeTimerItems = listOf(
                         ActiveTimerItem(
-                            listOf(1, 2, 3, 4, 5, 6, 10, 15, 16, 17),
-                            LocalDateTime.now(),
-                            2,
+                            selectedNumbers = listOf(1, 2, 3, 4, 5, 6, 10, 15, 16, 17),
+                            triggerTime = LocalDateTime.now(),
+                            alarmTime = 30,
+                            extraTime = 2,
                         ),
                         ActiveTimerItem(
-                            listOf(1, 2, 3, 4, 5, 6, 10, 15, 16, 17),
-                            LocalDateTime.now(),
-                            2,
+                            selectedNumbers = listOf(1, 2, 3, 4, 5, 6, 10, 15, 16, 17),
+                            triggerTime = LocalDateTime.now(),
+                            alarmTime = 30,
+                            extraTime = 2,
                         ),
                         ActiveTimerItem(
-                            listOf(1, 2, 3, 4, 5, 6, 10, 15, 16, 17),
-                            LocalDateTime.now(),
-                            2,
+                            selectedNumbers = listOf(1, 2, 3, 4, 5, 6, 10, 15, 16, 17),
+                            triggerTime = LocalDateTime.now(),
+                            alarmTime = 30,
+                            extraTime = 2,
                         ),
                         ActiveTimerItem(
-                            listOf(1, 2, 3, 4, 5, 6, 10, 15, 16, 17),
-                            LocalDateTime.now(),
-                            2,
+                            selectedNumbers = listOf(1, 2, 3, 4, 5, 6, 10, 15, 16, 17),
+                            triggerTime = LocalDateTime.now(),
+                            alarmTime = 30,
+                            extraTime = 2,
                         )
                     )
                 ),

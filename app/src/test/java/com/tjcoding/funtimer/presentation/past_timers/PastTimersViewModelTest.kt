@@ -39,19 +39,22 @@ class PastTimersViewModelTest {
         val timerItems = listOf(
             TimerItem(
                 selectedNumbers = listOf(1, 2, 3),
-                alarmTime = LocalDateTime.now(), // You should replace this with an actual LocalDateTime
+                triggerTime = LocalDateTime.now(),// You should replace this with an actual LocalDateTime
+                alarmTime = 30,
                 extraTime = 5,
                 hasTriggered = true
             ),
             TimerItem(
                 selectedNumbers = listOf(4, 5, 6),
-                alarmTime = LocalDateTime.now(), // You should replace this with an actual LocalDateTime
+                triggerTime = LocalDateTime.now(), // You should replace this with an actual LocalDateTime
+                alarmTime = 30,
                 extraTime = 10,
                 hasTriggered = true
             ),
             TimerItem(
                 selectedNumbers = listOf(7, 8, 9),
-                alarmTime = LocalDateTime.now(), // You should replace this with an actual LocalDateTime
+                triggerTime = LocalDateTime.now(), // You should replace this with an actual LocalDateTime
+                alarmTime = 30,
                 extraTime = 15,
                 hasTriggered = true
             )

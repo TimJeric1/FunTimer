@@ -8,6 +8,7 @@ import com.tjcoding.funtimer.domain.model.TimerItem
 fun TimerItem.toEntitiesPair(): Pair<AlarmTriggerTimeEntity, List<SelectedNumberEntity>>{
     val timerItemEntity = AlarmTriggerTimeEntity(
         id = this.hashCode(),
+        triggerTime = triggerTime,
         alarmTime = alarmTime,
         extraTime = extraTime,
         hasTriggered = hasTriggered
@@ -29,6 +30,7 @@ fun Pair<AlarmTriggerTimeEntity, List<SelectedNumberEntity>>.toTimerItem(): Time
 
     return TimerItem(
         selectedNumbers = selectedNumbers,
+        triggerTime = timerItemEntity.triggerTime,
         alarmTime = timerItemEntity.alarmTime,
         extraTime = timerItemEntity.extraTime,
         hasTriggered = timerItemEntity.hasTriggered

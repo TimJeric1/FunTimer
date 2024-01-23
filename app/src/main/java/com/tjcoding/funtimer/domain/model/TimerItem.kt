@@ -8,25 +8,17 @@ import java.time.ZoneId
 @Parcelize
 data class TimerItem(
     val selectedNumbers: List<Int>,
-    val alarmTime: LocalDateTime,
+    val triggerTime: LocalDateTime,
+    val alarmTime: Int,
     val extraTime: Int,
     val hasTriggered: Boolean
     ) : Parcelable {
     override fun hashCode(): Int {
-        return alarmTime.atZone(ZoneId.systemDefault()).toEpochSecond().toInt() + extraTime
+        return triggerTime.atZone(ZoneId.systemDefault()).toEpochSecond().toInt() + extraTime
     }
 
     override fun equals(other: Any?): Boolean {
         return this.hashCode() == other.hashCode()
-    }
-
-
-    fun getAlarmTriggerTime(): LocalDateTime {
-       return alarmTime.plusMinutes(extraTime.toLong())
-    }
-
-    fun getAlarmTriggerTimeDebug(): LocalDateTime {
-        return alarmTime.plusSeconds(extraTime.toLong())
     }
 }
 

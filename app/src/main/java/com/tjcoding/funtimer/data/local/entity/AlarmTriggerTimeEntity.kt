@@ -7,7 +7,8 @@ import java.time.LocalDateTime
 @Entity
 data class AlarmTriggerTimeEntity (
     @PrimaryKey val id: Int,
-    val alarmTime: LocalDateTime,
+    val triggerTime: LocalDateTime,
+    val alarmTime: Int,
     val extraTime: Int,
     val hasTriggered: Boolean
 )

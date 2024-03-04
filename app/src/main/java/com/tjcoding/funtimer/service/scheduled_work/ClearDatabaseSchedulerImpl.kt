@@ -1,4 +1,4 @@
-package com.tjcoding.funtimer.service.background_work
+package com.tjcoding.funtimer.service.scheduled_work
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -28,16 +28,15 @@ class ClearDatabaseSchedulerImpl @Inject constructor(
         val shouldScheduleToday = LocalTime.now().hour < 3
         val oneAM = LocalTime
             .parse("01:00:00")
-            // if current time is less than 3am then schedule the alarm to 3am same day
-            // if current time is more than 3am then schedule the alarm to 3am next day
+            // if current time is less than 3am then schedule the alarm to 1am same day
+            // if current time is more than 3am then schedule the alarm to 1am next day
             .atDate(LocalDate.now().plusDays(if (shouldScheduleToday) 0 else 1))
             .atOffset(ZoneOffset.systemDefault().rules.getOffset(Instant.now()))
             .toEpochSecond() * 1000
 
-        alarmManager.setWindow(
+        alarmManager.set(
             AlarmManager.RTC,
             oneAM,
-            AlarmManager.INTERVAL_HOUR * 5, // From 1AM to 6AM
             PendingIntent.getBroadcast(
                 context,
                 CLEAR_DATABASE_ALARM_CODE,

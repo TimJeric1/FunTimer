@@ -16,8 +16,8 @@ import com.tjcoding.funtimer.service.alarm.AlarmNotifications
 import com.tjcoding.funtimer.service.alarm.AlarmNotificationsImpl
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
 import com.tjcoding.funtimer.service.alarm.AlarmSchedulerImpl
-import com.tjcoding.funtimer.service.background_work.ClearDatabaseScheduler
-import com.tjcoding.funtimer.service.background_work.ClearDatabaseSchedulerImpl
+import com.tjcoding.funtimer.service.scheduled_work.ClearDatabaseScheduler
+import com.tjcoding.funtimer.service.scheduled_work.ClearDatabaseSchedulerImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

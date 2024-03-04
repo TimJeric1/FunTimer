@@ -48,7 +48,7 @@ import com.tjcoding.funtimer.presentation.active_timers.ActiveTimersScreenRoot
 import com.tjcoding.funtimer.presentation.past_timers.PastTimersScreenRoot
 import com.tjcoding.funtimer.utility.navigation.Screen
 import com.tjcoding.funtimer.presentation.timer_setup.TimerSetupScreenRoot
-import com.tjcoding.funtimer.service.background_work.ClearDatabaseScheduler
+import com.tjcoding.funtimer.service.scheduled_work.ClearDatabaseScheduler
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

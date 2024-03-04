@@ -1,4 +1,4 @@
-package com.tjcoding.funtimer.service.background_work
+package com.tjcoding.funtimer.service.scheduled_work
 
 interface ClearDatabaseScheduler {
     fun scheduleRegularClearing()

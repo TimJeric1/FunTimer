@@ -45,7 +45,15 @@
         </activity>
 
         <receiver android:name=".service.alarm.AlarmReceiver"/>
-        <receiver android:name=".service.background_work.ClearDatabaseReceiver"/>
+        <receiver android:name=".service.scheduled_work.ClearDatabaseReceiver"/>
+        <receiver
+            android:name=".service.alarm_recovery.OnSystemBootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
         <service
             android:name=".service.alarm.AlarmService"
             android:enabled="true"

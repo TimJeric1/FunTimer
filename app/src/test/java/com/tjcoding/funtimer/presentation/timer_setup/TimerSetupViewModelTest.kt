@@ -22,7 +22,6 @@ class TimerSetupViewModelTest {
             timerRepository = FakeTimerRepository(),
             alarmScheduler = FakeAlarmScheduler(),
             userPreferencesRepository = FakeUserPreferencesRepository(),
-            isInDebugMode = true
         )
     }
 

@@ -11,7 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
@@ -29,16 +29,17 @@ class OnSystemBootReceiver : BroadcastReceiver() {
     lateinit var alarmScheduler: AlarmScheduler
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action != Intent.ACTION_BOOT_COMPLETED) return
-        var timerItems : List<TimerItem>? = emptyList()
+        var timerItems: List<TimerItem>
         goAsync {
-            timerItems = timerRepository.getAllActiveTimerItemsStream().firstOrNull()
+            timerItems = timerRepository.getAllActiveTimerItemsStream().first()
+
+            if (timerItems.isEmpty()) return@goAsync
+
+            for (timerItem in timerItems) {
+                alarmScheduler.schedule(timerItem)
+            }
         }
 
-        if (timerItems == null) return
-
-        for (timerItem in timerItems!!) {
-            alarmScheduler.schedule(timerItem)
-        }
 
     }
 

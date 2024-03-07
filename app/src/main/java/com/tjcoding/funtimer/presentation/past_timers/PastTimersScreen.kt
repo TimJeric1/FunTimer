@@ -2,16 +2,21 @@ package com.tjcoding.funtimer.presentation.past_timers
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -49,13 +54,24 @@ fun PastTimersScreen(
             )
         },
     ) { paddingValues ->
-        PastTimerCardsVerticalGrid(
-            modifier.padding(paddingValues),
-            state.pastTimerItems,
-            onLongClick = {},
-        )
+        Box(
+            modifier = modifier.fillMaxSize(), // Fill the entire screen
+            contentAlignment = Alignment.Center // Center content within the Box
+        ) {
+            if (state.pastTimerItems.isEmpty()) {
+                Text(text = "No past timers",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineLarge
+                    )
+            } else {
+                PastTimerCardsVerticalGrid(
+                    modifier.padding(paddingValues),
+                    state.pastTimerItems,
+                    onLongClick = {},
+                )
+            }
+        }
     }
-
 }
 
 
@@ -111,6 +127,24 @@ private fun PastTimersScreenPreview() {
                             LocalDateTime.now().minusHours(1)
                         ),
                     )
+                )
+            )
+        }
+    }
+
+}
+
+@Composable
+@PreviewLightDark
+private fun PastTimersScreenEmptyPreview() {
+    FunTimerTheme {
+        Surface(
+            tonalElevation = 5.dp
+        ) {
+            PastTimersScreen(
+                modifier = Modifier,
+                state = PastTimersState(
+                    pastTimerItems = emptyList()
                 )
             )
         }

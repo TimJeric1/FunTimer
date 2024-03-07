@@ -3,9 +3,12 @@ package com.tjcoding.funtimer.presentation.active_timers
 import android.os.CountDownTimer
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -13,8 +16,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -56,17 +61,30 @@ fun ActiveTimersScreen(
             )
         },
     ) { paddingValues ->
-        TimerCardsVerticalGrid(
-            modifier.padding(paddingValues),
-            state.activeTimerItems,
-            onCardLongClick = { activeTimerItems ->
-                onEvent(
-                    ActiveTimersEvent.OnCardLongClick(
-                        activeTimerItems
-                    )
+        Box(
+            modifier = modifier.fillMaxSize(), // Fill the entire screen
+            contentAlignment = Alignment.Center // Center content within the Box
+        ) {
+            if (state.activeTimerItems.isEmpty()) {
+                Text(
+                    text = "No active timers",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineLarge
                 )
-            },
-        )
+            } else {
+                TimerCardsVerticalGrid(
+                    modifier.padding(paddingValues),
+                    state.activeTimerItems,
+                    onCardLongClick = { activeTimerItems ->
+                        onEvent(
+                            ActiveTimersEvent.OnCardLongClick(
+                                activeTimerItems
+                            )
+                        )
+                    },
+                )
+            }
+        }
     }
 }
 
@@ -212,7 +230,23 @@ private fun ActiveTimersScreenPreview() {
             )
         }
     }
-
+}
+@Composable
+@PreviewLightDark
+private fun ActiveTimersScreenEmptyPreview() {
+    FunTimerTheme {
+        Surface(
+            tonalElevation = 2.dp
+        ) {
+            ActiveTimersScreen(
+                modifier = Modifier,
+                state = ActiveTimersState(
+                    activeTimerItems = emptyList()
+                ),
+                onEvent = {}
+            )
+        }
+    }
 }
 
 

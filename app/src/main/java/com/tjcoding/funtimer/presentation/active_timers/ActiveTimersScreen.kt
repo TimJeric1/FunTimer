@@ -61,16 +61,18 @@ fun ActiveTimersScreen(
             )
         },
     ) { paddingValues ->
-        Box(
-            modifier = modifier.fillMaxSize(), // Fill the entire screen
-            contentAlignment = Alignment.Center // Center content within the Box
-        ) {
+
             if (state.activeTimerItems.isEmpty()) {
-                Text(
-                    text = "No active timers",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.headlineLarge
-                )
+                Box(
+                    modifier = modifier.fillMaxSize(), // Fill the entire screen
+                    contentAlignment = Alignment.Center // Center content within the Box
+                ) {
+                    Text(
+                        text = "No active timers",
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.headlineLarge
+                    )
+                }
             } else {
                 TimerCardsVerticalGrid(
                     modifier.padding(paddingValues),
@@ -86,7 +88,6 @@ fun ActiveTimersScreen(
             }
         }
     }
-}
 
 @Composable
 private fun TimerCardsVerticalGrid(

@@ -54,22 +54,24 @@ fun PastTimersScreen(
             )
         },
     ) { paddingValues ->
-        Box(
-            modifier = modifier.fillMaxSize(), // Fill the entire screen
-            contentAlignment = Alignment.Center // Center content within the Box
-        ) {
-            if (state.pastTimerItems.isEmpty()) {
-                Text(text = "No past timers",
+
+        if (state.pastTimerItems.isEmpty()) {
+            Box(
+                modifier = modifier.fillMaxSize(), // Fill the entire screen
+                contentAlignment = Alignment.Center // Center content within the Box
+            ) {
+                Text(
+                    text = "No past timers",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.headlineLarge
-                    )
-            } else {
-                PastTimerCardsVerticalGrid(
-                    modifier.padding(paddingValues),
-                    state.pastTimerItems,
-                    onLongClick = {},
                 )
             }
+        } else {
+            PastTimerCardsVerticalGrid(
+                modifier.padding(paddingValues),
+                state.pastTimerItems,
+                onLongClick = {},
+            )
         }
     }
 }
@@ -83,7 +85,10 @@ private fun PastTimerCardsVerticalGrid(
     onLongClick: (PastTimerItem) -> Unit,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
-    CustomItemsVerticalGrid(modifier = modifier, items = pastTimerItems, key = { pastTimerItem ->  pastTimerItem.hashCode() }) { lazyListModifier,pastTimerItem ->
+    CustomItemsVerticalGrid(
+        modifier = modifier,
+        items = pastTimerItems,
+        key = { pastTimerItem -> pastTimerItem.hashCode() }) { lazyListModifier, pastTimerItem ->
         PastTimerCard(modifier = lazyListModifier
             .size(screenHeight.dp * 0.25f)
             .padding(4.dp)
@@ -94,7 +99,7 @@ private fun PastTimerCardsVerticalGrid(
             numbers = pastTimerItem.selectedNumbers,
             time = pastTimerItem.triggerTime.formatTo24HourAndMinute(),
             onNumberBoxClick = {}
-            )
+        )
     }
 
 }

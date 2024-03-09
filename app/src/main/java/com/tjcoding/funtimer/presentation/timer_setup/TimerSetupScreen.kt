@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ViewCompact
 import androidx.compose.material.icons.filled.ViewCompactAlt
@@ -78,7 +78,6 @@ fun TimerSetupScreen(
     val shouldShowCustomTimePickerDialog = remember { mutableStateOf(false) }
     val shouldShowExtraTimePickerDialog = remember { mutableStateOf(false) }
     var radioOptions = state.displayedDurations.values.map { if (it == -1) "custom" else "$it min" }
-    val screenWidth = LocalConfiguration.current.screenWidthDp
     val screenHeight = LocalConfiguration.current.screenHeightDp
     LaunchedEffect(key1 = state.displayedDurations.values) {
         radioOptions = state.displayedDurations.values.map { if (it == -1) "custom" else "$it min" }
@@ -115,7 +114,6 @@ fun TimerSetupScreen(
             StandardLayout(
                 modifier,
                 paddingValues,
-                screenWidth,
                 screenHeight,
                 state,
                 onEvent,
@@ -125,7 +123,6 @@ fun TimerSetupScreen(
             AlternativeLayout(
                 modifier,
                 paddingValues,
-                screenWidth,
                 screenHeight,
                 state,
                 onEvent,
@@ -155,7 +152,6 @@ fun TimerSetupScreen(
 private fun StandardLayout(
     modifier: Modifier,
     paddingValues: PaddingValues,
-    screenWidth: Int,
     screenHeight: Int,
     state: TimerSetupState,
     onEvent: (TimerSetupEvent) -> Unit,
@@ -223,8 +219,8 @@ private fun StandardLayout(
         }
         TimerCard(
             modifier = Modifier
-                .width(screenWidth.dp * 0.5f - 24.dp - 4.dp)
-                .height(screenHeight.dp * 0.25f - 6.dp - 4.dp),
+                .height(screenHeight.dp * 0.25f)
+                .aspectRatio(7/8f),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
             extraTime = state.getExtraTimeInTimeFormat(),
@@ -239,7 +235,6 @@ private fun StandardLayout(
 private fun AlternativeLayout(
     modifier: Modifier,
     paddingValues: PaddingValues,
-    screenWidth: Int,
     screenHeight: Int,
     state: TimerSetupState,
     onEvent: (TimerSetupEvent) -> Unit,
@@ -254,8 +249,8 @@ private fun AlternativeLayout(
     ) {
         TimerCard(
             modifier = Modifier
-                .width(screenWidth.dp * 0.5f - 24.dp - 4.dp)
-                .height(screenHeight.dp * 0.25f - 6.dp - 4.dp),
+                .height(screenHeight.dp * 0.25f)
+                .aspectRatio(7/8f),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
             extraTime = state.getExtraTimeInTimeFormat(),

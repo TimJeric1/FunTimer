@@ -3,9 +3,9 @@ package com.tjcoding.funtimer.presentation.past_timers
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -15,7 +15,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -84,13 +83,12 @@ private fun PastTimerCardsVerticalGrid(
     pastTimerItems: List<PastTimerItem>,
     onLongClick: (PastTimerItem) -> Unit,
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp
     CustomItemsVerticalGrid(
         modifier = modifier,
         items = pastTimerItems,
         key = { pastTimerItem -> pastTimerItem.hashCode() }) { lazyListModifier, pastTimerItem ->
         PastTimerCard(modifier = lazyListModifier
-            .size(screenHeight.dp * 0.25f)
+            .aspectRatio(7/8f)
             .padding(4.dp)
             .combinedClickable(
                 onClick = {},

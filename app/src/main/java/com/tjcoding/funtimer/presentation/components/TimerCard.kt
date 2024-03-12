@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -137,7 +138,7 @@ fun PastTimerCard(
 }
 
 @Composable
-private fun BasicTimerCard(
+fun BasicTimerCard(
     modifier: Modifier = Modifier,
     numbers: List<Int>,
     onNumberBoxClick: (Int) -> Unit,
@@ -154,13 +155,13 @@ private fun BasicTimerCard(
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceAround
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             top()
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .fillMaxHeight(0.5f),
                 contentAlignment = Alignment.Center,
             ) {
                 NumbersGrid(

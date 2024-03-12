@@ -22,8 +22,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
@@ -95,7 +97,7 @@ class AlarmActivity : ComponentActivity() {
                     StatusBarColor(color = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
 
 
-                    val openDialog = remember { mutableStateOf(false) }
+                    var openDialog by remember { mutableStateOf(false) }
                     AlarmScreen(
                         numbers = timerItem.selectedNumbers,
                         onDismiss = {
@@ -103,16 +105,16 @@ class AlarmActivity : ComponentActivity() {
                             val lessThan5SecondsPassed =
                                 Instant.now().epochSecond < activityCreationTime + 5
                             if (lessThan5SecondsPassed) {
-                                openDialog.value = true
+                                openDialog = true
                             } else {
                                 onDismiss()
                             }
                         },
                         onMute = ::muteSound
                     )
-                    if (openDialog.value) {
+                    if (openDialog) {
                         AlertDialog(
-                            onDismissRequest = { openDialog.value = false },
+                            onDismissRequest = { openDialog = false },
                             title = {
                                 Text(text = "Dismiss the alarm?")
                             },
@@ -129,7 +131,7 @@ class AlarmActivity : ComponentActivity() {
                             dismissButton = {
                                 TextButton(
                                     onClick = {
-                                        openDialog.value = false
+                                        openDialog = false
                                     }
                                 ) {
                                     Text("No")

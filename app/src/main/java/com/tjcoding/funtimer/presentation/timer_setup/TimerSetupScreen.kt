@@ -23,8 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -75,8 +77,8 @@ fun TimerSetupScreen(
 ) {
 
 
-    val shouldShowCustomTimePickerDialog = remember { mutableStateOf(false) }
-    val shouldShowExtraTimePickerDialog = remember { mutableStateOf(false) }
+    var shouldShowCustomTimePickerDialog by remember { mutableStateOf(false) }
+    var shouldShowExtraTimePickerDialog by remember { mutableStateOf(false) }
     var radioOptions = state.displayedDurations.values.map { if (it == -1) "custom" else "$it min" }
     val screenHeight = LocalConfiguration.current.screenHeightDp
     LaunchedEffect(key1 = state.displayedDurations.values) {
@@ -84,10 +86,10 @@ fun TimerSetupScreen(
     }
 
     ObserveAsEvents(stream = shouldShowCustomTimePickerDialogStream) { shouldShowCustomTimePickerDialogNew ->
-        shouldShowCustomTimePickerDialog.value = shouldShowCustomTimePickerDialogNew
+        shouldShowCustomTimePickerDialog = shouldShowCustomTimePickerDialogNew
     }
     ObserveAsEvents(stream = shouldShowExtraTimePickerDialogStream) { shouldShowExtraTimePickerDialogNew ->
-        shouldShowExtraTimePickerDialog.value = shouldShowExtraTimePickerDialogNew
+        shouldShowExtraTimePickerDialog = shouldShowExtraTimePickerDialogNew
     }
 
 
@@ -128,19 +130,19 @@ fun TimerSetupScreen(
                 onEvent,
                 radioOptions
             )
-        if (shouldShowCustomTimePickerDialog.value) {
+        if (shouldShowCustomTimePickerDialog) {
             CustomTimePickerAlertDialog(
                 state = state,
                 pickerState = rememberPickerState(),
                 onEvent = onEvent,
-                onDismissRequest = { shouldShowCustomTimePickerDialog.value = false })
+                onDismissRequest = { shouldShowCustomTimePickerDialog = false })
         }
-        if (shouldShowExtraTimePickerDialog.value) {
+        if (shouldShowExtraTimePickerDialog) {
             ExtraTimePickerAlertDialog(
                 state = state,
                 pickerState = rememberPickerState(),
                 onEvent = onEvent,
-                onDismissRequest = { shouldShowExtraTimePickerDialog.value = false })
+                onDismissRequest = { shouldShowExtraTimePickerDialog = false })
         }
     }
 
@@ -359,7 +361,7 @@ fun ExtraTimePickerAlertDialog(
 
 
 @Composable
-private fun <T> ObserveAsEvents(stream: Flow<T>, onEvent: (T) -> Unit) {
+fun <T> ObserveAsEvents(stream: Flow<T>, onEvent: (T) -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(stream, lifecycleOwner.lifecycle) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

@@ -99,9 +99,42 @@ class TimerSetupViewModel @Inject constructor(
             TimerSetupEvent.OnExtraTimeIconClick -> {
                 onExtraTimeButtonClick()
             }
+
+            TimerSetupEvent.OnRestartIconClick -> {
+                onRestartIconClick()
+            }
+            TimerSetupEvent.OnBackspaceIconClick -> {
+                onBackspaceIconClick()
+            }
         }
 
 
+    }
+
+    private fun onRestartIconClick() {
+        val selectedNumbers = state.value.selectedNumbers.toMutableList()
+        val newPossibleNumbers = state.value.possibleNumbers.toMutableList()
+        for(number in selectedNumbers) newPossibleNumbers.addInOrder(number)
+        _state.update {
+            it.copy(
+                displayedNumber = newPossibleNumbers.first(),
+                selectedNumbers = emptyList(),
+                possibleNumbers = newPossibleNumbers.toList(),
+                selectedDurationOption = DurationOption.indexToDurationOption(0)
+            )
+        }
+    }
+    private fun onBackspaceIconClick() {
+        val newSelectedNumbers = state.value.selectedNumbers.toMutableList()
+        val removedNumber = newSelectedNumbers.removeLast()
+        val newPossibleNumbers = state.value.possibleNumbers.toMutableList()
+        newPossibleNumbers.addInOrder(removedNumber)
+        _state.update {
+            it.copy(
+                selectedNumbers = newSelectedNumbers.toList(),
+                possibleNumbers = newPossibleNumbers.toList()
+            )
+        }
     }
 
     private fun onExtraTimeButtonClick() {

@@ -9,13 +9,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Backspace
+import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.ViewCompact
 import androidx.compose.material.icons.filled.ViewCompactAlt
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -27,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -34,12 +41,12 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tjcoding.funtimer.presentation.timer_setup.components.NumberSelector
 import com.tjcoding.funtimer.presentation.timer_setup.components.TimeRadioGroup
-import com.tjcoding.funtimer.presentation.components.TimerCard
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.tjcoding.funtimer.presentation.components.BasicTimerCard
 import com.tjcoding.funtimer.presentation.timer_setup.components.PickerAlertDialog
 import com.tjcoding.funtimer.presentation.timer_setup.components.PickerState
 import com.tjcoding.funtimer.presentation.timer_setup.components.rememberPickerState
@@ -219,14 +226,16 @@ private fun StandardLayout(
                 Text(text = "Save")
             }
         }
-        TimerCard(
+        SetupTimerCard(
             modifier = Modifier
                 .height(screenHeight.dp * 0.25f)
                 .aspectRatio(7/8f),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
             extraTime = state.getExtraTimeInTimeFormat(),
-            onNumberBoxClick = { number: Int -> onEvent(TimerSetupEvent.OnSelectedNumberClick(number)) }
+            onNumberBoxClick = { number: Int -> onEvent(TimerSetupEvent.OnSelectedNumberClick(number)) },
+            onBackspaceIconClick = { onEvent(TimerSetupEvent.OnBackspaceIconClick) },
+            onRestartIconClick = { onEvent(TimerSetupEvent.OnRestartIconClick) }
         )
 
 
@@ -249,14 +258,16 @@ private fun AlternativeLayout(
         horizontalAlignment = CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        TimerCard(
+        SetupTimerCard(
             modifier = Modifier
                 .height(screenHeight.dp * 0.25f)
                 .aspectRatio(7/8f),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
             extraTime = state.getExtraTimeInTimeFormat(),
-            onNumberBoxClick = { number: Int -> onEvent(TimerSetupEvent.OnSelectedNumberClick(number)) }
+            onNumberBoxClick = { number: Int -> onEvent(TimerSetupEvent.OnSelectedNumberClick(number)) },
+            onBackspaceIconClick = { onEvent(TimerSetupEvent.OnBackspaceIconClick) },
+            onRestartIconClick = { onEvent(TimerSetupEvent.OnRestartIconClick) },
         )
         NumberSelector(
             displayedNumber = state.displayedNumber,
@@ -357,6 +368,71 @@ fun ExtraTimePickerAlertDialog(
         startIndex = items.indexOf(state.selectedExtraTime),
         titleText = "Input your extra time"
     )
+}
+
+@Composable
+fun SetupTimerCard(
+    modifier: Modifier = Modifier,
+    numbers: List<Int>,
+    time: String,
+    extraTime: String?,
+    onNumberBoxClick: (Int) -> Unit,
+    onBackspaceIconClick: () -> Unit,
+    onRestartIconClick: () -> Unit,
+) {
+    BasicTimerCard(modifier = modifier, numbers = numbers,
+        onNumberBoxClick = onNumberBoxClick,
+        cardColors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ),
+        boxBorderColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        boxTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        top = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(modifier = Modifier.size(32.dp), onClick = onBackspaceIconClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Backspace,
+                        modifier = Modifier.size(18.dp),
+                        contentDescription = null
+                    )
+                }
+                Icon(
+                    modifier = Modifier.padding(vertical = 2.dp),
+                    imageVector = Icons.Outlined.Timer,
+                    contentDescription = null
+                )
+                IconButton(modifier = Modifier.size(32.dp), onClick = onRestartIconClick) {
+                    Icon(
+                        imageVector = Icons.Filled.RestartAlt,
+                        modifier = Modifier.size(20.dp),
+                        contentDescription = null
+                    )
+                }
+            }
+
+        }, bottom = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceAround
+            ) {
+                Text(
+                    text = time,
+                    style = MaterialTheme.typography.labelLarge
+                )
+                if (extraTime != null) {
+                    Text(
+                        text = "ET: $extraTime",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+            }
+        })
 }
 
 

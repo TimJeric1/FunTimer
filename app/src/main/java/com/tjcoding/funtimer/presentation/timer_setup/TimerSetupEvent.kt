@@ -17,4 +17,8 @@ sealed interface TimerSetupEvent {
     data object OnLayoutViewIconClick: TimerSetupEvent
 
     data object OnExtraTimeIconClick: TimerSetupEvent
+
+    data object OnBackspaceIconClick: TimerSetupEvent
+
+    data object OnRestartIconClick: TimerSetupEvent
 }

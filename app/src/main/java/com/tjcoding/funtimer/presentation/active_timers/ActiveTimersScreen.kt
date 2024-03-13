@@ -1,7 +1,6 @@
 package com.tjcoding.funtimer.presentation.active_timers
 
 import android.os.CountDownTimer
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,8 +42,8 @@ import androidx.navigation.NavController
 import com.tjcoding.funtimer.BuildConfig
 import com.tjcoding.funtimer.presentation.components.BasicTimerCard
 import com.tjcoding.funtimer.presentation.components.CustomItemsVerticalGrid
-import com.tjcoding.funtimer.presentation.timer_setup.ObserveAsEvents
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
+import com.tjcoding.funtimer.utility.Util.ObserveAsEvents
 import com.tjcoding.funtimer.utility.Util.SecondsFormatTommss
 import com.tjcoding.funtimer.utility.navigation.SecondaryScreen
 import kotlinx.coroutines.flow.Flow
@@ -65,7 +64,7 @@ fun ActiveTimersScreenRoot(
         shouldShowDeleteTimerItemDialogStream = viewModel.shouldShowDeleteTimerItemDialogStream,
         shouldNavigateToEditTimerItemScreenStream = viewModel.shouldNavigateToEditTimerItemScreenStream,
         selectedActiveTimerItemStream = viewModel.selectedActiveTimerItemStream,
-        navigateToEditActiveTimerScreen = {id ->
+        navigateToEditActiveTimerScreen = { id ->
             val route = SecondaryScreen.EditActiveTimerScreen.createRoute(id)
             navController.navigate(route)
         }
@@ -91,7 +90,9 @@ fun ActiveTimersScreen(
         shouldShowAlertDialog = shouldShowDeleteTimerItemDialogNew
     }
     ObserveAsEvents(stream = shouldNavigateToEditTimerItemScreenStream) { shouldNavigateToEditTimerItemScreen ->
-        if(shouldNavigateToEditTimerItemScreen) navigateToEditActiveTimerScreen(selectedTimerItem?.toTimerItem().hashCode())
+        if (shouldNavigateToEditTimerItemScreen) navigateToEditActiveTimerScreen(
+            selectedTimerItem?.toTimerItem().hashCode()
+        )
     }
     ObserveAsEvents(stream = selectedActiveTimerItemStream) { selectedTimerItemNew ->
         selectedTimerItem = selectedTimerItemNew
@@ -213,7 +214,6 @@ private fun TimerCardsVerticalGrid(
 }
 
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
 private fun CountdownActiveTimerItem(
     modifier: Modifier,
     activeTimerItem: ActiveTimerItem,
@@ -230,70 +230,50 @@ private fun CountdownActiveTimerItem(
     val millisInFutureAlarmTime =
         remember { if (isInDebugMode) activeTimerItem.alarmTime * 1000L else activeTimerItem.alarmTime * 60 * 1000L }
 
-    if (millisInFutureTriggerTime > millisInFutureAlarmTime) {
 
-        val millisInFutureExtraTime =
-            remember { millisInFutureTriggerTime - millisInFutureAlarmTime }
+    val millisInFutureExtraTime =
+        remember { millisInFutureTriggerTime - millisInFutureAlarmTime }
+    var alarmTime by remember { mutableLongStateOf(if (millisInFutureTriggerTime > millisInFutureAlarmTime) millisInFutureAlarmTime / 1000 else millisInFutureTriggerTime / 1000) }
+    var extraTime by remember { mutableLongStateOf(millisInFutureExtraTime / 1000) }
 
-        var alarmTime by remember { mutableLongStateOf(millisInFutureAlarmTime / 1000) }
-        var extraTime by remember { mutableLongStateOf(millisInFutureExtraTime / 1000) }
+    val timeCountDown = remember {
+        object : CountDownTimer(
+            if (millisInFutureTriggerTime > millisInFutureAlarmTime) millisInFutureAlarmTime else millisInFutureTriggerTime,
+            1000
+        ) {
 
-        val timeCountDown = remember {
-            object : CountDownTimer(millisInFutureAlarmTime, 1000) {
-
-                override fun onTick(millisUntilFinished: Long) {
-                    alarmTime = (millisUntilFinished / 1000)
-                }
-
-                override fun onFinish() {}
+            override fun onTick(millisUntilFinished: Long) {
+                alarmTime = (millisUntilFinished / 1000)
             }
+
+            override fun onFinish() {}
         }
-
-        remember {
-            object : CountDownTimer(millisInFutureExtraTime, 1000) {
-
-                override fun onTick(millisUntilFinished: Long) {
-                    extraTime = millisUntilFinished / 1000
-                }
-
-                override fun onFinish() {
-                    timeCountDown.start()
-                }
-            }.start()
-        }
-
-        ActiveTimerCard(modifier = modifier
-            .aspectRatio(7 / 8f)
-            .padding(4.dp),
-            numbers = activeTimerItem.selectedNumbers,
-            time = alarmTime.SecondsFormatTommss(),
-            extraTime = extraTime.SecondsFormatTommss(),
-            onEditIconClick = { onEditIconClick(activeTimerItem) },
-            onXIconClick = { onXIconClick(activeTimerItem) },
-        )
-    } else {
-        var alarmTime by remember { mutableLongStateOf(millisInFutureTriggerTime / 1000) }
-
-        remember {
-            object : CountDownTimer(millisInFutureTriggerTime, 1000) {
-
-                override fun onTick(millisUntilFinished: Long) {
-                    alarmTime = (millisUntilFinished / 1000)
-                }
-
-                override fun onFinish() {}
-            }.start()
-        }
-        ActiveTimerCard(modifier = modifier
-            .aspectRatio(7 / 8f)
-            .padding(4.dp),
-            numbers = activeTimerItem.selectedNumbers,
-            time = alarmTime.SecondsFormatTommss(),
-            extraTime = "00:00",
-            onEditIconClick = { onEditIconClick(activeTimerItem) },
-            onXIconClick = { onXIconClick(activeTimerItem) },
-        )
     }
+
+    remember {
+        object : CountDownTimer(millisInFutureExtraTime, 1000) {
+
+            override fun onTick(millisUntilFinished: Long) {
+                extraTime = millisUntilFinished / 1000
+            }
+
+            override fun onFinish() {
+                timeCountDown.start()
+            }
+        }.start()
+    }
+
+
+    ActiveTimerCard(
+        modifier = modifier
+            .aspectRatio(7 / 8f)
+            .padding(4.dp),
+        numbers = activeTimerItem.selectedNumbers,
+        time = alarmTime.SecondsFormatTommss(),
+        extraTime = extraTime.SecondsFormatTommss(),
+        onEditIconClick = { onEditIconClick(activeTimerItem) },
+        onXIconClick = { onXIconClick(activeTimerItem) },
+    )
 
 
 }

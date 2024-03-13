@@ -38,29 +38,40 @@ class ActiveTimersViewModel @Inject constructor(
 
     fun onEvent(event: ActiveTimersEvent){
         when(event){
-            is ActiveTimersEvent.OnXClick -> {
-                viewModelScope.launch {
-                    selectedActiveTimerItemChannel.send(event.activeTimerItem)
-                    shouldShowDeleteTimerItemDialogChannel.send(true)
-                }
+            is ActiveTimersEvent.OnXIconClick -> {
+                onXIconClick(event.activeTimerItem)
             }
 
-            is ActiveTimersEvent.OnEditClick -> {
-                viewModelScope.launch {
-                    selectedActiveTimerItemChannel.send(event.activeTimerItem)
-                    shouldNavigateToEditTimerItemScreenChannel.send(true)
-                }
+            is ActiveTimersEvent.OnEditIconClick -> {
+                onEditIconClick(event.activeTimerItem)
             }
 
             is ActiveTimersEvent.OnAlertDialogDeleteClick -> {
-                viewModelScope.launch {
-                    repository.deleteTimerItem(event.activeTimerItem.toTimerItem())
-                }
-                alarmScheduler.cancel(event.activeTimerItem.toTimerItem())
+                onAlertDialogDeleteClick(event.activeTimerItem)
             }
         }
     }
 
+    private fun onXIconClick(activeTimerItem: ActiveTimerItem) {
+        viewModelScope.launch {
+            selectedActiveTimerItemChannel.send(activeTimerItem)
+            shouldShowDeleteTimerItemDialogChannel.send(true)
+        }
+    }
+
+    private fun onEditIconClick(activeTimerItem: ActiveTimerItem) {
+        viewModelScope.launch {
+            selectedActiveTimerItemChannel.send(activeTimerItem)
+            shouldNavigateToEditTimerItemScreenChannel.send(true)
+        }
+    }
+
+    private fun onAlertDialogDeleteClick(activeTimerItem: ActiveTimerItem) {
+        viewModelScope.launch {
+            repository.deleteTimerItem(activeTimerItem.toTimerItem())
+        }
+        alarmScheduler.cancel(activeTimerItem.toTimerItem())
+    }
 
 
 }

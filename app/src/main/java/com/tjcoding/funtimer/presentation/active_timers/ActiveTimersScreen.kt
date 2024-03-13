@@ -122,16 +122,16 @@ fun ActiveTimersScreen(
             TimerCardsVerticalGrid(
                 modifier.padding(paddingValues),
                 state.activeTimerItems,
-                onXClick = { activeTimerItem ->
+                onXIconClick = { activeTimerItem ->
                     onEvent(
-                        ActiveTimersEvent.OnXClick(
+                        ActiveTimersEvent.OnXIconClick(
                             activeTimerItem
                         )
                     )
                 },
-                onEditClick = { activeTimerItem ->
+                onEditIconClick = { activeTimerItem ->
                     onEvent(
-                        ActiveTimersEvent.OnEditClick(
+                        ActiveTimersEvent.OnEditIconClick(
                             activeTimerItem
                         )
                     )
@@ -200,14 +200,14 @@ private fun TimerCardsVerticalGrid(
 
     modifier: Modifier,
     activeTimerItems: List<ActiveTimerItem>,
-    onXClick: (ActiveTimerItem) -> Unit,
-    onEditClick: (ActiveTimerItem) -> Unit
+    onXIconClick: (ActiveTimerItem) -> Unit,
+    onEditIconClick: (ActiveTimerItem) -> Unit
 ) {
     CustomItemsVerticalGrid(
         modifier = modifier,
         items = activeTimerItems,
         key = { pastTimerItem -> pastTimerItem.hashCode() }) { lazyListModifier, activeTimerItem ->
-        CountdownActiveTimerItem(lazyListModifier, activeTimerItem, onXClick, onEditClick)
+        CountdownActiveTimerItem(lazyListModifier, activeTimerItem, onXIconClick, onEditIconClick)
     }
 
 }
@@ -217,8 +217,8 @@ private fun TimerCardsVerticalGrid(
 private fun CountdownActiveTimerItem(
     modifier: Modifier,
     activeTimerItem: ActiveTimerItem,
-    onXClick: (ActiveTimerItem) -> Unit,
-    onEditClick: (ActiveTimerItem) -> Unit,
+    onXIconClick: (ActiveTimerItem) -> Unit,
+    onEditIconClick: (ActiveTimerItem) -> Unit,
 ) {
     val isInDebugMode = BuildConfig.DEBUG
 
@@ -268,8 +268,8 @@ private fun CountdownActiveTimerItem(
             numbers = activeTimerItem.selectedNumbers,
             time = alarmTime.SecondsFormatTommss(),
             extraTime = extraTime.SecondsFormatTommss(),
-            onEditClick = { onEditClick(activeTimerItem) },
-            onXClick = { onXClick(activeTimerItem) },
+            onEditIconClick = { onEditIconClick(activeTimerItem) },
+            onXIconClick = { onXIconClick(activeTimerItem) },
         )
     } else {
         var alarmTime by remember { mutableLongStateOf(millisInFutureTriggerTime / 1000) }
@@ -290,8 +290,8 @@ private fun CountdownActiveTimerItem(
             numbers = activeTimerItem.selectedNumbers,
             time = alarmTime.SecondsFormatTommss(),
             extraTime = "00:00",
-            onEditClick = { onEditClick(activeTimerItem) },
-            onXClick = { onXClick(activeTimerItem) },
+            onEditIconClick = { onEditIconClick(activeTimerItem) },
+            onXIconClick = { onXIconClick(activeTimerItem) },
         )
     }
 
@@ -304,8 +304,8 @@ fun ActiveTimerCard(
     numbers: List<Int>,
     time: String,
     extraTime: String?,
-    onXClick: () -> Unit,
-    onEditClick: () -> Unit,
+    onXIconClick: () -> Unit,
+    onEditIconClick: () -> Unit,
 ) {
     BasicTimerCard(modifier = modifier, numbers = numbers,
         onNumberBoxClick = {},
@@ -321,7 +321,7 @@ fun ActiveTimerCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(modifier = Modifier.size(32.dp), onClick = onEditClick) {
+                IconButton(modifier = Modifier.size(32.dp), onClick = onEditIconClick) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
                         modifier = Modifier.size(20.dp),
@@ -333,7 +333,7 @@ fun ActiveTimerCard(
                     imageVector = Icons.Outlined.Timer,
                     contentDescription = null
                 )
-                IconButton(modifier = Modifier.size(32.dp), onClick = onXClick) {
+                IconButton(modifier = Modifier.size(32.dp), onClick = onXIconClick) {
                     Icon(
                         imageVector = Icons.Filled.Clear,
                         modifier = Modifier.size(20.dp),

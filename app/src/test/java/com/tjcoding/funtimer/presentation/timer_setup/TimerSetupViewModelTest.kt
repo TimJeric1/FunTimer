@@ -29,7 +29,7 @@ class TimerSetupViewModelTest {
     fun `onEvent should update state when OnDurationRadioButtonClick event is triggered`() = runBlocking {
         // Given
         val initialDurationOption = viewModel.state.first().selectedDurationOption
-        val newDurationOption = DurationOption.SIXTY_MINUTES
+        val newDurationOption = DurationOption.SECOND
 
         // When
         viewModel.onEvent(TimerSetupEvent.OnDurationRadioButtonClick(newDurationOption))

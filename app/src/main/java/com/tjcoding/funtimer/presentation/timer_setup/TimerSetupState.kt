@@ -35,15 +35,15 @@ data class TimerSetupState(
 
 
 enum class DurationOption {
-    THIRTY_MINUTES, SIXTY_MINUTES, CUSTOM;
+    FIRST, SECOND, THIRD;
 
     companion object {
         fun indexToDurationOption(index: Int): DurationOption {
             return when (index) {
-                0 -> THIRTY_MINUTES
-                1 -> SIXTY_MINUTES
-                2 -> CUSTOM
-                else -> THIRTY_MINUTES
+                0 -> FIRST
+                1 -> SECOND
+                2 -> THIRD
+                else -> FIRST
             }
         }
     }
@@ -56,9 +56,9 @@ fun DurationOption.toDuration(durations: Map<DurationOption, Int>): Int{
 }
 fun DurationOption. toIndex(): Int{
     return when(this){
-        DurationOption.THIRTY_MINUTES -> 0
-        DurationOption.SIXTY_MINUTES -> 1
-        DurationOption.CUSTOM -> 2
+        DurationOption.FIRST -> 0
+        DurationOption.SECOND -> 1
+        DurationOption.THIRD -> 2
     }
 }
 enum class LayoutView {

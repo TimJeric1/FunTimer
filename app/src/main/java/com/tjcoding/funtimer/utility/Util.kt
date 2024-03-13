@@ -20,9 +20,9 @@ import java.util.ArrayList
 
 object Util {
     const val DEFAULT_SELECTED_EXTRA_TIME = 2
-    val DEFAULT_DISPLAYED_DURATIONS = mapOf(DurationOption.THIRTY_MINUTES to 30, DurationOption.SIXTY_MINUTES to 60, DurationOption.CUSTOM to -1)
+    val DEFAULT_DISPLAYED_DURATIONS = mapOf(DurationOption.FIRST to 30, DurationOption.SECOND to 60, DurationOption.THIRD to -1)
     val DEFAULT_SELECTED_LAYOUT_VIEW = LayoutView.STANDARD
-    val DEFAULT_DURATION_OPTION = DurationOption.THIRTY_MINUTES
+    val DEFAULT_DURATION_OPTION = DurationOption.FIRST
     val DEFAULT_POSSIBLE_NUMBERS = (1..99).toList()
     val DEFAULT_SELECTED_NUMBERS = ArrayList<Int>(100)
     val DEFAULT_DISPLAYED_NUMBER = 1

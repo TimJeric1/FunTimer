@@ -16,9 +16,9 @@ class FakeUserPreferencesRepository : UserPreferencesRepository {
 
     private val _userPreferencesStream = MutableStateFlow(UserPreferences(
         customDurations = mapOf(
-            DurationOption.THIRTY_MINUTES to DEFAULT_DISPLAYED_DURATIONS[DurationOption.THIRTY_MINUTES]!!,
-            DurationOption.SIXTY_MINUTES to DEFAULT_DISPLAYED_DURATIONS[DurationOption.SIXTY_MINUTES]!!,
-            DurationOption.CUSTOM to DEFAULT_DISPLAYED_DURATIONS[DurationOption.CUSTOM]!!,
+            DurationOption.FIRST to DEFAULT_DISPLAYED_DURATIONS[DurationOption.FIRST]!!,
+            DurationOption.SECOND to DEFAULT_DISPLAYED_DURATIONS[DurationOption.SECOND]!!,
+            DurationOption.THIRD to DEFAULT_DISPLAYED_DURATIONS[DurationOption.THIRD]!!,
         ),
         selectedLayoutView = DEFAULT_SELECTED_LAYOUT_VIEW,
         selectedExtraTime = DEFAULT_SELECTED_EXTRA_TIME,

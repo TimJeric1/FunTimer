@@ -206,11 +206,11 @@ class TimerSetupViewModel @Inject constructor(
         _state.update {
             it.copy(selectedDurationOption = newDuration)
         }
-        if (newDuration == DurationOption.CUSTOM) onCustomDurationSelected()
+        if (newDuration == DurationOption.THIRD) onCustomDurationSelected()
     }
 
     private fun onCustomDurationSelected() {
-        if (state.value.displayedDurations[DurationOption.CUSTOM] == -1)
+        if (state.value.displayedDurations[DurationOption.THIRD] == -1)
             viewModelScope.launch { showCustomTimePickerDialog() }
     }
 

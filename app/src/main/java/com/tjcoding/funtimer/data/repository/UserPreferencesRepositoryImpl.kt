@@ -40,9 +40,9 @@ class UserPreferencesRepositoryImpl(
         .map { preferences ->
             val customDurationsList = preferences[PreferencesKeys.SELECTED_CUSTOM_DURATIONS]?.map { it.toInt() } ?: DEFAULT_DISPLAYED_DURATIONS.values.toList()
             val customDurations = mapOf(
-                DurationOption.THIRTY_MINUTES to customDurationsList[DurationOption.THIRTY_MINUTES.toIndex()],
-                DurationOption.SIXTY_MINUTES to customDurationsList[DurationOption.SIXTY_MINUTES.toIndex()],
-                DurationOption.CUSTOM to customDurationsList[DurationOption.CUSTOM.toIndex()],
+                DurationOption.FIRST to customDurationsList[DurationOption.FIRST.toIndex()],
+                DurationOption.SECOND to customDurationsList[DurationOption.SECOND.toIndex()],
+                DurationOption.THIRD to customDurationsList[DurationOption.THIRD.toIndex()],
             )
             val selectedLayoutView = LayoutView.fromString(preferences[PreferencesKeys.SELECTED_LAYOUT_VIEW] ?: "")
             val selectedExtraTime = preferences[PreferencesKeys.SELECTED_EXTRA_TIME] ?: DEFAULT_SELECTED_EXTRA_TIME

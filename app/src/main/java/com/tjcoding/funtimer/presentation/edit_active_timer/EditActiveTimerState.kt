@@ -8,7 +8,7 @@ import com.tjcoding.funtimer.utility.Util.DEFAULT_SELECTED_NUMBERS
 
 private const val TAG = "TimerSetupState"
 
-data class TimerSetupState(
+data class EditActiveTimerState(
     val displayedNumber: Int = DEFAULT_DISPLAYED_NUMBER,
     val selectedNumbers: List<Int> = DEFAULT_SELECTED_NUMBERS,
     val possibleNumbers: List<Int> = DEFAULT_POSSIBLE_NUMBERS,

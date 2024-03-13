@@ -1,4 +1,4 @@
-package com.tjcoding.funtimer.presentation.edit_active_timer
+package com.tjcoding.funtimer.presentation.timer_setup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,13 +9,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Backspace
+import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.ViewCompact
 import androidx.compose.material.icons.filled.ViewCompactAlt
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -27,34 +33,31 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tjcoding.funtimer.presentation.timer_setup.components.NumberSelector
 import com.tjcoding.funtimer.presentation.timer_setup.components.TimeRadioGroup
-import com.tjcoding.funtimer.presentation.components.TimerCard
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.repeatOnLifecycle
+import com.tjcoding.funtimer.presentation.components.BasicTimerCard
+import com.tjcoding.funtimer.presentation.edit_active_timer.EditActiveTimerState
 import com.tjcoding.funtimer.presentation.timer_setup.components.PickerAlertDialog
 import com.tjcoding.funtimer.presentation.timer_setup.components.PickerState
 import com.tjcoding.funtimer.presentation.timer_setup.components.rememberPickerState
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
-import kotlinx.coroutines.Dispatchers
+import com.tjcoding.funtimer.utility.Util.ObserveAsEvents
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.withContext
 
 
 @Composable
 fun EditActiveTimerScreenRoot(
     modifier: Modifier = Modifier,
-    viewModel: EditActiveTimerViewModel = hiltViewModel(),
-    id: Int,
+    viewModel: TimerSetupViewModel = hiltViewModel()
 ) {
 
     EditActiveTimerScreen(
@@ -71,7 +74,7 @@ fun EditActiveTimerScreenRoot(
 fun EditActiveTimerScreen(
     modifier: Modifier = Modifier,
     state: TimerSetupState,
-    onEvent: (EditActiveTimerEvent) -> Unit,
+    onEvent: (TimerSetupEvent) -> Unit,
     shouldShowCustomTimePickerDialogStream: Flow<Boolean>,
     shouldShowExtraTimePickerDialogStream: Flow<Boolean>,
 
@@ -100,13 +103,13 @@ fun EditActiveTimerScreen(
                 Text(text = "Fun Timer")
             },
                 actions = {
-                    IconButton(onClick = { onEvent(EditActiveTimerEvent.OnLayoutViewIconClick) }) {
+                    IconButton(onClick = { onEvent(TimerSetupEvent.OnLayoutViewIconClick) }) {
                         Icon(
                             imageVector = if (state.selectedLayoutView == LayoutView.STANDARD) Icons.Default.ViewCompact else Icons.Default.ViewCompactAlt,
                             contentDescription = "layout view icon"
                         )
                     }
-                    IconButton(onClick = { onEvent(EditActiveTimerEvent.OnExtraTimeIconClick) }) {
+                    IconButton(onClick = { onEvent(TimerSetupEvent.OnExtraTimeIconClick) }) {
                         Text(text = "ET")
                     }
 
@@ -157,7 +160,7 @@ private fun StandardLayout(
     paddingValues: PaddingValues,
     screenHeight: Int,
     state: TimerSetupState,
-    onEvent: (EditActiveTimerEvent) -> Unit,
+    onEvent: (TimerSetupEvent) -> Unit,
     radioOptions: List<String>
 ) {
     Column(
@@ -172,10 +175,10 @@ private fun StandardLayout(
             modifier = Modifier.fillMaxWidth(0.7f),
             displayedNumber = state.displayedNumber,
             onLeftFilledArrowClick = {
-                onEvent(EditActiveTimerEvent.OnLeftFilledArrowClick)
+                onEvent(TimerSetupEvent.OnLeftFilledArrowClick)
             },
             onRightFilledArrowClick = {
-                onEvent(EditActiveTimerEvent.OnRightFilledArrowClick)
+                onEvent(TimerSetupEvent.OnRightFilledArrowClick)
             }
         )
         TimeRadioGroup(
@@ -183,26 +186,26 @@ private fun StandardLayout(
             selectedOption = state.selectedDurationOption.toIndex(),
             onOptionSelected = { index ->
                 onEvent(
-                    EditActiveTimerEvent.OnDurationRadioButtonClick(
+                    TimerSetupEvent.OnDurationRadioButtonClick(
                         duration = DurationOption.indexToDurationOption(index)
                     )
                 )
             },
             onLongClick = { index ->
                 onEvent(
-                    EditActiveTimerEvent.OnDurationRadioButtonClick(
+                    TimerSetupEvent.OnDurationRadioButtonClick(
                         duration = DurationOption.indexToDurationOption(index)
                     )
                 )
-                onEvent(EditActiveTimerEvent.OnDurationRadioButtonLongClick)
+                onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick)
             },
             onDoubleClick = { index ->
                 onEvent(
-                    EditActiveTimerEvent.OnDurationRadioButtonClick(
+                    TimerSetupEvent.OnDurationRadioButtonClick(
                         duration = DurationOption.indexToDurationOption(index)
                     )
                 )
-                onEvent(EditActiveTimerEvent.OnDurationRadioButtonLongClick)
+                onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick)
             }
         )
         Row(
@@ -210,24 +213,26 @@ private fun StandardLayout(
             Arrangement.SpaceEvenly
         ) {
             OutlinedButton(onClick = {
-                onEvent(EditActiveTimerEvent.OnAddButtonClick)
+                onEvent(TimerSetupEvent.OnAddButtonClick)
             }) {
                 Text(text = "Add")
             }
             Button(onClick = {
-                onEvent(EditActiveTimerEvent.OnSaveButtonClick)
+                onEvent(TimerSetupEvent.OnSaveButtonClick)
             }) {
                 Text(text = "Save")
             }
         }
-        TimerCard(
+        EditActiveTimerCard(
             modifier = Modifier
                 .height(screenHeight.dp * 0.25f)
                 .aspectRatio(7/8f),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
             extraTime = state.getExtraTimeInTimeFormat(),
-            onNumberBoxClick = { number: Int -> onEvent(EditActiveTimerEvent.OnSelectedNumberClick(number)) }
+            onNumberBoxClick = { number: Int -> onEvent(TimerSetupEvent.OnSelectedNumberClick(number)) },
+            onBackspaceIconClick = { onEvent(TimerSetupEvent.OnBackspaceIconClick) },
+            onRestartIconClick = { onEvent(TimerSetupEvent.OnRestartIconClick) }
         )
 
 
@@ -240,7 +245,7 @@ private fun AlternativeLayout(
     paddingValues: PaddingValues,
     screenHeight: Int,
     state: TimerSetupState,
-    onEvent: (EditActiveTimerEvent) -> Unit,
+    onEvent: (TimerSetupEvent) -> Unit,
     radioOptions: List<String>
 ) {
     Column(
@@ -250,22 +255,25 @@ private fun AlternativeLayout(
         horizontalAlignment = CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        TimerCard(
+        EditActiveTimerCard(
             modifier = Modifier
                 .height(screenHeight.dp * 0.25f)
                 .aspectRatio(7/8f),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
             extraTime = state.getExtraTimeInTimeFormat(),
-            onNumberBoxClick = { number: Int -> onEvent(EditActiveTimerEvent.OnSelectedNumberClick(number)) }
+            onNumberBoxClick = { number: Int -> onEvent(TimerSetupEvent.OnSelectedNumberClick(number)) },
+            onBackspaceIconClick = { onEvent(TimerSetupEvent.OnBackspaceIconClick) },
+            onRestartIconClick = { onEvent(TimerSetupEvent.OnRestartIconClick) },
         )
         NumberSelector(
+            modifier = Modifier.fillMaxWidth(0.7f),
             displayedNumber = state.displayedNumber,
             onLeftFilledArrowClick = {
-                onEvent(EditActiveTimerEvent.OnLeftFilledArrowClick)
+                onEvent(TimerSetupEvent.OnLeftFilledArrowClick)
             },
             onRightFilledArrowClick = {
-                onEvent(EditActiveTimerEvent.OnRightFilledArrowClick)
+                onEvent(TimerSetupEvent.OnRightFilledArrowClick)
             }
         )
         TimeRadioGroup(
@@ -273,26 +281,26 @@ private fun AlternativeLayout(
             selectedOption = state.selectedDurationOption.toIndex(),
             onOptionSelected = { index ->
                 onEvent(
-                    EditActiveTimerEvent.OnDurationRadioButtonClick(
+                    TimerSetupEvent.OnDurationRadioButtonClick(
                         duration = DurationOption.indexToDurationOption(index)
                     )
                 )
             },
             onLongClick = { index ->
                 onEvent(
-                    EditActiveTimerEvent.OnDurationRadioButtonClick(
+                    TimerSetupEvent.OnDurationRadioButtonClick(
                         duration = DurationOption.indexToDurationOption(index)
                     )
                 )
-                onEvent(EditActiveTimerEvent.OnDurationRadioButtonLongClick)
+                onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick)
             },
             onDoubleClick = { index ->
                 onEvent(
-                    EditActiveTimerEvent.OnDurationRadioButtonClick(
+                    TimerSetupEvent.OnDurationRadioButtonClick(
                         duration = DurationOption.indexToDurationOption(index)
                     )
                 )
-                onEvent(EditActiveTimerEvent.OnDurationRadioButtonLongClick)
+                onEvent(TimerSetupEvent.OnDurationRadioButtonLongClick)
             }
         )
         Row(
@@ -300,12 +308,12 @@ private fun AlternativeLayout(
             Arrangement.SpaceEvenly
         ) {
             OutlinedButton(onClick = {
-                onEvent(EditActiveTimerEvent.OnAddButtonClick)
+                onEvent(TimerSetupEvent.OnAddButtonClick)
             }) {
                 Text(text = "Add")
             }
             Button(onClick = {
-                onEvent(EditActiveTimerEvent.OnSaveButtonClick)
+                onEvent(TimerSetupEvent.OnSaveButtonClick)
             }) {
                 Text(text = "Save")
             }
@@ -317,9 +325,9 @@ private fun AlternativeLayout(
 
 @Composable
 fun CustomTimePickerAlertDialog(
-    state: TimerSetupState,
+    state: EditActiveTimerState,
     pickerState: PickerState,
-    onEvent: (EditActiveTimerEvent) -> Unit,
+    onEvent: (TimerSetupEvent) -> Unit,
     onDismissRequest: () -> Unit
 ) {
     val items = (5..100 step 5).toList()
@@ -330,7 +338,7 @@ fun CustomTimePickerAlertDialog(
     PickerAlertDialog(
         pickerState = pickerState,
         onConfirmRequest = { pickedItem ->
-            onEvent(EditActiveTimerEvent.OnCustomDurationPicked(pickedItem.toInt()))
+            onEvent(TimerSetupEvent.OnCustomDurationPicked(pickedItem.toInt()))
         },
         onDismissRequest = onDismissRequest,
         items = items.map { it.toString() },
@@ -342,16 +350,16 @@ fun CustomTimePickerAlertDialog(
 
 @Composable
 fun ExtraTimePickerAlertDialog(
-    state: TimerSetupState,
+    state: EditActiveTimerState,
     pickerState: PickerState,
-    onEvent: (EditActiveTimerEvent) -> Unit,
+    onEvent: (TimerSetupEvent) -> Unit,
     onDismissRequest: () -> Unit
 ) {
     val items = (1..10).toList()
     PickerAlertDialog(
         pickerState = pickerState,
         onConfirmRequest = { pickedItem ->
-            onEvent(EditActiveTimerEvent.OnExtraTimePicked(pickedItem.toInt()))
+            onEvent(TimerSetupEvent.OnExtraTimePicked(pickedItem.toInt()))
         },
         onDismissRequest = onDismissRequest,
         items = items.map { it.toString() },
@@ -360,18 +368,71 @@ fun ExtraTimePickerAlertDialog(
     )
 }
 
-
 @Composable
-fun <T> ObserveAsEvents(stream: Flow<T>, onEvent: (T) -> Unit) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(stream, lifecycleOwner.lifecycle) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            withContext(Dispatchers.Main.immediate) {
-                stream.collect(onEvent)
+fun EditActiveTimerCard(
+    modifier: Modifier = Modifier,
+    numbers: List<Int>,
+    time: String,
+    extraTime: String?,
+    onNumberBoxClick: (Int) -> Unit,
+    onBackspaceIconClick: () -> Unit,
+    onRestartIconClick: () -> Unit,
+) {
+    BasicTimerCard(modifier = modifier, numbers = numbers,
+        onNumberBoxClick = onNumberBoxClick,
+        cardColors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ),
+        boxBorderColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        boxTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        top = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(modifier = Modifier.size(32.dp), onClick = onBackspaceIconClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Backspace,
+                        modifier = Modifier.size(18.dp),
+                        contentDescription = null
+                    )
+                }
+                Icon(
+                    modifier = Modifier.padding(vertical = 2.dp),
+                    imageVector = Icons.Outlined.Timer,
+                    contentDescription = null
+                )
+                IconButton(modifier = Modifier.size(32.dp), onClick = onRestartIconClick) {
+                    Icon(
+                        imageVector = Icons.Filled.RestartAlt,
+                        modifier = Modifier.size(20.dp),
+                        contentDescription = null
+                    )
+                }
             }
-        }
-    }
+
+        }, bottom = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceAround
+            ) {
+                Text(
+                    text = time,
+                    style = MaterialTheme.typography.labelLarge
+                )
+                if (extraTime != null) {
+                    Text(
+                        text = "ET: $extraTime",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+            }
+        })
 }
+
 
 
 
@@ -382,7 +443,7 @@ private fun TimerSetupScreenPreview() {
         Surface(
             tonalElevation = 2.dp
         ) {
-            EditActiveTimerScreen(
+            TimerSetupScreen(
                 modifier = Modifier,
                 state = TimerSetupState(),
                 onEvent = {},

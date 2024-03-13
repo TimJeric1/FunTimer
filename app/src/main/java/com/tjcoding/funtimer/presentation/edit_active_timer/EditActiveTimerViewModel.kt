@@ -40,11 +40,11 @@ class EditActiveTimerViewModel @Inject constructor(
 
     private val userPreferencesStream = userPreferencesRepository.userPreferencesStream
 
-    private val _state = MutableStateFlow(TimerSetupState())
+    private val _state = MutableStateFlow(EditActiveTimerState())
     // it has to combine timerItemStream in order for the timerItemsStream to have a collector
     val state = combine(_state, timerItemsStream, userPreferencesStream) { state, _, userPreferences ->
         state.copy()
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TimerSetupState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EditActiveTimerState())
 
     private val shouldShowCustomTimePickerDialogChannel = Channel<Boolean>()
     val shouldShowCustomTimePickerDialogStream = shouldShowCustomTimePickerDialogChannel.receiveAsFlow()
@@ -95,10 +95,43 @@ class EditActiveTimerViewModel @Inject constructor(
             EditActiveTimerEvent.OnExtraTimeIconClick -> {
                 onExtraTimeButtonClick()
             }
+            EditActiveTimerEvent.OnRestartIconClick -> {
+                onRestartIconClick()
+            }
+            EditActiveTimerEvent.OnBackspaceIconClick -> {
+                onBackspaceIconClick()
+            }
         }
 
 
     }
+
+    private fun onRestartIconClick() {
+        val selectedNumbers = state.value.selectedNumbers.toMutableList()
+        val newPossibleNumbers = state.value.possibleNumbers.toMutableList()
+        for(number in selectedNumbers) newPossibleNumbers.addInOrder(number)
+        _state.update {
+            it.copy(
+                displayedNumber = newPossibleNumbers.first(),
+                selectedNumbers = emptyList(),
+                possibleNumbers = newPossibleNumbers.toList(),
+                selectedDurationOption = DurationOption.indexToDurationOption(0)
+            )
+        }
+    }
+    private fun onBackspaceIconClick() {
+        val newSelectedNumbers = state.value.selectedNumbers.toMutableList()
+        val removedNumber = newSelectedNumbers.removeLast()
+        val newPossibleNumbers = state.value.possibleNumbers.toMutableList()
+        newPossibleNumbers.addInOrder(removedNumber)
+        _state.update {
+            it.copy(
+                selectedNumbers = newSelectedNumbers.toList(),
+                possibleNumbers = newPossibleNumbers.toList()
+            )
+        }
+    }
+
 
     private fun onExtraTimeButtonClick() {
         viewModelScope.launch {

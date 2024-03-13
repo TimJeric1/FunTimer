@@ -1,8 +1,16 @@
 package com.tjcoding.funtimer.utility
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.tjcoding.funtimer.presentation.timer_setup.DurationOption
 import com.tjcoding.funtimer.presentation.timer_setup.LayoutView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -52,6 +60,19 @@ object Util {
         }
         return false
     }
+
+    @Composable
+    fun <T> ObserveAsEvents(stream: Flow<T>, onEvent: (T) -> Unit) {
+        val lifecycleOwner = LocalLifecycleOwner.current
+        LaunchedEffect(stream, lifecycleOwner.lifecycle) {
+            lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                withContext(Dispatchers.Main.immediate) {
+                    stream.collect(onEvent)
+                }
+            }
+        }
+    }
+
 
 
 }

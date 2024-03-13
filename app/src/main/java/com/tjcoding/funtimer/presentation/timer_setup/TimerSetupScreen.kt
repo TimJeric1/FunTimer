@@ -37,24 +37,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tjcoding.funtimer.presentation.timer_setup.components.NumberSelector
 import com.tjcoding.funtimer.presentation.timer_setup.components.TimeRadioGroup
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import com.tjcoding.funtimer.presentation.components.BasicTimerCard
 import com.tjcoding.funtimer.presentation.timer_setup.components.PickerAlertDialog
 import com.tjcoding.funtimer.presentation.timer_setup.components.PickerState
 import com.tjcoding.funtimer.presentation.timer_setup.components.rememberPickerState
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
-import kotlinx.coroutines.Dispatchers
+import com.tjcoding.funtimer.utility.Util.ObserveAsEvents
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -226,7 +222,7 @@ private fun StandardLayout(
                 Text(text = "Save")
             }
         }
-        SetupTimerCard(
+        TimerSetupTimerCard(
             modifier = Modifier
                 .height(screenHeight.dp * 0.25f)
                 .aspectRatio(7/8f),
@@ -258,7 +254,7 @@ private fun AlternativeLayout(
         horizontalAlignment = CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        SetupTimerCard(
+        TimerSetupTimerCard(
             modifier = Modifier
                 .height(screenHeight.dp * 0.25f)
                 .aspectRatio(7/8f),
@@ -372,7 +368,7 @@ fun ExtraTimePickerAlertDialog(
 }
 
 @Composable
-fun SetupTimerCard(
+fun TimerSetupTimerCard(
     modifier: Modifier = Modifier,
     numbers: List<Int>,
     time: String,
@@ -437,17 +433,6 @@ fun SetupTimerCard(
 }
 
 
-@Composable
-fun <T> ObserveAsEvents(stream: Flow<T>, onEvent: (T) -> Unit) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(stream, lifecycleOwner.lifecycle) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            withContext(Dispatchers.Main.immediate) {
-                stream.collect(onEvent)
-            }
-        }
-    }
-}
 
 
 

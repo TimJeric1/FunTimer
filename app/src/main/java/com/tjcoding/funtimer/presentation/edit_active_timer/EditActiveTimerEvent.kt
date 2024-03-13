@@ -1,5 +1,6 @@
 package com.tjcoding.funtimer.presentation.edit_active_timer
 
+
 sealed interface EditActiveTimerEvent {
     data object OnLeftFilledArrowClick: EditActiveTimerEvent
     data object OnRightFilledArrowClick: EditActiveTimerEvent
@@ -17,4 +18,8 @@ sealed interface EditActiveTimerEvent {
     data object OnLayoutViewIconClick: EditActiveTimerEvent
 
     data object OnExtraTimeIconClick: EditActiveTimerEvent
+
+    data object OnBackspaceIconClick: EditActiveTimerEvent
+
+    data object OnRestartIconClick: EditActiveTimerEvent
 }

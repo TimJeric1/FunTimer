@@ -57,7 +57,8 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun EditActiveTimerScreenRoot(
     modifier: Modifier = Modifier,
-    viewModel: TimerSetupViewModel = hiltViewModel()
+    viewModel: TimerSetupViewModel = hiltViewModel(),
+    id: Int
 ) {
 
     EditActiveTimerScreen(

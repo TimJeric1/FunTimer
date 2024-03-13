@@ -10,6 +10,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -45,11 +48,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.tjcoding.funtimer.presentation.active_timers.ActiveTimersScreenRoot
+import com.tjcoding.funtimer.presentation.edit_active_timer.EditActiveTimerScreenRoot
 import com.tjcoding.funtimer.presentation.past_timers.PastTimersScreenRoot
 import com.tjcoding.funtimer.utility.navigation.Screen
 import com.tjcoding.funtimer.presentation.timer_setup.TimerSetupScreenRoot
 import com.tjcoding.funtimer.service.scheduled_work.ClearDatabaseScheduler
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
+import com.tjcoding.funtimer.utility.navigation.SecondaryScreen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -75,15 +80,32 @@ class MainActivity : ComponentActivity() {
                     tonalElevation = 5.dp
                 ) {
 
-                    NavigationBarColor(color = MaterialTheme.colorScheme.surfaceColorAtElevation(NavigationBarDefaults.Elevation + 5.dp))
+                    NavigationBarColor(
+                        color = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                            NavigationBarDefaults.Elevation + 5.dp
+                        )
+                    )
                     StatusBarColor(color = MaterialTheme.colorScheme.surfaceColorAtElevation(5.dp))
 
 
                     val navController = rememberNavController()
+                    val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
+
                     Scaffold(
-                        bottomBar = { BottomNavigationBar(navController) }
+                        bottomBar = {
+                            AnimatedVisibility(
+                                visible = currentDestination != SecondaryScreen.EditActiveTimerScreen.route,
+                                enter = expandVertically(),
+                                exit = shrinkVertically()
+                            ) {
+                                BottomNavigationBar(navController)
+                            }
+                        }
                     ) { contentPadding ->
-                        NavHost(navController = navController, startDestination = Screen.TimerSetupScreen.route) {
+                        NavHost(
+                            navController = navController,
+                            startDestination = Screen.TimerSetupScreen.route
+                        ) {
                             composable(Screen.TimerSetupScreen.route) {
                                 TimerSetupScreenRoot(
                                     modifier = Modifier.padding(
@@ -95,7 +117,8 @@ class MainActivity : ComponentActivity() {
                                 ActiveTimersScreenRoot(
                                     modifier = Modifier.padding(
                                         contentPadding
-                                    )
+                                    ),
+                                    navController = navController
                                 )
                             }
                             composable(Screen.PastTimersScreen.route) {
@@ -103,6 +126,18 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier.padding(
                                         contentPadding
                                     )
+                                )
+                            }
+                            composable(
+                                route = SecondaryScreen.EditActiveTimerScreen.route,
+                                arguments = SecondaryScreen.EditActiveTimerScreen.arguments
+                            ) { backStackEntry ->
+                                val id = backStackEntry.arguments?.getInt("id")
+                                EditActiveTimerScreenRoot(
+                                    modifier = Modifier.padding(
+                                        contentPadding
+                                    ),
+                                    id = id ?: 0,
                                 )
                             }
                         }
@@ -143,7 +178,7 @@ class MainActivity : ComponentActivity() {
                             // Restore state when reselecting a previously selected item
                         }
                     },
-                    label = { Text(text = screen.name)},
+                    label = { Text(text = screen.name) },
                     colors = NavigationBarItemDefaults.colors(
                         indicatorColor = MaterialTheme.colorScheme.primaryContainer
                     )
@@ -164,7 +199,10 @@ class MainActivity : ComponentActivity() {
         if (!view.isInEditMode) {
             SideEffect {
                 (view.context as Activity).window.navigationBarColor = color.toArgb()
-                WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightNavigationBars = !darkTheme
+                WindowCompat.getInsetsController(
+                    currentWindow,
+                    view
+                ).isAppearanceLightNavigationBars = !darkTheme
             }
         }
     }
@@ -179,7 +217,8 @@ class MainActivity : ComponentActivity() {
         if (!view.isInEditMode) {
             SideEffect {
                 (view.context as Activity).window.statusBarColor = color.toArgb()
-                WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars = !darkTheme
+                WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars =
+                    !darkTheme
             }
         }
     }
@@ -256,8 +295,6 @@ class MainActivity : ComponentActivity() {
         }
 
     }
-
-
 
 
 }

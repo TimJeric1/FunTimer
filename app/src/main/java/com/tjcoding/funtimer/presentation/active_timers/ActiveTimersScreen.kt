@@ -2,7 +2,6 @@ package com.tjcoding.funtimer.presentation.active_timers
 
 import android.os.CountDownTimer
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +28,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,12 +39,14 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.tjcoding.funtimer.BuildConfig
 import com.tjcoding.funtimer.presentation.components.BasicTimerCard
 import com.tjcoding.funtimer.presentation.components.CustomItemsVerticalGrid
 import com.tjcoding.funtimer.presentation.timer_setup.ObserveAsEvents
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 import com.tjcoding.funtimer.utility.Util.SecondsFormatTommss
+import com.tjcoding.funtimer.utility.navigation.SecondaryScreen
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDateTime
@@ -55,7 +55,8 @@ import java.time.ZoneId
 @Composable
 fun ActiveTimersScreenRoot(
     modifier: Modifier = Modifier,
-    viewModel: ActiveTimersViewModel = hiltViewModel()
+    viewModel: ActiveTimersViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     ActiveTimersScreen(
         state = viewModel.state.collectAsStateWithLifecycle().value,
@@ -63,7 +64,11 @@ fun ActiveTimersScreenRoot(
         modifier = modifier,
         shouldShowDeleteTimerItemDialogStream = viewModel.shouldShowDeleteTimerItemDialogStream,
         shouldNavigateToEditTimerItemScreenStream = viewModel.shouldNavigateToEditTimerItemScreenStream,
-        selectedTimerItemStream = viewModel.selectedTimerItemStream
+        selectedActiveTimerItemStream = viewModel.selectedActiveTimerItemStream,
+        navigateToEditActiveTimerScreen = {id ->
+            val route = SecondaryScreen.EditActiveTimerScreen.createRoute(id)
+            navController.navigate(route)
+        }
     )
 }
 
@@ -74,21 +79,21 @@ fun ActiveTimersScreen(
     state: ActiveTimersState,
     onEvent: (ActiveTimersEvent) -> Unit,
     shouldShowDeleteTimerItemDialogStream: Flow<Boolean>,
-    shouldNavigateToEditTimerItemScreenStream: Flow<Int>,
-    selectedTimerItemStream: Flow<ActiveTimerItem>
+    shouldNavigateToEditTimerItemScreenStream: Flow<Boolean>,
+    selectedActiveTimerItemStream: Flow<ActiveTimerItem>,
+    navigateToEditActiveTimerScreen: (Int) -> Unit
 ) {
 
     var shouldShowAlertDialog by remember { mutableStateOf(false) }
     var selectedTimerItem: ActiveTimerItem? by remember { mutableStateOf(null) }
-    var shouldNavigateToOtherScreen by remember { mutableIntStateOf(0) }
 
     ObserveAsEvents(stream = shouldShowDeleteTimerItemDialogStream) { shouldShowDeleteTimerItemDialogNew ->
         shouldShowAlertDialog = shouldShowDeleteTimerItemDialogNew
     }
-    ObserveAsEvents(stream = shouldNavigateToEditTimerItemScreenStream) { shouldNavigateToEditTimerItemScreenNew ->
-        shouldNavigateToOtherScreen = shouldNavigateToEditTimerItemScreenNew
+    ObserveAsEvents(stream = shouldNavigateToEditTimerItemScreenStream) { shouldNavigateToEditTimerItemScreen ->
+        if(shouldNavigateToEditTimerItemScreen) navigateToEditActiveTimerScreen(selectedTimerItem?.toTimerItem().hashCode())
     }
-    ObserveAsEvents(stream = selectedTimerItemStream) { selectedTimerItemNew ->
+    ObserveAsEvents(stream = selectedActiveTimerItemStream) { selectedTimerItemNew ->
         selectedTimerItem = selectedTimerItemNew
     }
 
@@ -259,16 +264,12 @@ private fun CountdownActiveTimerItem(
 
         ActiveTimerCard(modifier = modifier
             .aspectRatio(7 / 8f)
-            .padding(4.dp)
-            .combinedClickable(
-                onClick = {},
-                onLongClick = { onXClick(activeTimerItem) }
-            ),
+            .padding(4.dp),
             numbers = activeTimerItem.selectedNumbers,
             time = alarmTime.SecondsFormatTommss(),
             extraTime = extraTime.SecondsFormatTommss(),
             onEditClick = { onEditClick(activeTimerItem) },
-            onXClick = { onXClick(activeTimerItem) }
+            onXClick = { onXClick(activeTimerItem) },
         )
     } else {
         var alarmTime by remember { mutableLongStateOf(millisInFutureTriggerTime / 1000) }
@@ -285,16 +286,12 @@ private fun CountdownActiveTimerItem(
         }
         ActiveTimerCard(modifier = modifier
             .aspectRatio(7 / 8f)
-            .padding(4.dp)
-            .combinedClickable(
-                onClick = {},
-                onLongClick = { onXClick(activeTimerItem) }
-            ),
+            .padding(4.dp),
             numbers = activeTimerItem.selectedNumbers,
             time = alarmTime.SecondsFormatTommss(),
             extraTime = "00:00",
-            onEditClick = {},
-            onXClick = {}
+            onEditClick = { onEditClick(activeTimerItem) },
+            onXClick = { onXClick(activeTimerItem) },
         )
     }
 
@@ -403,9 +400,10 @@ private fun ActiveTimersScreenPreview() {
                     )
                 ),
                 onEvent = {},
-                shouldNavigateToEditTimerItemScreenStream = flowOf(0),
+                shouldNavigateToEditTimerItemScreenStream = flowOf(false),
                 shouldShowDeleteTimerItemDialogStream = flowOf(false),
-                selectedTimerItemStream = flowOf()
+                selectedActiveTimerItemStream = flowOf(),
+                navigateToEditActiveTimerScreen = {}
             )
         }
     }
@@ -424,9 +422,10 @@ private fun ActiveTimersScreenEmptyPreview() {
                     activeTimerItems = emptyList()
                 ),
                 onEvent = {},
-                shouldNavigateToEditTimerItemScreenStream = flowOf(0),
+                shouldNavigateToEditTimerItemScreenStream = flowOf(false),
                 shouldShowDeleteTimerItemDialogStream = flowOf(false),
-                selectedTimerItemStream = flowOf()
+                selectedActiveTimerItemStream = flowOf(),
+                navigateToEditActiveTimerScreen = {}
             )
         }
     }

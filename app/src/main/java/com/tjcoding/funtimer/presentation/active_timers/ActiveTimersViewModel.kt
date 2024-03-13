@@ -30,24 +30,25 @@ class ActiveTimersViewModel @Inject constructor(
     private val shouldShowDeleteTimerItemDialogChannel = Channel<Boolean>()
     val shouldShowDeleteTimerItemDialogStream = shouldShowDeleteTimerItemDialogChannel.receiveAsFlow()
 
-    private val selectedTimerItemChannel = Channel<ActiveTimerItem>()
-    val selectedTimerItemStream = selectedTimerItemChannel.receiveAsFlow()
+    private val selectedActiveTimerItemChannel = Channel<ActiveTimerItem>()
+    val selectedActiveTimerItemStream = selectedActiveTimerItemChannel.receiveAsFlow()
 
-    private val shouldNavigateToEditTimerItemScreenChannel = Channel<Int>()
+    private val shouldNavigateToEditTimerItemScreenChannel = Channel<Boolean>()
     val shouldNavigateToEditTimerItemScreenStream = shouldNavigateToEditTimerItemScreenChannel.receiveAsFlow()
 
     fun onEvent(event: ActiveTimersEvent){
         when(event){
             is ActiveTimersEvent.OnXClick -> {
                 viewModelScope.launch {
-                    selectedTimerItemChannel.send(event.activeTimerItem)
+                    selectedActiveTimerItemChannel.send(event.activeTimerItem)
                     shouldShowDeleteTimerItemDialogChannel.send(true)
                 }
             }
 
             is ActiveTimersEvent.OnEditClick -> {
                 viewModelScope.launch {
-                    shouldNavigateToEditTimerItemScreenChannel.send(event.activeTimerItem.toTimerItem().hashCode())
+                    selectedActiveTimerItemChannel.send(event.activeTimerItem)
+                    shouldNavigateToEditTimerItemScreenChannel.send(true)
                 }
             }
 

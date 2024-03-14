@@ -263,7 +263,7 @@ class TimerSetupViewModel @Inject constructor(
     private fun updateState(timerItems: List<TimerItem>) {
         timerItemsStreamCounter++
 
-        updateSelectedNumbers(timerItems)
+        updatePossibleNumbers(timerItems)
 
         val shouldUpdateDisplayedNumber = timerItemsStreamCounter <= 1
 
@@ -282,7 +282,7 @@ class TimerSetupViewModel @Inject constructor(
         }
     }
 
-    private fun updateSelectedNumbers(timerItems: List<TimerItem>) {
+    private fun updatePossibleNumbers(timerItems: List<TimerItem>) {
         val selectedNumbers = timerItems.map { it.selectedNumbers }.flatten()
         val newPossibleNumbers = (1..99).toList().toMutableList()
         newPossibleNumbers.removeAll(selectedNumbers)

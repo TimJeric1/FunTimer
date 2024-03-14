@@ -137,7 +137,7 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier.padding(
                                         contentPadding
                                     ),
-                                    id = id ?: 0,
+                                    timerItemId = id ?: 0,
                                 )
                             }
                         }

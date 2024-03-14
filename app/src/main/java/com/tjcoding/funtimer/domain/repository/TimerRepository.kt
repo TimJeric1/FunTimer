@@ -15,4 +15,5 @@ interface TimerRepository {
     fun getAllTriggeredTimerItemsStream(): Flow<List<TimerItem>>
 
     suspend fun deleteAll()
+    suspend fun getTimerItemById(timerItemId: Int): TimerItem
 }

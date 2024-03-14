@@ -1,6 +1,5 @@
 package com.tjcoding.funtimer.presentation.active_timers
 
-import android.os.CountDownTimer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,7 +26,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,9 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.tjcoding.funtimer.BuildConfig
 import com.tjcoding.funtimer.presentation.components.BasicTimerCard
 import com.tjcoding.funtimer.presentation.components.CustomItemsVerticalGrid
+import com.tjcoding.funtimer.presentation.timer_setup.AlarmAndExtraTimeCountdown
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 import com.tjcoding.funtimer.utility.Util.ObserveAsEvents
 import com.tjcoding.funtimer.utility.Util.SecondsFormatTommss
@@ -49,7 +47,6 @@ import com.tjcoding.funtimer.utility.navigation.SecondaryScreen
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 @Composable
 fun ActiveTimersScreenRoot(
@@ -208,75 +205,22 @@ private fun TimerCardsVerticalGrid(
         modifier = modifier,
         items = activeTimerItems,
         key = { pastTimerItem -> pastTimerItem.hashCode() }) { lazyListModifier, activeTimerItem ->
-        CountdownActiveTimerItem(lazyListModifier, activeTimerItem, onXIconClick, onEditIconClick)
-    }
-
-}
-
-@Composable
-private fun CountdownActiveTimerItem(
-    modifier: Modifier,
-    activeTimerItem: ActiveTimerItem,
-    onXIconClick: (ActiveTimerItem) -> Unit,
-    onEditIconClick: (ActiveTimerItem) -> Unit,
-) {
-    val isInDebugMode = BuildConfig.DEBUG
-
-
-    val millisInFutureTriggerTime = remember {
-        (activeTimerItem.triggerTime.atZone(ZoneId.systemDefault())
-            .toEpochSecond() * 1000 - System.currentTimeMillis())
-    }
-    val millisInFutureAlarmTime =
-        remember { if (isInDebugMode) activeTimerItem.alarmTime * 1000L else activeTimerItem.alarmTime * 60 * 1000L }
-
-
-    val millisInFutureExtraTime =
-        remember { millisInFutureTriggerTime - millisInFutureAlarmTime }
-    var alarmTime by remember { mutableLongStateOf(if (millisInFutureTriggerTime > millisInFutureAlarmTime) millisInFutureAlarmTime / 1000 else millisInFutureTriggerTime / 1000) }
-    var extraTime by remember { mutableLongStateOf(millisInFutureExtraTime / 1000) }
-
-    val timeCountDown = remember {
-        object : CountDownTimer(
-            if (millisInFutureTriggerTime > millisInFutureAlarmTime) millisInFutureAlarmTime else millisInFutureTriggerTime,
-            1000
-        ) {
-
-            override fun onTick(millisUntilFinished: Long) {
-                alarmTime = (millisUntilFinished / 1000)
-            }
-
-            override fun onFinish() {}
+        AlarmAndExtraTimeCountdown(alarmTime = activeTimerItem.alarmTime, triggerTime = activeTimerItem.triggerTime) {countDownAlarmTime ,countDownExtraTime ->
+            ActiveTimerCard(
+                modifier = lazyListModifier
+                    .aspectRatio(7 / 8f)
+                    .padding(4.dp),
+                numbers = activeTimerItem.selectedNumbers,
+                time = countDownAlarmTime.SecondsFormatTommss(),
+                extraTime = countDownExtraTime.SecondsFormatTommss(),
+                onEditIconClick = { onEditIconClick(activeTimerItem) },
+                onXIconClick = { onXIconClick(activeTimerItem) },
+            )
         }
     }
 
-    remember {
-        object : CountDownTimer(millisInFutureExtraTime, 1000) {
-
-            override fun onTick(millisUntilFinished: Long) {
-                extraTime = millisUntilFinished / 1000
-            }
-
-            override fun onFinish() {
-                timeCountDown.start()
-            }
-        }.start()
-    }
-
-
-    ActiveTimerCard(
-        modifier = modifier
-            .aspectRatio(7 / 8f)
-            .padding(4.dp),
-        numbers = activeTimerItem.selectedNumbers,
-        time = alarmTime.SecondsFormatTommss(),
-        extraTime = extraTime.SecondsFormatTommss(),
-        onEditIconClick = { onEditIconClick(activeTimerItem) },
-        onXIconClick = { onXIconClick(activeTimerItem) },
-    )
-
-
 }
+
 
 @Composable
 fun ActiveTimerCard(

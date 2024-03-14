@@ -52,6 +52,19 @@ abstract class TimerDao {
         updateSelectedNumberEntities(timerItemPair.second)
     }
 
+    @Transaction
+    open suspend fun getTimerItemByIdAsPair(id: Int): Pair<AlarmTriggerTimeEntity, List<SelectedNumberEntity>> {
+        val timeEntity = getTimeEntityById(id)
+        val selectedNumberEntities = getSelectedNumberEntitiesByTimeItemId(id)
+        val timerItemPair = mapOf(timeEntity to selectedNumberEntities).entries.first().toPair()
+        return timerItemPair
+    }
+    @Query("SELECT * FROM AlarmTriggerTimeEntity as t WHERE t.id = :id")
+    protected abstract suspend fun getTimeEntityById(id: Int): AlarmTriggerTimeEntity
+
+    @Query("SELECT * FROM SelectedNumberEntity as t WHERE t.timeItemId = :id")
+    protected abstract suspend fun getSelectedNumberEntitiesByTimeItemId(id: Int): List<SelectedNumberEntity>
+
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
     protected abstract suspend fun updateSelectedNumberEntities(selectedNumberEntities: List<SelectedNumberEntity>)

@@ -1,7 +1,11 @@
 package com.tjcoding.funtimer.presentation.edit_active_timer
 
+import com.tjcoding.funtimer.presentation.timer_setup.DurationOption
+
 
 sealed interface EditActiveTimerEvent {
+
+    data class OnScreenLaunch(val timerItemId: Int): EditActiveTimerEvent
     data object OnLeftFilledArrowClick: EditActiveTimerEvent
     data object OnRightFilledArrowClick: EditActiveTimerEvent
     data class OnDurationRadioButtonClick(val duration: DurationOption): EditActiveTimerEvent
@@ -13,11 +17,7 @@ sealed interface EditActiveTimerEvent {
 
     data class OnCustomDurationPicked(val duration: Int): EditActiveTimerEvent
 
-    data class OnExtraTimePicked(val extraTime: Int): EditActiveTimerEvent
-
     data object OnLayoutViewIconClick: EditActiveTimerEvent
-
-    data object OnExtraTimeIconClick: EditActiveTimerEvent
 
     data object OnBackspaceIconClick: EditActiveTimerEvent
 

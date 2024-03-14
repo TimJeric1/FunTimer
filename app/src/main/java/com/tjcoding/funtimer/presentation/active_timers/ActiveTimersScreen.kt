@@ -47,6 +47,7 @@ import com.tjcoding.funtimer.utility.navigation.SecondaryScreen
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDateTime
+import java.util.UUID
 
 @Composable
 fun ActiveTimersScreenRoot(
@@ -77,7 +78,7 @@ fun ActiveTimersScreen(
     shouldShowDeleteTimerItemDialogStream: Flow<Boolean>,
     shouldNavigateToEditTimerItemScreenStream: Flow<Boolean>,
     selectedActiveTimerItemStream: Flow<ActiveTimerItem>,
-    navigateToEditActiveTimerScreen: (Int) -> Unit
+    navigateToEditActiveTimerScreen: (String) -> Unit
 ) {
 
     var shouldShowAlertDialog by remember { mutableStateOf(false) }
@@ -88,7 +89,7 @@ fun ActiveTimersScreen(
     }
     ObserveAsEvents(stream = shouldNavigateToEditTimerItemScreenStream) { shouldNavigateToEditTimerItemScreen ->
         if (shouldNavigateToEditTimerItemScreen) navigateToEditActiveTimerScreen(
-            selectedTimerItem?.toTimerItem().hashCode()
+            selectedTimerItem?.id.toString()
         )
     }
     ObserveAsEvents(stream = selectedActiveTimerItemStream) { selectedTimerItemNew ->
@@ -204,7 +205,7 @@ private fun TimerCardsVerticalGrid(
     CustomItemsVerticalGrid(
         modifier = modifier,
         items = activeTimerItems,
-        key = { pastTimerItem -> pastTimerItem.hashCode() }) { lazyListModifier, activeTimerItem ->
+        key = { pastTimerItem -> pastTimerItem.id }) { lazyListModifier, activeTimerItem ->
         AlarmAndExtraTimeCountdown(alarmTime = activeTimerItem.alarmTime, triggerTime = activeTimerItem.triggerTime) {countDownAlarmTime ,countDownExtraTime ->
             ActiveTimerCard(
                 modifier = lazyListModifier
@@ -298,24 +299,28 @@ private fun ActiveTimersScreenPreview() {
                 state = ActiveTimersState(
                     activeTimerItems = listOf(
                         ActiveTimerItem(
+                            id = UUID.randomUUID(),
                             selectedNumbers = listOf(1, 2, 3, 4, 5, 6, 10, 15, 16, 17, 18),
                             triggerTime = LocalDateTime.now().plusMinutes(32),
                             alarmTime = 30,
                             extraTime = 2,
                         ),
                         ActiveTimerItem(
+                            id = UUID.randomUUID(),
                             selectedNumbers = listOf(1, 2, 3, 4, 5, 6, 10, 15, 16, 17, 19),
                             triggerTime = LocalDateTime.now(),
                             alarmTime = 30,
                             extraTime = 2,
                         ),
                         ActiveTimerItem(
+                            id = UUID.randomUUID(),
                             selectedNumbers = listOf(1, 2, 3, 4, 5, 6, 10, 15, 16, 17, 20),
                             triggerTime = LocalDateTime.now(),
                             alarmTime = 30,
                             extraTime = 2,
                         ),
                         ActiveTimerItem(
+                            id = UUID.randomUUID(),
                             selectedNumbers = listOf(1, 2, 3, 4, 5, 6, 10, 15, 16, 17, 21),
                             triggerTime = LocalDateTime.now(),
                             alarmTime = 30,

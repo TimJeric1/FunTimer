@@ -16,10 +16,10 @@ interface AlarmNotifications {
         const val CHANNEL_ID = "fun_timer_alarm_channel"
 
         fun getReminderNotificationId(timerItem: TimerItem): Int {
-            return timerItem.hashCode()
+            return timerItem.id.hashCode()
         }
         fun getAlarmNotificationId(timerItem: TimerItem): Int {
-            return timerItem.hashCode()*100
+            return timerItem.id.hashCode()*100
         }
     }
 }

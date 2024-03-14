@@ -31,7 +31,7 @@ class AlarmSchedulerImpl @Inject constructor(
             triggerAtMillis,
             PendingIntent.getBroadcast(
                 context,
-                timerItem.hashCode(),
+                timerItem.id.hashCode(),
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
@@ -42,7 +42,7 @@ class AlarmSchedulerImpl @Inject constructor(
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
-                timerItem.hashCode(),
+                timerItem.id.hashCode(),
                 Intent(context, AlarmReceiver::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )

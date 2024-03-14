@@ -6,6 +6,7 @@ import com.tjcoding.funtimer.presentation.timer_setup.LayoutView
 import com.tjcoding.funtimer.utility.Util.DEFAULT_DISPLAYED_NUMBER
 import com.tjcoding.funtimer.utility.Util.DEFAULT_POSSIBLE_NUMBERS
 import java.time.LocalDateTime
+import java.util.UUID
 
 
 data class EditActiveTimerState(
@@ -18,12 +19,14 @@ data class EditActiveTimerState(
     ),
     val selectedLayoutView: LayoutView = LayoutView.STANDARD,
     val editedTimerItem: ActiveTimerItem = ActiveTimerItem(
+        id = UUID.randomUUID(),
         selectedNumbers = emptyList(),
         alarmTime = 0,
         extraTime = 0,
         triggerTime = LocalDateTime.now()
     ),
     val originalTimerItem: ActiveTimerItem = ActiveTimerItem(
+        id = UUID.randomUUID(),
         selectedNumbers = emptyList(),
         alarmTime = 0,
         extraTime = 0,

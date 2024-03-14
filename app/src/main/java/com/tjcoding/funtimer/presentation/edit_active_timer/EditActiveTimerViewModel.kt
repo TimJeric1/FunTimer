@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 
@@ -108,7 +109,7 @@ class EditActiveTimerViewModel @Inject constructor(
 
     }
 
-    private fun onScreenLaunch(timerItemId: Int) {
+    private fun onScreenLaunch(timerItemId: UUID) {
         viewModelScope.launch {
             val timerItem = timerRepository.getTimerItemById(timerItemId)
             _state.update {

@@ -60,20 +60,21 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.UUID
 
 
 @Composable
 fun EditActiveTimerScreenRoot(
     modifier: Modifier = Modifier,
     viewModel: EditActiveTimerViewModel = hiltViewModel(),
-    timerItemId: Int
+    timerItemIdAsString: String
 ) {
     EditActiveTimerScreen(
         modifier = modifier,
         onEvent = viewModel::onEvent,
         state = viewModel.state.collectAsStateWithLifecycle().value,
         shouldShowCustomTimePickerDialogStream = viewModel.shouldShowCustomTimePickerDialogStream,
-        timerItemId = timerItemId
+        timerItemId = UUID.fromString(timerItemIdAsString)
     )
 }
 
@@ -84,7 +85,7 @@ fun EditActiveTimerScreen(
     state: EditActiveTimerState,
     onEvent: (EditActiveTimerEvent) -> Unit,
     shouldShowCustomTimePickerDialogStream: Flow<Boolean>,
-    timerItemId: Int
+    timerItemId: UUID
     ) {
     LaunchedEffect(key1 = true) {
         onEvent(EditActiveTimerEvent.OnScreenLaunch(timerItemId))
@@ -490,7 +491,7 @@ private fun EditActiveTimerScreenPreview() {
                 state = EditActiveTimerState(),
                 onEvent = {},
                 shouldShowCustomTimePickerDialogStream = flowOf(false),
-                timerItemId = 0
+                timerItemId = UUID.randomUUID()
             )
         }
     }

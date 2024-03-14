@@ -132,12 +132,12 @@ class MainActivity : ComponentActivity() {
                                 route = SecondaryScreen.EditActiveTimerScreen.route,
                                 arguments = SecondaryScreen.EditActiveTimerScreen.arguments
                             ) { backStackEntry ->
-                                val id = backStackEntry.arguments?.getInt("id")
+                                val id = backStackEntry.arguments?.getString("id")
                                 EditActiveTimerScreenRoot(
                                     modifier = Modifier.padding(
                                         contentPadding
                                     ),
-                                    timerItemId = id ?: 0,
+                                    timerItemIdAsString = id ?: "",
                                 )
                             }
                         }

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retryWhen
+import java.util.UUID
 
 
 class TimerRepositoryImpl(
@@ -60,7 +61,7 @@ class TimerRepositoryImpl(
         timerDao.deleteAll()
     }
 
-    override suspend fun getTimerItemById(timerItemId: Int): TimerItem {
+    override suspend fun getTimerItemById(timerItemId: UUID): TimerItem {
         val timerItemPair = timerDao.getTimerItemByIdAsPair(timerItemId)
         val timerItem = timerItemPair.toTimerItem()
         return timerItem

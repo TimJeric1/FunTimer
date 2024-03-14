@@ -2,12 +2,14 @@ package com.tjcoding.funtimer.presentation.active_timers
 
 import com.tjcoding.funtimer.domain.model.TimerItem
 import java.time.LocalDateTime
+import java.util.UUID
 
 data class ActiveTimersState(
     var activeTimerItems: List<ActiveTimerItem> = emptyList()
 )
 
 data class ActiveTimerItem(
+    val id: UUID,
     val selectedNumbers: List<Int>,
     val triggerTime: LocalDateTime,
     val alarmTime: Int,
@@ -16,6 +18,7 @@ data class ActiveTimerItem(
 
 fun TimerItem.toActiveTimerItem(): ActiveTimerItem {
     return ActiveTimerItem(
+        id = id,
         selectedNumbers = this.selectedNumbers,
         triggerTime = this.triggerTime,
         alarmTime = this.alarmTime,
@@ -25,6 +28,7 @@ fun TimerItem.toActiveTimerItem(): ActiveTimerItem {
 
 fun ActiveTimerItem.toTimerItem(): TimerItem {
     return TimerItem(
+        id = id,
         selectedNumbers = this.selectedNumbers,
         triggerTime = this.triggerTime,
         alarmTime = this.alarmTime,

@@ -26,9 +26,9 @@ sealed class SecondaryScreen(
 ) {
     data object EditActiveTimerScreen :
         SecondaryScreen("edit_active_timer_screen/{id}", arguments = listOf(
-            navArgument("id") { type = NavType.IntType }
+            navArgument("id") { type = NavType.StringType }
         )) {
-        fun createRoute(id: Int) = "edit_active_timer_screen/$id"
+        fun createRoute(id: String) = "edit_active_timer_screen/$id"
     }
 
 }

@@ -6,6 +6,7 @@ import com.tjcoding.funtimer.domain.model.TimerItem
 import org.junit.Assert.*
 import org.junit.Test
 import java.time.LocalDateTime
+import java.util.UUID
 
 class TimerItemMapperKtTest {
 
@@ -13,6 +14,7 @@ class TimerItemMapperKtTest {
     fun `toEntitiesPair should convert TimerItem to Pair of entities`() {
         // Arrange
         val timerItem = TimerItem(
+            id = UUID.randomUUID(),
             selectedNumbers = listOf(1, 2, 3),
             triggerTime = LocalDateTime.now(),
             extraTime = 5,
@@ -24,7 +26,7 @@ class TimerItemMapperKtTest {
         val entitiesPair = timerItem.toEntitiesPair()
 
         // Assert
-        assertEquals(timerItem.hashCode(), entitiesPair.first.id)
+        assertEquals(timerItem.id, entitiesPair.first.id)
         assertEquals(timerItem.triggerTime, entitiesPair.first.triggerTime)
         assertEquals(timerItem.extraTime, entitiesPair.first.extraTime)
         assertEquals(timerItem.hasTriggered, entitiesPair.first.hasTriggered)
@@ -32,7 +34,7 @@ class TimerItemMapperKtTest {
         assertEquals(timerItem.selectedNumbers.size, entitiesPair.second.size)
         for (i in timerItem.selectedNumbers.indices) {
             assertEquals(timerItem.selectedNumbers[i], entitiesPair.second[i].selectedNumber)
-            assertEquals(timerItem.hashCode(), entitiesPair.second[i].timeItemId)
+            assertEquals(timerItem.id, entitiesPair.second[i].alarmTriggerTimeEntityId)
         }
     }
 
@@ -40,12 +42,13 @@ class TimerItemMapperKtTest {
     fun `toTimerItem should convert Pair of entities to TimerItem`() {
         // Arrange
         val triggerTime = LocalDateTime.now()
+        val id = UUID.randomUUID()
         val entitiesPair = Pair(
-            AlarmTriggerTimeEntity(1, triggerTime,30, 10, false),
+            AlarmTriggerTimeEntity(id, triggerTime,30, 10, false),
             listOf(
-                SelectedNumberEntity(selectedNumber = 1, timeItemId = 1),
-                SelectedNumberEntity(selectedNumber = 2, timeItemId = 1),
-                SelectedNumberEntity(selectedNumber = 3, timeItemId = 1)
+                SelectedNumberEntity(selectedNumber = 1, alarmTriggerTimeEntityId = id),
+                SelectedNumberEntity(selectedNumber = 2, alarmTriggerTimeEntityId = id),
+                SelectedNumberEntity(selectedNumber = 3, alarmTriggerTimeEntityId = id)
             )
         )
 
@@ -53,6 +56,7 @@ class TimerItemMapperKtTest {
         val timerItem = entitiesPair.toTimerItem()
 
         // Assert
+        assertEquals(entitiesPair.first.id, timerItem.id)
         assertEquals(entitiesPair.first.triggerTime, timerItem.triggerTime)
         assertEquals(entitiesPair.first.extraTime, timerItem.extraTime)
         assertEquals(entitiesPair.first.hasTriggered, timerItem.hasTriggered)

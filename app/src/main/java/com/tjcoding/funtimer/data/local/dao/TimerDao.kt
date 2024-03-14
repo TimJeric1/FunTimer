@@ -10,7 +10,7 @@ import androidx.room.Update
 import com.tjcoding.funtimer.data.local.entity.SelectedNumberEntity
 import com.tjcoding.funtimer.data.local.entity.AlarmTriggerTimeEntity
 import kotlinx.coroutines.flow.Flow
-
+import java.util.UUID
 
 
 @Dao
@@ -19,7 +19,7 @@ abstract class TimerDao {
     @Query(
         "SELECT * FROM SelectedNumberEntity t1" +
                 " INNER JOIN AlarmTriggerTimeEntity t2" +
-                " ON t1.timeItemId = t2.id" +
+                " ON t1.alarmTriggerTimeEntityId = t2.id" +
                 " WHERE t2.hasTriggered = 0"
     )
     abstract fun getAllNotTriggeredTimerItemsAsMapsStream(): Flow<Map<AlarmTriggerTimeEntity, List<SelectedNumberEntity>>>
@@ -27,7 +27,7 @@ abstract class TimerDao {
     @Query(
         "SELECT * FROM SelectedNumberEntity t1" +
                 " INNER JOIN AlarmTriggerTimeEntity t2" +
-                " ON t1.timeItemId = t2.id" +
+                " ON t1.alarmTriggerTimeEntityId = t2.id" +
                 " WHERE t2.hasTriggered = 1"
     )
     abstract fun getAllTriggeredTimerItemsAsMapsStream(): Flow<Map<AlarmTriggerTimeEntity, List<SelectedNumberEntity>>>
@@ -53,17 +53,17 @@ abstract class TimerDao {
     }
 
     @Transaction
-    open suspend fun getTimerItemByIdAsPair(id: Int): Pair<AlarmTriggerTimeEntity, List<SelectedNumberEntity>> {
+    open suspend fun getTimerItemByIdAsPair(id: UUID): Pair<AlarmTriggerTimeEntity, List<SelectedNumberEntity>> {
         val timeEntity = getTimeEntityById(id)
         val selectedNumberEntities = getSelectedNumberEntitiesByTimeItemId(id)
         val timerItemPair = mapOf(timeEntity to selectedNumberEntities).entries.first().toPair()
         return timerItemPair
     }
     @Query("SELECT * FROM AlarmTriggerTimeEntity as t WHERE t.id = :id")
-    protected abstract suspend fun getTimeEntityById(id: Int): AlarmTriggerTimeEntity
+    protected abstract suspend fun getTimeEntityById(id: UUID): AlarmTriggerTimeEntity
 
-    @Query("SELECT * FROM SelectedNumberEntity as t WHERE t.timeItemId = :id")
-    protected abstract suspend fun getSelectedNumberEntitiesByTimeItemId(id: Int): List<SelectedNumberEntity>
+    @Query("SELECT * FROM SelectedNumberEntity as t WHERE t.alarmTriggerTimeEntityId = :id")
+    protected abstract suspend fun getSelectedNumberEntitiesByTimeItemId(id: UUID): List<SelectedNumberEntity>
 
 
     @Update(onConflict = OnConflictStrategy.IGNORE)

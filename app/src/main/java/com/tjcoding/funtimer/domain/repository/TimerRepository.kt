@@ -2,6 +2,7 @@ package com.tjcoding.funtimer.domain.repository
 
 import com.tjcoding.funtimer.domain.model.TimerItem
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 interface TimerRepository {
 
@@ -15,5 +16,5 @@ interface TimerRepository {
     fun getAllTriggeredTimerItemsStream(): Flow<List<TimerItem>>
 
     suspend fun deleteAll()
-    suspend fun getTimerItemById(timerItemId: Int): TimerItem
+    suspend fun getTimerItemById(timerItemId: UUID): TimerItem
 }

@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.util.UUID
 import javax.inject.Inject
 
 
@@ -184,6 +185,7 @@ class TimerSetupViewModel @Inject constructor(
         val isInDebugMode = BuildConfig.DEBUG
         val timerDuration = state.value.getDuration()
         val timerItem = TimerItem(
+            id = UUID.randomUUID(),
             selectedNumbers = state.value.selectedNumbers,
             triggerTime = if (isInDebugMode) LocalDateTime.now()
                 .plusSeconds(timerDuration.toLong()).plusSeconds(state.value.selectedExtraTime.toLong()) else LocalDateTime.now()

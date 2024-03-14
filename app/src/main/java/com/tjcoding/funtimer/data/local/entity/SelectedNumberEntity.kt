@@ -1,12 +1,11 @@
 package com.tjcoding.funtimer.data.local.entity
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
 import java.util.UUID
 
 @Entity(
+    primaryKeys = ["alarmTriggerTimeEntityId", "alarmTriggerTimeEntitySelectedNumberId"],
     foreignKeys = [
         ForeignKey(
             entity = AlarmTriggerTimeEntity::class,
@@ -17,9 +16,7 @@ import java.util.UUID
     ]
 )
 data class SelectedNumberEntity(
-
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val selectedNumber: Int,
-    @ColumnInfo(index = true)
     val alarmTriggerTimeEntityId: UUID,
+    val alarmTriggerTimeEntitySelectedNumberId: Int,
+    val selectedNumber: Int,
 )

@@ -13,10 +13,11 @@ fun TimerItem.toEntitiesPair(): Pair<AlarmTriggerTimeEntity, List<SelectedNumber
         extraTime = extraTime,
         hasTriggered = hasTriggered
     )
-    val selectedNumberEntities = selectedNumbers.map {
+    val selectedNumberEntities = selectedNumbers.mapIndexed { index, selectedNumber ->
         SelectedNumberEntity(
-            selectedNumber = it,
-            alarmTriggerTimeEntityId = id
+            alarmTriggerTimeEntityId = id,
+            alarmTriggerTimeEntitySelectedNumberId = index,
+            selectedNumber = selectedNumber,
         )
     }
     return Pair(timerItemEntity, selectedNumberEntities)

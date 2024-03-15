@@ -9,9 +9,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.tjcoding.funtimer.domain.model.UserPreferences
 import com.tjcoding.funtimer.domain.repository.UserPreferencesRepository
-import com.tjcoding.funtimer.presentation.timer_setup.DurationOption
-import com.tjcoding.funtimer.presentation.timer_setup.LayoutView
-import com.tjcoding.funtimer.presentation.timer_setup.toIndex
+import com.tjcoding.funtimer.presentation.common.DurationOption
+import com.tjcoding.funtimer.presentation.common.LayoutView
+import com.tjcoding.funtimer.presentation.common.toIndex
 import com.tjcoding.funtimer.utility.Util.DEFAULT_DISPLAYED_DURATIONS
 import com.tjcoding.funtimer.utility.Util.DEFAULT_SELECTED_EXTRA_TIME
 import com.tjcoding.funtimer.utility.Util.shouldRetry

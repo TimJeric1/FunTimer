@@ -8,7 +8,9 @@ import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.domain.repository.UserPreferencesRepository
 import com.tjcoding.funtimer.presentation.active_timers.toActiveTimerItem
 import com.tjcoding.funtimer.presentation.active_timers.toTimerItem
-import com.tjcoding.funtimer.presentation.timer_setup.DurationOption
+import com.tjcoding.funtimer.presentation.common.DurationOption
+import com.tjcoding.funtimer.presentation.common.toDuration
+import com.tjcoding.funtimer.presentation.common.toIndex
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
 import com.tjcoding.funtimer.utility.Util.addInOrder
 import dagger.hilt.android.lifecycle.HiltViewModel

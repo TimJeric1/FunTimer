@@ -5,8 +5,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.tjcoding.funtimer.presentation.timer_setup.DurationOption
-import com.tjcoding.funtimer.presentation.timer_setup.LayoutView
+import com.tjcoding.funtimer.presentation.common.DurationOption
+import com.tjcoding.funtimer.presentation.common.LayoutView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

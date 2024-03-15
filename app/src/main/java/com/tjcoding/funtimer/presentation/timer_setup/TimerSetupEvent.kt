@@ -1,5 +1,7 @@
 package com.tjcoding.funtimer.presentation.timer_setup
 
+import com.tjcoding.funtimer.presentation.common.DurationOption
+
 sealed interface TimerSetupEvent {
     data object OnLeftFilledArrowClick: TimerSetupEvent
     data object OnRightFilledArrowClick: TimerSetupEvent

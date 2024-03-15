@@ -1,7 +1,7 @@
 package com.tjcoding.funtimer.domain.model
 
-import com.tjcoding.funtimer.presentation.timer_setup.DurationOption
-import com.tjcoding.funtimer.presentation.timer_setup.LayoutView
+import com.tjcoding.funtimer.presentation.common.DurationOption
+import com.tjcoding.funtimer.presentation.common.LayoutView
 
 data class UserPreferences(
     val customDurations: Map<DurationOption, Int>,

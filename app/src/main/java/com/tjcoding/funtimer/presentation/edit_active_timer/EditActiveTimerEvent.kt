@@ -1,6 +1,6 @@
 package com.tjcoding.funtimer.presentation.edit_active_timer
 
-import com.tjcoding.funtimer.presentation.timer_setup.DurationOption
+import com.tjcoding.funtimer.presentation.common.DurationOption
 import java.util.UUID
 
 

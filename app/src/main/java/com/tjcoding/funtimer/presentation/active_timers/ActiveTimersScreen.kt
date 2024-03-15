@@ -37,9 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.tjcoding.funtimer.presentation.components.AlarmAndExtraTimeCountdown
 import com.tjcoding.funtimer.presentation.components.BasicTimerCard
 import com.tjcoding.funtimer.presentation.components.CustomItemsVerticalGrid
-import com.tjcoding.funtimer.presentation.timer_setup.AlarmAndExtraTimeCountdown
 import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 import com.tjcoding.funtimer.utility.Util.ObserveAsEvents
 import com.tjcoding.funtimer.utility.Util.SecondsFormatTommss

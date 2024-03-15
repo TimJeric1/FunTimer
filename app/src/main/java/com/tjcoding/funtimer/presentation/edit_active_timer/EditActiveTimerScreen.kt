@@ -1,6 +1,5 @@
 package com.tjcoding.funtimer.presentation.timer_setup
 
-import android.os.CountDownTimer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,7 +30,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,7 +44,10 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.tjcoding.funtimer.BuildConfig
+import com.tjcoding.funtimer.presentation.common.DurationOption
+import com.tjcoding.funtimer.presentation.common.LayoutView
+import com.tjcoding.funtimer.presentation.common.toIndex
+import com.tjcoding.funtimer.presentation.components.AlarmAndExtraTimeCountdown
 import com.tjcoding.funtimer.presentation.components.BasicTimerCard
 import com.tjcoding.funtimer.presentation.edit_active_timer.EditActiveTimerEvent
 import com.tjcoding.funtimer.presentation.edit_active_timer.EditActiveTimerState
@@ -59,8 +60,6 @@ import com.tjcoding.funtimer.utility.Util.ObserveAsEvents
 import com.tjcoding.funtimer.utility.Util.SecondsFormatTommss
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import java.time.LocalDateTime
-import java.time.ZoneId
 import java.util.UUID
 
 
@@ -436,57 +435,6 @@ fun EditActiveTimerCard(
         })
 }
 
-@Composable
-fun AlarmAndExtraTimeCountdown(
-    alarmTime: Int,
-    triggerTime: LocalDateTime,
-    content: @Composable (countDownAlarmTime: Long, countDownExtraTime: Long) -> Unit
-) {
-    val isInDebugMode = BuildConfig.DEBUG
-
-    val millisInFutureTriggerTime = remember(triggerTime) {
-        (triggerTime.atZone(ZoneId.systemDefault())
-            .toEpochSecond() * 1000 - System.currentTimeMillis())
-    }
-    val millisInFutureAlarmTime =
-        remember(alarmTime) { if (isInDebugMode) alarmTime * 1000L else alarmTime * 60 * 1000L }
-
-
-    val millisInFutureExtraTime =
-        remember(millisInFutureTriggerTime, millisInFutureAlarmTime) { millisInFutureTriggerTime - millisInFutureAlarmTime }
-    var countDownAlarmTime by remember(millisInFutureTriggerTime, millisInFutureAlarmTime) { mutableLongStateOf(if (millisInFutureTriggerTime > millisInFutureAlarmTime) millisInFutureAlarmTime / 1000 else millisInFutureTriggerTime / 1000) }
-    var countDownExtraTime by remember(millisInFutureExtraTime) { mutableLongStateOf(millisInFutureExtraTime / 1000) }
-
-    val timeCountDown = remember(millisInFutureTriggerTime,millisInFutureAlarmTime) {
-        object : CountDownTimer(
-            if (millisInFutureTriggerTime > millisInFutureAlarmTime) millisInFutureAlarmTime else millisInFutureTriggerTime,
-            1000
-        ) {
-
-            override fun onTick(millisUntilFinished: Long) {
-                countDownAlarmTime = (millisUntilFinished / 1000)
-            }
-
-            override fun onFinish() {}
-        }
-    }
-
-    remember(millisInFutureExtraTime) {
-        object : CountDownTimer(millisInFutureExtraTime, 1000) {
-
-            override fun onTick(millisUntilFinished: Long) {
-                countDownExtraTime = millisUntilFinished / 1000
-            }
-
-            override fun onFinish() {
-                timeCountDown.start()
-            }
-        }.start()
-    }
-
-    content(countDownAlarmTime, countDownExtraTime)
-
-}
 
 
 

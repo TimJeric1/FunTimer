@@ -6,6 +6,9 @@ import com.tjcoding.funtimer.BuildConfig
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.domain.repository.UserPreferencesRepository
+import com.tjcoding.funtimer.presentation.common.DurationOption
+import com.tjcoding.funtimer.presentation.common.LayoutView
+import com.tjcoding.funtimer.presentation.common.toIndex
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
 import com.tjcoding.funtimer.utility.Util.addInOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -146,7 +149,8 @@ class TimerSetupViewModel @Inject constructor(
 
     private fun onLayoutViewButtonClick() {
         viewModelScope.launch {
-            userPreferencesRepository.updateSelectedLayoutView(if (state.value.selectedLayoutView == LayoutView.STANDARD) LayoutView.ALTERNATIVE else LayoutView.STANDARD)
+            userPreferencesRepository.updateSelectedLayoutView(if (state.value.selectedLayoutView ==
+                LayoutView.STANDARD) LayoutView.ALTERNATIVE else LayoutView.STANDARD)
         }
     }
 

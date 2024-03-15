@@ -9,7 +9,7 @@ interface TimerRepository {
     fun getAllActiveTimerItemsStream(): Flow<List<TimerItem>>
     suspend fun insertTimerItem(timerItem: TimerItem)
 
-    suspend fun updateTimerItem(timerItem: TimerItem)
+    suspend fun updateTimerItem(originalTimerItem: TimerItem, newTimerItem: TimerItem)
 
     suspend fun deleteTimerItem(timerItem: TimerItem)
 

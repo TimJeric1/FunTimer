@@ -39,7 +39,7 @@ class AlarmReceiver : BroadcastReceiver() {
             val timerItem = timerRepository.getTimerItemById(timerItemId)
             if (timerItem == null) return@goAsync
 
-            timerRepository.updateTimerItem(timerItem.copy(hasTriggered = true))
+            timerRepository.updateTimerItem(originalTimerItem = timerItem, newTimerItem = timerItem.copy(hasTriggered = true))
 
             val serviceIntent = Intent(context, AlarmService::class.java)
             serviceIntent.action = FIRE_ALARM_ACTION

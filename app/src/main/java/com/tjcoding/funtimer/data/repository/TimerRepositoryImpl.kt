@@ -46,9 +46,12 @@ class TimerRepositoryImpl(
         timerDao.insertTimerItemAsPair(timerItem.toEntitiesPair())
     }
 
-    override suspend fun updateTimerItem(timerItem: TimerItem) {
+    override suspend fun updateTimerItem(originalTimerItem: TimerItem, newTimerItem: TimerItem) {
         // no need for withContext(Dispatcher.io) because room automatically does that
-        timerDao.updateTimerItemAsPair(timerItem.toEntitiesPair())
+        timerDao.updateTimerItemAsPair(
+            originalItemPair = originalTimerItem.toEntitiesPair(),
+            newTimerItemPair = newTimerItem.toEntitiesPair()
+        )
     }
 
     override suspend fun deleteTimerItem(timerItem: TimerItem) {

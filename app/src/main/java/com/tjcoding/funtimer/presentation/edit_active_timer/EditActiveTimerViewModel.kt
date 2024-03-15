@@ -235,7 +235,7 @@ class EditActiveTimerViewModel @Inject constructor(
 
 
         viewModelScope.launch {
-            timerRepository.updateTimerItem(editedTimerItem)
+            timerRepository.updateTimerItem(originalTimerItem = originalTimerItem.toTimerItem(), newTimerItem = editedTimerItem)
             if (originalTimerItem.triggerTime != editedTimerItem.triggerTime)
                 alarmScheduler.scheduleOrUpdateAlarm(editedTimerItem)
             shouldNavigateUpChannel.send(true)

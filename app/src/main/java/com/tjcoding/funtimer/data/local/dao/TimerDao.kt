@@ -46,10 +46,16 @@ abstract class TimerDao {
         insertTimeEntity(timerItemPair.first)
         insertSelectedNumberEntities(timerItemPair.second)
     }
+
     @Transaction
-    open suspend fun updateTimerItemAsPair(timerItemPair: Pair<AlarmTriggerTimeEntity, List<SelectedNumberEntity>>) {
-        updateTimeEntity(timerItemPair.first)
-        updateSelectedNumberEntities(timerItemPair.second)
+    open suspend fun deleteTimerItemAsPair(timerItemPair: Pair<AlarmTriggerTimeEntity, List<SelectedNumberEntity>>) {
+        deleteTimeEntity(timerItemPair.first)
+        deleteSelectedNumberEntities(timerItemPair.second)
+    }
+    @Transaction
+    open suspend fun updateTimerItemAsPair(originalItemPair: Pair<AlarmTriggerTimeEntity, List<SelectedNumberEntity>>, newTimerItemPair: Pair<AlarmTriggerTimeEntity, List<SelectedNumberEntity>>) {
+        deleteTimerItemAsPair(originalItemPair)
+        insertTimerItemAsPair(newTimerItemPair)
     }
 
     @Transaction

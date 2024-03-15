@@ -1,4 +1,4 @@
-package com.tjcoding.funtimer.presentation.timer_setup
+package com.tjcoding.funtimer.presentation.edit_active_timer
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.ViewCompact
@@ -49,9 +50,6 @@ import com.tjcoding.funtimer.presentation.common.LayoutView
 import com.tjcoding.funtimer.presentation.common.toIndex
 import com.tjcoding.funtimer.presentation.components.AlarmAndExtraTimeCountdown
 import com.tjcoding.funtimer.presentation.components.BasicTimerCard
-import com.tjcoding.funtimer.presentation.edit_active_timer.EditActiveTimerEvent
-import com.tjcoding.funtimer.presentation.edit_active_timer.EditActiveTimerState
-import com.tjcoding.funtimer.presentation.edit_active_timer.EditActiveTimerViewModel
 import com.tjcoding.funtimer.presentation.timer_setup.components.PickerAlertDialog
 import com.tjcoding.funtimer.presentation.timer_setup.components.PickerState
 import com.tjcoding.funtimer.presentation.timer_setup.components.rememberPickerState
@@ -121,9 +119,9 @@ fun EditActiveTimerScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = {
-                Text(text = "Fun Timer")
-            },
+
+            TopAppBar(
+                title = {},
                 actions = {
                     IconButton(onClick = { onEvent(EditActiveTimerEvent.OnLayoutViewIconClick) }) {
                         Icon(
@@ -131,7 +129,16 @@ fun EditActiveTimerScreen(
                             contentDescription = "layout view icon"
                         )
                     }
-                })
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = ""
+                        )
+                    }
+                },
+            )
         },
     ) { paddingValues ->
         if (state.selectedLayoutView == LayoutView.STANDARD)

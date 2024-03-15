@@ -44,7 +44,8 @@ class EditActiveTimerViewModel @Inject constructor(
         // it has to be .statein otherwise it won't replay the last value on back navigation
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    private val userPreferencesStream = userPreferencesRepository.editActiveTimerScreenUserPreferencesStream
+    private val userPreferencesStream =
+        userPreferencesRepository.editActiveTimerScreenUserPreferencesStream
 
     private val _state = MutableStateFlow(EditActiveTimerState())
 
@@ -123,7 +124,7 @@ class EditActiveTimerViewModel @Inject constructor(
     private fun onScreenLaunch(timerItemId: UUID) {
         viewModelScope.launch {
             val timerItem = timerRepository.getTimerItemById(timerItemId)
-            if(timerItem == null) {
+            if (timerItem == null) {
                 viewModelScope.launch {
                     // TODO: show error message dialog
                 }
@@ -172,10 +173,11 @@ class EditActiveTimerViewModel @Inject constructor(
 
     private fun onLayoutViewButtonClick() {
         viewModelScope.launch {
-            viewModelScope.launch {
-                userPreferencesRepository.updateEditActiveTimerScreenLayoutView(if (state.value.selectedLayoutView ==
-                    LayoutView.STANDARD) LayoutView.ALTERNATIVE else LayoutView.STANDARD)
-            }
+            userPreferencesRepository.updateEditActiveTimerScreenLayoutView(
+                if (state.value.selectedLayoutView ==
+                    LayoutView.STANDARD
+                ) LayoutView.ALTERNATIVE else LayoutView.STANDARD
+            )
         }
     }
 
@@ -190,17 +192,19 @@ class EditActiveTimerViewModel @Inject constructor(
                 index = state.value.selectedDurationOption.toIndex()
             )
         }
-        val previousDuration = state.value.selectedDurationOption.toDuration(state.value.displayedDurations)
-        if(previousDuration == duration) return
+        val previousDuration =
+            state.value.selectedDurationOption.toDuration(state.value.displayedDurations)
+        if (previousDuration == duration) return
         val isInDebugMode = BuildConfig.DEBUG
         val addedDuration = duration.toLong()
         val editedActiveTimerItem = state.value.editedActiveTimerItem
         val originalTimerItem = state.value.originalTimerItem
         _state.update {
             it.copy(
-                editedActiveTimerItem = editedActiveTimerItem.copy(triggerTime =
-                if(isInDebugMode) originalTimerItem.triggerTime.plusSeconds(addedDuration)
-                else originalTimerItem.triggerTime.plusMinutes(addedDuration)
+                editedActiveTimerItem = editedActiveTimerItem.copy(
+                    triggerTime =
+                    if (isInDebugMode) originalTimerItem.triggerTime.plusSeconds(addedDuration)
+                    else originalTimerItem.triggerTime.plusMinutes(addedDuration)
                 )
             )
         }
@@ -232,7 +236,7 @@ class EditActiveTimerViewModel @Inject constructor(
 
         viewModelScope.launch {
             timerRepository.updateTimerItem(editedTimerItem)
-            if(originalTimerItem.triggerTime != editedTimerItem.triggerTime)
+            if (originalTimerItem.triggerTime != editedTimerItem.triggerTime)
                 alarmScheduler.scheduleOrUpdateAlarm(editedTimerItem)
             shouldNavigateUpChannel.send(true)
         }
@@ -248,8 +252,9 @@ class EditActiveTimerViewModel @Inject constructor(
         _state.update {
             it.copy(
                 selectedDurationOption = newDurationOption,
-                editedActiveTimerItem = editedActiveTimerItem.copy(triggerTime =
-                if(isInDebugMode) originalTimerItem.triggerTime.plusSeconds(addedDuration)
+                editedActiveTimerItem = editedActiveTimerItem.copy(
+                    triggerTime =
+                    if (isInDebugMode) originalTimerItem.triggerTime.plusSeconds(addedDuration)
                     else originalTimerItem.triggerTime.plusMinutes(addedDuration)
                 )
             )

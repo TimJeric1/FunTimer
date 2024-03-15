@@ -48,8 +48,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.tjcoding.funtimer.presentation.active_timers.ActiveTimersScreenRoot
+import com.tjcoding.funtimer.presentation.edit_active_timer.EditActiveTimerScreenRoot
 import com.tjcoding.funtimer.presentation.past_timers.PastTimersScreenRoot
-import com.tjcoding.funtimer.presentation.timer_setup.EditActiveTimerScreenRoot
 import com.tjcoding.funtimer.utility.navigation.Screen
 import com.tjcoding.funtimer.presentation.timer_setup.TimerSetupScreenRoot
 import com.tjcoding.funtimer.service.scheduled_work.ClearDatabaseScheduler

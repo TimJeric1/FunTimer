@@ -45,6 +45,7 @@ import com.tjcoding.funtimer.presentation.timer_setup.components.TimeRadioGroup
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.tjcoding.funtimer.BuildConfig
 import com.tjcoding.funtimer.presentation.components.BasicTimerCard
 import com.tjcoding.funtimer.presentation.edit_active_timer.EditActiveTimerEvent
@@ -67,14 +68,17 @@ import java.util.UUID
 fun EditActiveTimerScreenRoot(
     modifier: Modifier = Modifier,
     viewModel: EditActiveTimerViewModel = hiltViewModel(),
-    timerItemIdAsString: String
+    timerItemIdAsString: String,
+    navController: NavController
 ) {
     EditActiveTimerScreen(
         modifier = modifier,
         onEvent = viewModel::onEvent,
         state = viewModel.state.collectAsStateWithLifecycle().value,
         shouldShowCustomTimePickerDialogStream = viewModel.shouldShowCustomTimePickerDialogStream,
-        timerItemId = UUID.fromString(timerItemIdAsString)
+        shouldNavigateUpStream = viewModel.shouldNavigateUpStream,
+        timerItemId = UUID.fromString(timerItemIdAsString),
+        navigateUp = { navController.navigateUp() }
     )
 }
 
@@ -85,7 +89,9 @@ fun EditActiveTimerScreen(
     state: EditActiveTimerState,
     onEvent: (EditActiveTimerEvent) -> Unit,
     shouldShowCustomTimePickerDialogStream: Flow<Boolean>,
-    timerItemId: UUID
+    shouldNavigateUpStream: Flow<Boolean>,
+    timerItemId: UUID,
+    navigateUp: () -> Unit
     ) {
     LaunchedEffect(key1 = true) {
         onEvent(EditActiveTimerEvent.OnScreenLaunch(timerItemId))
@@ -94,12 +100,17 @@ fun EditActiveTimerScreen(
     var shouldShowCustomTimePickerDialog by remember { mutableStateOf(false) }
     var radioOptions = state.displayedDurations.values.map { if (it == -1) "custom" else "$it min" }
     val screenHeight = LocalConfiguration.current.screenHeightDp
+
     LaunchedEffect(key1 = state.displayedDurations.values) {
         radioOptions = state.displayedDurations.values.map { if (it == -1) "custom" else "$it min" }
     }
 
     ObserveAsEvents(stream = shouldShowCustomTimePickerDialogStream) { shouldShowCustomTimePickerDialogNew ->
         shouldShowCustomTimePickerDialog = shouldShowCustomTimePickerDialogNew
+    }
+
+    ObserveAsEvents(stream = shouldNavigateUpStream) { shouldNavigateUp ->
+        if(shouldNavigateUp) navigateUp()
     }
 
 
@@ -218,12 +229,12 @@ private fun StandardLayout(
                 Text(text = "Save")
             }
         }
-        AlarmAndExtraTimeCountdown(alarmTime = state.editedTimerItem.alarmTime, triggerTime = state.editedTimerItem.triggerTime) {countDownAlarmTime ,countDownExtraTime ->
+        AlarmAndExtraTimeCountdown(alarmTime = state.editedActiveTimerItem.alarmTime, triggerTime = state.editedActiveTimerItem.triggerTime) { countDownAlarmTime, countDownExtraTime ->
             EditActiveTimerCard(
                 modifier = Modifier
                     .height(screenHeight.dp * 0.25f)
                     .aspectRatio(7 / 8f),
-                numbers = state.editedTimerItem.selectedNumbers,
+                numbers = state.editedActiveTimerItem.selectedNumbers,
                 time = countDownAlarmTime.SecondsFormatTommss(),
                 extraTime = countDownExtraTime.SecondsFormatTommss(),
                 onNumberBoxClick = { number: Int ->
@@ -258,12 +269,12 @@ private fun AlternativeLayout(
         horizontalAlignment = CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        AlarmAndExtraTimeCountdown(alarmTime = state.editedTimerItem.alarmTime, triggerTime = state.editedTimerItem.triggerTime) {countDownAlarmTime ,countDownExtraTime ->
+        AlarmAndExtraTimeCountdown(alarmTime = state.editedActiveTimerItem.alarmTime, triggerTime = state.editedActiveTimerItem.triggerTime) { countDownAlarmTime, countDownExtraTime ->
             EditActiveTimerCard(
                 modifier = Modifier
                     .height(screenHeight.dp * 0.25f)
                     .aspectRatio(7 / 8f),
-                numbers = state.editedTimerItem.selectedNumbers,
+                numbers = state.editedActiveTimerItem.selectedNumbers,
                 time = countDownAlarmTime.SecondsFormatTommss(),
                 extraTime = countDownExtraTime.SecondsFormatTommss(),
                 onNumberBoxClick = { number: Int ->
@@ -491,10 +502,11 @@ private fun EditActiveTimerScreenPreview() {
                 state = EditActiveTimerState(),
                 onEvent = {},
                 shouldShowCustomTimePickerDialogStream = flowOf(false),
-                timerItemId = UUID.randomUUID()
+                shouldNavigateUpStream = flowOf(false),
+                timerItemId = UUID.randomUUID(),
+                navigateUp = {}
             )
         }
     }
-
 }
 

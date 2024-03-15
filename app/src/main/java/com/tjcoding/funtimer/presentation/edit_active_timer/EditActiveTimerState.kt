@@ -18,7 +18,7 @@ data class EditActiveTimerState(
         DurationOption.SECOND to 5, DurationOption.THIRD to -5
     ),
     val selectedLayoutView: LayoutView = LayoutView.STANDARD,
-    val editedTimerItem: ActiveTimerItem = ActiveTimerItem(
+    val editedActiveTimerItem: ActiveTimerItem = ActiveTimerItem(
         id = UUID.randomUUID(),
         selectedNumbers = emptyList(),
         alarmTime = 0,
@@ -43,7 +43,7 @@ data class EditActiveTimerState(
     }
 
     fun getExtraTimeInTimeFormat(): String {
-        return "${editedTimerItem.extraTime}:00"
+        return "${editedActiveTimerItem.extraTime}:00"
     }
 
 

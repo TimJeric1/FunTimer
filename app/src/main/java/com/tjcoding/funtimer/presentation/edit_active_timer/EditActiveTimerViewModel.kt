@@ -7,6 +7,7 @@ import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.domain.repository.UserPreferencesRepository
 import com.tjcoding.funtimer.presentation.active_timers.toActiveTimerItem
+import com.tjcoding.funtimer.presentation.active_timers.toTimerItem
 import com.tjcoding.funtimer.presentation.timer_setup.DurationOption
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
 import com.tjcoding.funtimer.utility.Util.addInOrder
@@ -53,6 +54,10 @@ class EditActiveTimerViewModel @Inject constructor(
     private val shouldShowCustomTimePickerDialogChannel = Channel<Boolean>()
     val shouldShowCustomTimePickerDialogStream =
         shouldShowCustomTimePickerDialogChannel.receiveAsFlow()
+
+    private val shouldNavigateUpChannel = Channel<Boolean>()
+    val shouldNavigateUpStream =
+        shouldNavigateUpChannel.receiveAsFlow()
 
 
     fun onEvent(event: EditActiveTimerEvent) {
@@ -112,10 +117,16 @@ class EditActiveTimerViewModel @Inject constructor(
     private fun onScreenLaunch(timerItemId: UUID) {
         viewModelScope.launch {
             val timerItem = timerRepository.getTimerItemById(timerItemId)
+            if(timerItem == null) {
+                viewModelScope.launch {
+                    // TODO: show error message dialog
+                }
+                return@launch
+            }
             _state.update {
                 it.copy(
                     originalTimerItem = timerItem.toActiveTimerItem(),
-                    editedTimerItem = timerItem.toActiveTimerItem(),
+                    editedActiveTimerItem = timerItem.toActiveTimerItem(),
                 )
             }
         }
@@ -123,7 +134,7 @@ class EditActiveTimerViewModel @Inject constructor(
 
 
     private fun onRestartIconClick() {
-        val editedTimerItem = state.value.editedTimerItem
+        val editedTimerItem = state.value.editedActiveTimerItem
         val originalTimerItem = state.value.originalTimerItem
         val newPossibleNumbers = state.value.possibleNumbers.toMutableList()
         for (number in editedTimerItem.selectedNumbers) newPossibleNumbers.addInOrder(number)
@@ -131,7 +142,7 @@ class EditActiveTimerViewModel @Inject constructor(
         _state.update {
             it.copy(
                 displayedNumber = newPossibleNumbers.first(),
-                editedTimerItem = it.originalTimerItem,
+                editedActiveTimerItem = it.originalTimerItem,
                 possibleNumbers = newPossibleNumbers.toList(),
                 selectedDurationOption = DurationOption.indexToDurationOption(0)
             )
@@ -139,14 +150,14 @@ class EditActiveTimerViewModel @Inject constructor(
     }
 
     private fun onBackspaceIconClick() {
-        val editedTimerItem = state.value.editedTimerItem
+        val editedTimerItem = state.value.editedActiveTimerItem
         val newSelectedNumbers = editedTimerItem.selectedNumbers.toMutableList()
         val removedNumber = newSelectedNumbers.removeLast()
         val newPossibleNumbers = state.value.possibleNumbers.toMutableList()
         newPossibleNumbers.addInOrder(removedNumber)
         _state.update {
             it.copy(
-                editedTimerItem = editedTimerItem.copy(selectedNumbers = newSelectedNumbers.toList()),
+                editedActiveTimerItem = editedTimerItem.copy(selectedNumbers = newSelectedNumbers.toList()),
                 possibleNumbers = newPossibleNumbers.toList()
             )
         }
@@ -172,26 +183,35 @@ class EditActiveTimerViewModel @Inject constructor(
     }
 
     private fun onSelectedNumberClick(number: Int) {
-        val editedTimerItem = state.value.editedTimerItem
+        val editedTimerItem = state.value.editedActiveTimerItem
         val newSelectedNumbers = editedTimerItem.selectedNumbers.toMutableList()
         newSelectedNumbers.remove(number)
         val newPossibleNumbers = state.value.possibleNumbers.toMutableList()
         newPossibleNumbers.addInOrder(number)
         _state.update {
             it.copy(
-                editedTimerItem = editedTimerItem.copy(selectedNumbers = newSelectedNumbers),
+                editedActiveTimerItem = editedTimerItem.copy(selectedNumbers = newSelectedNumbers),
                 possibleNumbers = newPossibleNumbers.toList()
             )
         }
     }
 
     private fun onSaveButtonClick() {
-        val editedTimerItem = state.value.editedTimerItem
-        if (editedTimerItem.selectedNumbers.isEmpty()) return
+        val editedActiveTimerItem = state.value.editedActiveTimerItem
+        if (editedActiveTimerItem.selectedNumbers.isEmpty()) {
+            // TODO: show error dialog
+            return
+        }
+
 
         val isInDebugMode = BuildConfig.DEBUG
         val timerDuration = state.value.getDuration()
-        // TODO: update originalTimerItem to editedTimerItem
+
+        viewModelScope.launch {
+            timerRepository.updateTimerItem(editedActiveTimerItem.toTimerItem())
+            shouldNavigateUpChannel.send(true)
+        }
+
     }
 
     private fun onDurationRadioButtonClick(newDuration: DurationOption) {
@@ -213,7 +233,7 @@ class EditActiveTimerViewModel @Inject constructor(
 
 
     private fun onAddButtonClick() {
-        val editedTimerItem = state.value.editedTimerItem
+        val editedTimerItem = state.value.editedActiveTimerItem
         if (editedTimerItem.selectedNumbers.size >= 11) return
         val numberToAdd = state.value.displayedNumber
         onRightFilledArrowClick()
@@ -223,7 +243,7 @@ class EditActiveTimerViewModel @Inject constructor(
         newPossibleNumbers.remove(numberToAdd)
         _state.update {
             it.copy(
-                editedTimerItem = editedTimerItem.copy(selectedNumbers = newSelectedNumbers.toList()),
+                editedActiveTimerItem = editedTimerItem.copy(selectedNumbers = newSelectedNumbers.toList()),
                 possibleNumbers = newPossibleNumbers.toList(),
             )
         }

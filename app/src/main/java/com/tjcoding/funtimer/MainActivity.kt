@@ -138,6 +138,7 @@ class MainActivity : ComponentActivity() {
                                         contentPadding
                                     ),
                                     timerItemIdAsString = id ?: "",
+                                    navController = navController
                                 )
                             }
                         }

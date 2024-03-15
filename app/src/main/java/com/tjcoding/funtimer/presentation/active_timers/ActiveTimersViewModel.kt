@@ -70,7 +70,7 @@ class ActiveTimersViewModel @Inject constructor(
         viewModelScope.launch {
             repository.deleteTimerItem(activeTimerItem.toTimerItem())
         }
-        alarmScheduler.cancel(activeTimerItem.toTimerItem())
+        alarmScheduler.cancelAlarm(activeTimerItem.toTimerItem())
     }
 
 

@@ -197,7 +197,7 @@ class TimerSetupViewModel @Inject constructor(
         viewModelScope.launch {
             timerRepository.insertTimerItem(timerItem)
         }
-        alarmScheduler.schedule(timerItem)
+        alarmScheduler.scheduleOrUpdateAlarm(timerItem)
         _state.update {
             it.copy(selectedNumbers = emptyList())
         }

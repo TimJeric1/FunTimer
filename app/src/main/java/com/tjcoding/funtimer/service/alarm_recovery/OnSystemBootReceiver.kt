@@ -36,7 +36,7 @@ class OnSystemBootReceiver : BroadcastReceiver() {
             if (timerItems.isEmpty()) return@goAsync
 
             for (timerItem in timerItems) {
-                alarmScheduler.schedule(timerItem)
+                alarmScheduler.scheduleOrUpdateAlarm(timerItem)
             }
         }
 

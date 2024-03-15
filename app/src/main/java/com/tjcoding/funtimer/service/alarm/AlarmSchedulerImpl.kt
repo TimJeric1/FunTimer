@@ -17,15 +17,15 @@ class AlarmSchedulerImpl @Inject constructor(
     private val isInDebugMode = BuildConfig.DEBUG
 
 
-
-
-    override fun schedule(timerItem: TimerItem) {
+    override fun scheduleOrUpdateAlarm(timerItem: TimerItem) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("TIMER_ITEM_ID", timerItem.id)
         }
 
-        val triggerAtMillis = if(isInDebugMode) timerItem.triggerTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
-        else timerItem.triggerTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
+        val triggerAtMillis =
+            if (isInDebugMode) timerItem.triggerTime.atZone(ZoneId.systemDefault())
+                .toEpochSecond() * 1000
+            else timerItem.triggerTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             triggerAtMillis,
@@ -38,7 +38,7 @@ class AlarmSchedulerImpl @Inject constructor(
         )
     }
 
-    override fun cancel(timerItem: TimerItem) {
+    override fun cancelAlarm(timerItem: TimerItem) {
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
@@ -48,6 +48,5 @@ class AlarmSchedulerImpl @Inject constructor(
             )
         )
     }
-
 
 }

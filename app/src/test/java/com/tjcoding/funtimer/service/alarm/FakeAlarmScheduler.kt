@@ -7,11 +7,11 @@ class FakeAlarmScheduler : AlarmScheduler {
     private val scheduledItems: MutableList<TimerItem> = mutableListOf()
     private val canceledItems: MutableList<TimerItem> = mutableListOf()
 
-    override fun schedule(timerItem: TimerItem) {
+    override fun scheduleOrUpdateAlarm(timerItem: TimerItem) {
         scheduledItems.add(timerItem)
     }
 
-    override fun cancel(timerItem: TimerItem) {
+    override fun cancelAlarm(timerItem: TimerItem) {
         canceledItems.add(timerItem)
     }
 }

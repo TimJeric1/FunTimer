@@ -47,12 +47,8 @@ class AlarmService : Service() {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
-
-
-
-        intent ?: return START_NOT_STICKY
-        intent.action ?: return START_NOT_STICKY
+        if(intent == null) return START_NOT_STICKY
+        if(intent.action == null) return START_NOT_STICKY
 
         val newAlarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("TIMER_ITEM", TimerItem::class.java)

@@ -73,7 +73,7 @@ class UserPreferencesRepositoryImpl(
                 DurationOption.SECOND to editActiveTimerScreenSelectedDurations[DurationOption.SECOND.toIndex()],
                 DurationOption.THIRD to editActiveTimerScreenSelectedDurations[DurationOption.THIRD.toIndex()],
             )
-            val editActiveTimerScreenSelectedLayoutView = LayoutView.fromString(preferences[PreferencesKeys.TIMER_SETUP_SCREEN_SELECTED_LAYOUT_VIEW] ?: "")
+            val editActiveTimerScreenSelectedLayoutView = LayoutView.fromString(preferences[PreferencesKeys.EDIT_ACTIVE_TIMER_SCREEN_SELECTED_LAYOUT_VIEW] ?: "")
             EditActiveTimerScreenUserPreferences(
                 selectedCustomDurations = editActiveTimerScreenSelectedCustomDurations,
                 selectedLayoutView = editActiveTimerScreenSelectedLayoutView,

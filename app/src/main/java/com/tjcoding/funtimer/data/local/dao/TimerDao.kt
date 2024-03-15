@@ -53,14 +53,15 @@ abstract class TimerDao {
     }
 
     @Transaction
-    open suspend fun getTimerItemByIdAsPair(id: UUID): Pair<AlarmTriggerTimeEntity, List<SelectedNumberEntity>> {
+    open suspend fun getTimerItemByIdAsPair(id: UUID): Pair<AlarmTriggerTimeEntity, List<SelectedNumberEntity>>? {
         val timeEntity = getTimeEntityById(id)
+        if(timeEntity == null) return null
         val selectedNumberEntities = getSelectedNumberEntitiesByTimeItemId(id)
         val timerItemPair = mapOf(timeEntity to selectedNumberEntities).entries.first().toPair()
         return timerItemPair
     }
     @Query("SELECT * FROM AlarmTriggerTimeEntity as t WHERE t.id = :id")
-    protected abstract suspend fun getTimeEntityById(id: UUID): AlarmTriggerTimeEntity
+    protected abstract suspend fun getTimeEntityById(id: UUID): AlarmTriggerTimeEntity?
 
     @Query("SELECT * FROM SelectedNumberEntity as t WHERE t.alarmTriggerTimeEntityId = :id")
     protected abstract suspend fun getSelectedNumberEntitiesByTimeItemId(id: UUID): List<SelectedNumberEntity>

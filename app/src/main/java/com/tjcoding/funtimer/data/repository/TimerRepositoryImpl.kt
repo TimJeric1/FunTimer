@@ -61,9 +61,9 @@ class TimerRepositoryImpl(
         timerDao.deleteAll()
     }
 
-    override suspend fun getTimerItemById(timerItemId: UUID): TimerItem {
+    override suspend fun getTimerItemById(timerItemId: UUID): TimerItem? {
         val timerItemPair = timerDao.getTimerItemByIdAsPair(timerItemId)
-        val timerItem = timerItemPair.toTimerItem()
+        val timerItem = timerItemPair?.toTimerItem()
         return timerItem
     }
 

@@ -21,7 +21,7 @@ class AlarmSchedulerImpl @Inject constructor(
 
     override fun schedule(timerItem: TimerItem) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("TIMER_ITEM", timerItem)
+            putExtra("TIMER_ITEM_ID", timerItem.id)
         }
 
         val triggerAtMillis = if(isInDebugMode) timerItem.triggerTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000

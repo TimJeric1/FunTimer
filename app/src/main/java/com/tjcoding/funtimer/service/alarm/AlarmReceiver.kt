@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.FIRE_ALARM_ACTION
 import dagger.hilt.android.AndroidEntryPoint
@@ -15,6 +14,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.IOException
+import java.util.UUID
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -28,19 +28,24 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
 
 
-        val timerItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent?.getParcelableExtra("TIMER_ITEM", TimerItem::class.java) ?: return
+        val timerItemId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent?.getParcelableExtra("TIMER_ITEM_ID", UUID::class.java) ?: return
         } else {
             @Suppress("DEPRECATION")
-            intent?.getParcelableExtra("TIMER_ITEM") ?: return
+            intent?.extras?.get("TIMER_ITEM_ID") as UUID
         }
+
         goAsync {
+            val timerItem = timerRepository.getTimerItemById(timerItemId)
+            if (timerItem == null) return@goAsync
+
             timerRepository.updateTimerItem(timerItem.copy(hasTriggered = true))
+
+            val serviceIntent = Intent(context, AlarmService::class.java)
+            serviceIntent.action = FIRE_ALARM_ACTION
+            serviceIntent.putExtra("TIMER_ITEM", timerItem)
+            context?.startForegroundService(serviceIntent)
         }
-        val serviceIntent = Intent(context, AlarmService::class.java)
-        serviceIntent.action = FIRE_ALARM_ACTION
-        serviceIntent.putExtra("TIMER_ITEM", timerItem)
-        context?.startForegroundService(serviceIntent)
 
 
     }
@@ -57,8 +62,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 retryIO {
                     block()
                 }
-            }
-            finally {
+            } finally {
                 pendingResult.finish()
             }
         }
@@ -69,8 +73,8 @@ class AlarmReceiver : BroadcastReceiver() {
         initialDelay: Long = 1000, // 1 second
         maxDelay: Long = 5000,    // 5 second
         factor: Double = 2.0,
-        block: suspend () -> T): T
-    {
+        block: suspend () -> T
+    ): T {
         var currentDelay = initialDelay
         repeat(times - 1) {
             try {

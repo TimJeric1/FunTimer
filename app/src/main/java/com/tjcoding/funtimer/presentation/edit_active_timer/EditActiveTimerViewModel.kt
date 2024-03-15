@@ -197,34 +197,39 @@ class EditActiveTimerViewModel @Inject constructor(
     }
 
     private fun onSaveButtonClick() {
-        val editedActiveTimerItem = state.value.editedActiveTimerItem
-        if (editedActiveTimerItem.selectedNumbers.isEmpty()) {
+        val originalTimerItem = state.value.originalTimerItem
+        val editedTimerItem = state.value.editedActiveTimerItem.toTimerItem()
+        if (editedTimerItem.selectedNumbers.isEmpty()) {
             // TODO: show error dialog
             return
         }
 
 
-        val isInDebugMode = BuildConfig.DEBUG
-        val timerDuration = state.value.getDuration()
 
         viewModelScope.launch {
-            timerRepository.updateTimerItem(editedActiveTimerItem.toTimerItem())
+            timerRepository.updateTimerItem(editedTimerItem)
+            if(originalTimerItem.triggerTime != editedTimerItem.triggerTime)
+                alarmScheduler.scheduleOrUpdateAlarm(editedTimerItem)
             shouldNavigateUpChannel.send(true)
         }
 
     }
 
-    private fun onDurationRadioButtonClick(newDuration: DurationOption) {
-        if (state.value.selectedDurationOption == newDuration) return
+    private fun onDurationRadioButtonClick(newDurationOption: DurationOption) {
+        if (state.value.selectedDurationOption == newDurationOption) return
+        val isInDebugMode = BuildConfig.DEBUG
+        val addedDuration = newDurationOption.toDuration(state.value.displayedDurations).toLong()
+        val editedActiveTimerItem = state.value.editedActiveTimerItem
+        val originalTimerItem = state.value.originalTimerItem
         _state.update {
-            it.copy(selectedDurationOption = newDuration)
+            it.copy(
+                selectedDurationOption = newDurationOption,
+                editedActiveTimerItem = editedActiveTimerItem.copy(triggerTime =
+                if(isInDebugMode) originalTimerItem.triggerTime.plusSeconds(addedDuration)
+                    else originalTimerItem.triggerTime.plusMinutes(addedDuration)
+                )
+            )
         }
-        if (newDuration == DurationOption.THIRD) onCustomDurationSelected()
-    }
-
-    private fun onCustomDurationSelected() {
-        if (state.value.displayedDurations[DurationOption.THIRD] == -1)
-            viewModelScope.launch { showCustomTimePickerDialog() }
     }
 
     private suspend fun showCustomTimePickerDialog() {

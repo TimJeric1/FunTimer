@@ -15,7 +15,8 @@ data class EditActiveTimerState(
     val selectedDurationOption: DurationOption = DurationOption.FIRST,
     val displayedDurations: Map<DurationOption, Int> = mapOf(
         DurationOption.FIRST to 0,
-        DurationOption.SECOND to 5, DurationOption.THIRD to -5
+        DurationOption.SECOND to 5,
+        DurationOption.THIRD to -5,
     ),
     val selectedLayoutView: LayoutView = LayoutView.STANDARD,
     val editedActiveTimerItem: ActiveTimerItem = ActiveTimerItem(
@@ -32,23 +33,7 @@ data class EditActiveTimerState(
         extraTime = 0,
         triggerTime = LocalDateTime.now()
     )
-) {
-    fun getDuration(): Int {
-        return selectedDurationOption.toDuration(displayedDurations)
-    }
-
-    fun getDurationInTimeFormat(): String {
-        val duration = getDuration()
-        return "$duration:00"
-    }
-
-    fun getExtraTimeInTimeFormat(): String {
-        return "${editedActiveTimerItem.extraTime}:00"
-    }
-
-
-}
-
+)
 
 
 fun DurationOption.toDuration(durations: Map<DurationOption, Int>): Int {

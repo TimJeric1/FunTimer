@@ -1,17 +1,22 @@
 package com.tjcoding.funtimer.domain.repository
 
-import com.tjcoding.funtimer.domain.model.UserPreferences
+import com.tjcoding.funtimer.domain.model.EditActiveTimerScreenUserPreferences
+import com.tjcoding.funtimer.domain.model.TimerSetupScreenUserPreferences
 import com.tjcoding.funtimer.presentation.common.LayoutView
 import kotlinx.coroutines.flow.Flow
 
 interface UserPreferencesRepository {
 
-    val userPreferencesStream: Flow<UserPreferences>
+    val timerSetupScreenUserPreferencesStream: Flow<TimerSetupScreenUserPreferences>
 
-    suspend fun updateSelectedCustomDurations(selectedCustomDuration: Int, index: Int)
+    val editActiveTimerScreenUserPreferencesStream: Flow<EditActiveTimerScreenUserPreferences>
 
-    suspend fun updateSelectedLayoutView(selectedLayoutView: LayoutView)
+    suspend fun updateTimerSetupScreenSelectedCustomDurations(selectedCustomDuration: Int, index: Int)
 
-    suspend fun updateSelectedExtraTime(selectedExtraTime: Int)
+    suspend fun updateTimerSetupScreenSelectedLayoutView(selectedLayoutView: LayoutView)
 
+    suspend fun updateTimerSetupScreenSelectedExtraTime(selectedExtraTime: Int)
+
+    suspend fun updateEditActiveTimerScreenLayoutView(layoutView: LayoutView)
+    suspend fun updateEditActiveTimerScreenCustomDurations(selectedCustomDuration: Int, index: Int)
 }

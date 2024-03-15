@@ -9,6 +9,7 @@ import com.tjcoding.funtimer.domain.repository.UserPreferencesRepository
 import com.tjcoding.funtimer.presentation.active_timers.toActiveTimerItem
 import com.tjcoding.funtimer.presentation.active_timers.toTimerItem
 import com.tjcoding.funtimer.presentation.common.DurationOption
+import com.tjcoding.funtimer.presentation.common.LayoutView
 import com.tjcoding.funtimer.presentation.common.toDuration
 import com.tjcoding.funtimer.presentation.common.toIndex
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
@@ -43,14 +44,17 @@ class EditActiveTimerViewModel @Inject constructor(
         // it has to be .statein otherwise it won't replay the last value on back navigation
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    private val userPreferencesStream = userPreferencesRepository.userPreferencesStream
+    private val userPreferencesStream = userPreferencesRepository.editActiveTimerScreenUserPreferencesStream
 
     private val _state = MutableStateFlow(EditActiveTimerState())
 
     // it has to combine timerItemStream in order for the timerItemsStream to have a collector
     val state =
         combine(_state, timerItemsStream, userPreferencesStream) { state, _, userPreferences ->
-            state.copy()
+            state.copy(
+                displayedDurations = userPreferences.selectedCustomDurations,
+                selectedLayoutView = userPreferences.selectedLayoutView,
+            )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EditActiveTimerState())
 
     private val shouldShowCustomTimePickerDialogChannel = Channel<Boolean>()
@@ -168,6 +172,10 @@ class EditActiveTimerViewModel @Inject constructor(
 
     private fun onLayoutViewButtonClick() {
         viewModelScope.launch {
+            viewModelScope.launch {
+                userPreferencesRepository.updateEditActiveTimerScreenLayoutView(if (state.value.selectedLayoutView ==
+                    LayoutView.STANDARD) LayoutView.ALTERNATIVE else LayoutView.STANDARD)
+            }
         }
     }
 
@@ -177,9 +185,23 @@ class EditActiveTimerViewModel @Inject constructor(
 
     private fun onCustomDurationPicked(duration: Int) {
         viewModelScope.launch {
-            userPreferencesRepository.updateSelectedCustomDurations(
+            userPreferencesRepository.updateEditActiveTimerScreenCustomDurations(
                 selectedCustomDuration = duration,
                 index = state.value.selectedDurationOption.toIndex()
+            )
+        }
+        val previousDuration = state.value.selectedDurationOption.toDuration(state.value.displayedDurations)
+        if(previousDuration == duration) return
+        val isInDebugMode = BuildConfig.DEBUG
+        val addedDuration = duration.toLong()
+        val editedActiveTimerItem = state.value.editedActiveTimerItem
+        val originalTimerItem = state.value.originalTimerItem
+        _state.update {
+            it.copy(
+                editedActiveTimerItem = editedActiveTimerItem.copy(triggerTime =
+                if(isInDebugMode) originalTimerItem.triggerTime.plusSeconds(addedDuration)
+                else originalTimerItem.triggerTime.plusMinutes(addedDuration)
+                )
             )
         }
     }

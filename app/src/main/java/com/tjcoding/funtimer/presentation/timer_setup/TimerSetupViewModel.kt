@@ -42,13 +42,13 @@ class TimerSetupViewModel @Inject constructor(
         // it has to be .statein otherwise it won't replay the last value on back navigation
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    private val userPreferencesStream = userPreferencesRepository.userPreferencesStream
+    private val userPreferencesStream = userPreferencesRepository.timerSetupScreenUserPreferencesStream
 
     private val _state = MutableStateFlow(TimerSetupState())
     // it has to combine timerItemStream in order for the timerItemsStream to have a collector
     val state = combine(_state, timerItemsStream, userPreferencesStream) { state, _, userPreferences ->
         state.copy(
-            displayedDurations = userPreferences.customDurations,
+            displayedDurations = userPreferences.selectedCustomDurations,
             selectedLayoutView = userPreferences.selectedLayoutView,
             selectedExtraTime = userPreferences.selectedExtraTime
         )
@@ -149,7 +149,7 @@ class TimerSetupViewModel @Inject constructor(
 
     private fun onLayoutViewButtonClick() {
         viewModelScope.launch {
-            userPreferencesRepository.updateSelectedLayoutView(if (state.value.selectedLayoutView ==
+            userPreferencesRepository.updateTimerSetupScreenSelectedLayoutView(if (state.value.selectedLayoutView ==
                 LayoutView.STANDARD) LayoutView.ALTERNATIVE else LayoutView.STANDARD)
         }
     }
@@ -160,13 +160,13 @@ class TimerSetupViewModel @Inject constructor(
 
     private fun onCustomDurationPicked(duration: Int) {
         viewModelScope.launch {
-            userPreferencesRepository.updateSelectedCustomDurations(selectedCustomDuration = duration, index = state.value.selectedDurationOption.toIndex())
+            userPreferencesRepository.updateTimerSetupScreenSelectedCustomDurations(selectedCustomDuration = duration, index = state.value.selectedDurationOption.toIndex())
         }
     }
 
     private fun onExtraTimePicked(extraTime: Int) {
         viewModelScope.launch {
-            userPreferencesRepository.updateSelectedExtraTime(extraTime)
+            userPreferencesRepository.updateTimerSetupScreenSelectedExtraTime(extraTime)
         }
     }
 

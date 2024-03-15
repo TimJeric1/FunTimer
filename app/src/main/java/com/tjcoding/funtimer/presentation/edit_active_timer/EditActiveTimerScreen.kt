@@ -91,13 +91,19 @@ fun EditActiveTimerScreen(
     shouldNavigateUpStream: Flow<Boolean>,
     timerItemId: UUID,
     navigateUp: () -> Unit
-    ) {
+) {
     LaunchedEffect(key1 = true) {
         onEvent(EditActiveTimerEvent.OnScreenLaunch(timerItemId))
     }
 
     var shouldShowCustomTimePickerDialog by remember { mutableStateOf(false) }
-    var radioOptions = state.displayedDurations.values.map { if (it == -1) "custom" else "$it min" }
+    var radioOptions = state.displayedDurations.values.map {
+        if (it == -1) "custom"
+        else {
+            if (it > 0) "+$it min"
+            else "$it min"
+        }
+    }
     val screenHeight = LocalConfiguration.current.screenHeightDp
 
     LaunchedEffect(key1 = state.displayedDurations.values) {
@@ -109,7 +115,7 @@ fun EditActiveTimerScreen(
     }
 
     ObserveAsEvents(stream = shouldNavigateUpStream) { shouldNavigateUp ->
-        if(shouldNavigateUp) navigateUp()
+        if (shouldNavigateUp) navigateUp()
     }
 
 
@@ -228,7 +234,10 @@ private fun StandardLayout(
                 Text(text = "Save")
             }
         }
-        AlarmAndExtraTimeCountdown(alarmTime = state.editedActiveTimerItem.alarmTime, triggerTime = state.editedActiveTimerItem.triggerTime) { countDownAlarmTime, countDownExtraTime ->
+        AlarmAndExtraTimeCountdown(
+            alarmTime = state.editedActiveTimerItem.alarmTime,
+            triggerTime = state.editedActiveTimerItem.triggerTime
+        ) { countDownAlarmTime, countDownExtraTime ->
             EditActiveTimerCard(
                 modifier = Modifier
                     .height(screenHeight.dp * 0.25f)
@@ -268,7 +277,10 @@ private fun AlternativeLayout(
         horizontalAlignment = CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        AlarmAndExtraTimeCountdown(alarmTime = state.editedActiveTimerItem.alarmTime, triggerTime = state.editedActiveTimerItem.triggerTime) { countDownAlarmTime, countDownExtraTime ->
+        AlarmAndExtraTimeCountdown(
+            alarmTime = state.editedActiveTimerItem.alarmTime,
+            triggerTime = state.editedActiveTimerItem.triggerTime
+        ) { countDownAlarmTime, countDownExtraTime ->
             EditActiveTimerCard(
                 modifier = Modifier
                     .height(screenHeight.dp * 0.25f)
@@ -352,7 +364,7 @@ fun CustomTimePickerAlertDialog(
     onEvent: (EditActiveTimerEvent) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    val items = (5..100 step 5).toList()
+    val items = (-30..30 step 5).toList()
     val startIndex =
         if (items.indexOf(state.displayedDurations[state.selectedDurationOption]) == -1) 0 else items.indexOf(
             state.displayedDurations[state.selectedDurationOption]
@@ -363,7 +375,10 @@ fun CustomTimePickerAlertDialog(
             onEvent(EditActiveTimerEvent.OnCustomDurationPicked(pickedItem.toInt()))
         },
         onDismissRequest = onDismissRequest,
-        items = items.map { it.toString() },
+        items = items.map {
+            if (it > 0) "+$it"
+            else "$it"
+        },
         startIndex = startIndex,
         titleText = "Input your custom time"
     )
@@ -434,8 +449,6 @@ fun EditActiveTimerCard(
             }
         })
 }
-
-
 
 
 @Composable

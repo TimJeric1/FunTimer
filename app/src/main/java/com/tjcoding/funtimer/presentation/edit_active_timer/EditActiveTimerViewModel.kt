@@ -255,7 +255,8 @@ class EditActiveTimerViewModel @Inject constructor(
                 editedActiveTimerItem = editedActiveTimerItem.copy(
                     triggerTime =
                     if (isInDebugMode) originalTimerItem.triggerTime.plusSeconds(addedDuration)
-                    else originalTimerItem.triggerTime.plusMinutes(addedDuration)
+                    else originalTimerItem.triggerTime.plusMinutes(addedDuration),
+                    alarmTime = originalTimerItem.alarmTime + addedDuration.toInt(),
                 )
             )
         }

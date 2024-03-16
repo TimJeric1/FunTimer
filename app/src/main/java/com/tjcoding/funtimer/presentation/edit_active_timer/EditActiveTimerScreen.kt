@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -37,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tjcoding.funtimer.presentation.timer_setup.components.NumberSelector
 import com.tjcoding.funtimer.presentation.timer_setup.components.TimeRadioGroup
@@ -102,7 +100,6 @@ fun EditActiveTimerScreen(
             else "$it min"
         }
     }
-    val screenHeight = LocalConfiguration.current.screenHeightDp
 
     LaunchedEffect(key1 = state.displayedDurations.values) {
         radioOptions = state.displayedDurations.values.map { if (it == -1) "custom" else "$it min" }
@@ -145,7 +142,6 @@ fun EditActiveTimerScreen(
             StandardLayout(
                 modifier,
                 paddingValues,
-                screenHeight,
                 state,
                 onEvent,
                 radioOptions
@@ -154,7 +150,6 @@ fun EditActiveTimerScreen(
             AlternativeLayout(
                 modifier,
                 paddingValues,
-                screenHeight,
                 state,
                 onEvent,
                 radioOptions
@@ -176,7 +171,6 @@ fun EditActiveTimerScreen(
 private fun StandardLayout(
     modifier: Modifier,
     paddingValues: PaddingValues,
-    screenHeight: Int,
     state: EditActiveTimerState,
     onEvent: (EditActiveTimerEvent) -> Unit,
     radioOptions: List<String>
@@ -247,8 +241,9 @@ private fun StandardLayout(
         ) { countDownAlarmTime, countDownExtraTime ->
             EditActiveTimerCard(
                 modifier = Modifier
-                    .height(screenHeight.dp * 0.25f)
-                    .aspectRatio(7 / 8f),
+                    .fillMaxWidth(0.5f)
+                    .padding(10.dp)
+                    .aspectRatio(7/8f),
                 numbers = state.editedActiveTimerItem.selectedNumbers,
                 time = countDownAlarmTime.SecondsFormatTommss(),
                 extraTime = countDownExtraTime.SecondsFormatTommss(),
@@ -272,7 +267,6 @@ private fun StandardLayout(
 private fun AlternativeLayout(
     modifier: Modifier,
     paddingValues: PaddingValues,
-    screenHeight: Int,
     state: EditActiveTimerState,
     onEvent: (EditActiveTimerEvent) -> Unit,
     radioOptions: List<String>
@@ -290,8 +284,9 @@ private fun AlternativeLayout(
         ) { countDownAlarmTime, countDownExtraTime ->
             EditActiveTimerCard(
                 modifier = Modifier
-                    .height(screenHeight.dp * 0.25f)
-                    .aspectRatio(7 / 8f),
+                    .fillMaxWidth(0.5f)
+                    .padding(10.dp)
+                    .aspectRatio(7/8f),
                 numbers = state.editedActiveTimerItem.selectedNumbers,
                 time = countDownAlarmTime.SecondsFormatTommss(),
                 extraTime = countDownExtraTime.SecondsFormatTommss(),

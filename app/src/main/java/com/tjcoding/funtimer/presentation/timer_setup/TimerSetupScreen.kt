@@ -122,7 +122,6 @@ fun TimerSetupScreen(
             StandardLayout(
                 modifier,
                 paddingValues,
-                screenHeight,
                 state,
                 onEvent,
                 radioOptions
@@ -160,7 +159,6 @@ fun TimerSetupScreen(
 private fun StandardLayout(
     modifier: Modifier,
     paddingValues: PaddingValues,
-    screenHeight: Int,
     state: TimerSetupState,
     onEvent: (TimerSetupEvent) -> Unit,
     radioOptions: List<String>
@@ -227,7 +225,8 @@ private fun StandardLayout(
         }
         TimerSetupTimerCard(
             modifier = Modifier
-                .height(screenHeight.dp * 0.25f)
+                .fillMaxWidth(0.5f)
+                .padding(10.dp)
                 .aspectRatio(7/8f),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),

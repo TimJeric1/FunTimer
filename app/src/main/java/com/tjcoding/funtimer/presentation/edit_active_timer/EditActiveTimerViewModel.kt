@@ -269,7 +269,6 @@ class EditActiveTimerViewModel @Inject constructor(
 
     private fun onAddButtonClick() {
         val editedTimerItem = state.value.editedActiveTimerItem
-        if (editedTimerItem.selectedNumbers.size >= 11) return
         val numberToAdd = state.value.displayedNumber
         onRightFilledArrowClick()
         val newSelectedNumbers = editedTimerItem.selectedNumbers.toMutableList()

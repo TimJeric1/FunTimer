@@ -19,12 +19,12 @@ import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 @Composable
 fun NumbersGrid(
     modifier: Modifier = Modifier,
-    selectedNumbers: List<Int> = listOf(9, 10,15,23,47),
+    selectedNumbers: List<Int> = listOf(9, 10, 15, 23, 47),
     maxItemsInEachRow: Int = 4,
     onClick: (Int) -> Unit = {},
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
     verticalArrangement: Arrangement.Vertical = Arrangement.Center,
-    boxTextColor : Color = MaterialTheme.colorScheme.onSurface,
+    boxTextColor: Color = MaterialTheme.colorScheme.onSurface,
     boxBorderColor: Color = MaterialTheme.colorScheme.onSurfaceVariant
 ) {
     FlowRow(
@@ -34,41 +34,22 @@ fun NumbersGrid(
         maxItemsInEachRow = maxItemsInEachRow
     ) {
         for (number in selectedNumbers) {
-            if (number < 10) {
-                NumberBox(
-                    modifier = Modifier
-                        .padding(
-                            vertical = 2.dp,
-                            horizontal = 4.dp
-                        )
-                        .clickable {
-                            onClick(number)
-                        }
-                        .height(22.dp)
-                        .width(26.dp),
-                    number = number,
-                    textStyle = MaterialTheme.typography.labelSmall,
-                    textColor = boxTextColor,
-                    borderColor = boxBorderColor
-                )
-            } else {
-                NumberBox(
-                    modifier = Modifier
-                        .padding(
-                            vertical = 2.dp,
-                            horizontal = 4.dp
-                        )
-                        .clickable {
-                            onClick(number)
-                        }
-                        .height(22.dp)
-                        .width(26.dp),
-                    number = number,
-                    textStyle = MaterialTheme.typography.labelSmall,
-                    textColor = boxTextColor,
-                    borderColor = boxBorderColor
-                )
-            }
+            NumberBox(
+                modifier = Modifier
+                    .padding(
+                        vertical = 2.dp,
+                        horizontal = 4.dp
+                    )
+                    .clickable {
+                        onClick(number)
+                    }
+                    .height(22.dp)
+                    .width(26.dp),
+                number = number,
+                textStyle = MaterialTheme.typography.labelSmall,
+                textColor = boxTextColor,
+                borderColor = boxBorderColor
+            )
         }
     }
 }
@@ -90,7 +71,6 @@ fun BigNumbersGrid(
         maxItemsInEachRow = maxItemsInEachRow
     ) {
         for (number in selectedNumbers) {
-            if (number < 10) {
                 NumberBox(
                     modifier = Modifier
                         .padding(
@@ -105,22 +85,6 @@ fun BigNumbersGrid(
                     number = number,
                     textStyle = MaterialTheme.typography.displayMedium
                 )
-            } else {
-                NumberBox(
-                    modifier = Modifier
-                        .padding(
-                            vertical = 2.dp,
-                            horizontal = 4.dp
-                        )
-                        .clickable {
-                            onClick(number)
-                        }
-                        .height(56.dp)
-                        .width(56.dp),
-                    number = number,
-                    textStyle = MaterialTheme.typography.displayMedium
-                )
-            }
         }
     }
 }
@@ -131,7 +95,7 @@ private fun NumbersGridPreview() {
     FunTimerTheme {
         NumbersGrid(
             modifier = Modifier,
-            selectedNumbers = listOf(9, 10,15,23,47),
+            selectedNumbers = listOf(9, 10, 15, 23, 47),
             maxItemsInEachRow = 4,
             onClick = {},
             horizontalArrangement = Arrangement.Center,
@@ -147,7 +111,7 @@ private fun BigNumbersGridPreview() {
     FunTimerTheme {
         BigNumbersGrid(
             modifier = Modifier,
-            selectedNumbers = listOf(9,10,15,23,47),
+            selectedNumbers = listOf(9, 10, 15, 23, 47),
             maxItemsInEachRow = 4,
             onClick = {},
             horizontalArrangement = Arrangement.Center,

@@ -229,7 +229,6 @@ class TimerSetupViewModel @Inject constructor(
 
 
     private fun onAddButtonClick() {
-        if (state.value.selectedNumbers.size >= 11) return
         val numberToAdd = state.value.displayedNumber
         onRightFilledArrowClick()
         val newSelectedNumbers = state.value.selectedNumbers.toMutableList()

@@ -23,4 +23,6 @@ sealed interface EditActiveTimerEvent {
     data object OnBackspaceIconClick: EditActiveTimerEvent
 
     data object OnRestartIconClick: EditActiveTimerEvent
+
+    data object OnErrorAlertDialogOkClick: EditActiveTimerEvent
 }

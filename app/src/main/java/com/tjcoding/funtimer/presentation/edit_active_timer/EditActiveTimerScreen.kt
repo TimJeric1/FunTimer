@@ -2,7 +2,6 @@ package com.tjcoding.funtimer.presentation.edit_active_timer
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +23,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -32,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -48,6 +51,7 @@ import com.tjcoding.funtimer.presentation.common.LayoutView
 import com.tjcoding.funtimer.presentation.common.toIndex
 import com.tjcoding.funtimer.presentation.components.AlarmAndExtraTimeCountdown
 import com.tjcoding.funtimer.presentation.components.BasicTimerCard
+import com.tjcoding.funtimer.presentation.components.ErrorAlertDialog
 import com.tjcoding.funtimer.presentation.timer_setup.components.PickerAlertDialog
 import com.tjcoding.funtimer.presentation.timer_setup.components.PickerState
 import com.tjcoding.funtimer.presentation.timer_setup.components.rememberPickerState
@@ -56,6 +60,7 @@ import com.tjcoding.funtimer.utility.Util.ObserveAsEvents
 import com.tjcoding.funtimer.utility.Util.SecondsFormatTommss
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 
@@ -72,6 +77,8 @@ fun EditActiveTimerScreenRoot(
         state = viewModel.state.collectAsStateWithLifecycle().value,
         shouldShowCustomTimePickerDialogStream = viewModel.shouldShowCustomTimePickerDialogStream,
         shouldNavigateUpStream = viewModel.shouldNavigateUpStream,
+        shouldShowSnackbarWithTextStream = viewModel.shouldShowSnackbarWithTextStream,
+        shouldShowErrorAlertDialogWithTextStream = viewModel.shouldShowErrorAlertDialogWithTextStream,
         timerItemId = UUID.fromString(timerItemIdAsString),
         navigateUp = { navController.navigateUp() }
     )
@@ -85,6 +92,8 @@ fun EditActiveTimerScreen(
     onEvent: (EditActiveTimerEvent) -> Unit,
     shouldShowCustomTimePickerDialogStream: Flow<Boolean>,
     shouldNavigateUpStream: Flow<Boolean>,
+    shouldShowSnackbarWithTextStream: Flow<String>,
+    shouldShowErrorAlertDialogWithTextStream: Flow<String>,
     timerItemId: UUID,
     navigateUp: () -> Unit
 ) {
@@ -92,7 +101,14 @@ fun EditActiveTimerScreen(
         onEvent(EditActiveTimerEvent.OnScreenLaunch(timerItemId))
     }
 
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
     var shouldShowCustomTimePickerDialog by remember { mutableStateOf(false) }
+
+    var shouldShowErrorAlertDialog by remember { mutableStateOf(false) }
+    var errorAlertDialogText by remember { mutableStateOf("") }
+
     var radioOptions = state.displayedDurations.values.map {
         if (it == -1) "custom"
         else {
@@ -113,8 +129,29 @@ fun EditActiveTimerScreen(
         if (shouldNavigateUp) navigateUp()
     }
 
+    ObserveAsEvents(stream = shouldShowSnackbarWithTextStream) { text ->
+        scope.launch {
+            snackbarHostState
+                .showSnackbar(
+                    message = text,
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Short
+                )
+        }
+    }
+
+    ObserveAsEvents(stream = shouldShowErrorAlertDialogWithTextStream) { text ->
+        if(text.isBlank()) return@ObserveAsEvents
+        shouldShowErrorAlertDialog = true
+        errorAlertDialogText = text
+    }
+
 
     Scaffold(
+        modifier = modifier,
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
 
             TopAppBar(
@@ -140,16 +177,14 @@ fun EditActiveTimerScreen(
     ) { paddingValues ->
         if (state.selectedLayoutView == LayoutView.STANDARD)
             StandardLayout(
-                modifier,
-                paddingValues,
+                Modifier.fillMaxSize().padding(paddingValues),
                 state,
                 onEvent,
                 radioOptions
             )
         else
             AlternativeLayout(
-                modifier,
-                paddingValues,
+                Modifier.fillMaxSize().padding(paddingValues),
                 state,
                 onEvent,
                 radioOptions
@@ -161,6 +196,16 @@ fun EditActiveTimerScreen(
                 onEvent = onEvent,
                 onDismissRequest = { shouldShowCustomTimePickerDialog = false })
         }
+        if (shouldShowErrorAlertDialog) {
+            ErrorAlertDialog(
+                text = errorAlertDialogText,
+                onDismissClick = {
+                    shouldShowErrorAlertDialog = false
+                    errorAlertDialogText = ""
+                    onEvent(EditActiveTimerEvent.OnErrorAlertDialogOkClick)
+                }
+            )
+        }
     }
 
 
@@ -170,15 +215,12 @@ fun EditActiveTimerScreen(
 @Composable
 private fun StandardLayout(
     modifier: Modifier,
-    paddingValues: PaddingValues,
     state: EditActiveTimerState,
     onEvent: (EditActiveTimerEvent) -> Unit,
     radioOptions: List<String>
 ) {
     Column(
-        modifier = modifier
-            .padding(paddingValues)
-            .fillMaxSize(),
+        modifier = modifier,
         horizontalAlignment = CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -243,7 +285,7 @@ private fun StandardLayout(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
                     .padding(10.dp)
-                    .aspectRatio(7/8f),
+                    .aspectRatio(7 / 8f),
                 numbers = state.editedActiveTimerItem.selectedNumbers,
                 time = countDownAlarmTime.SecondsFormatTommss(),
                 extraTime = countDownExtraTime.SecondsFormatTommss(),
@@ -266,15 +308,12 @@ private fun StandardLayout(
 @Composable
 private fun AlternativeLayout(
     modifier: Modifier,
-    paddingValues: PaddingValues,
     state: EditActiveTimerState,
     onEvent: (EditActiveTimerEvent) -> Unit,
     radioOptions: List<String>
 ) {
     Column(
-        modifier = modifier
-            .padding(paddingValues)
-            .fillMaxSize(),
+        modifier = modifier,
         horizontalAlignment = CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -286,7 +325,7 @@ private fun AlternativeLayout(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
                     .padding(10.dp)
-                    .aspectRatio(7/8f),
+                    .aspectRatio(7 / 8f),
                 numbers = state.editedActiveTimerItem.selectedNumbers,
                 time = countDownAlarmTime.SecondsFormatTommss(),
                 extraTime = countDownExtraTime.SecondsFormatTommss(),
@@ -466,6 +505,8 @@ private fun EditActiveTimerScreenPreview() {
                 onEvent = {},
                 shouldShowCustomTimePickerDialogStream = flowOf(false),
                 shouldNavigateUpStream = flowOf(false),
+                shouldShowSnackbarWithTextStream = flowOf(""),
+                shouldShowErrorAlertDialogWithTextStream = flowOf(""),
                 timerItemId = UUID.randomUUID(),
                 navigateUp = {}
             )

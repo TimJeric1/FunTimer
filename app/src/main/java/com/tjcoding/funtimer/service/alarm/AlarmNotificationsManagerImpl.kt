@@ -14,15 +14,15 @@ import androidx.core.app.NotificationManagerCompat
 import com.tjcoding.funtimer.R
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.model.toMessage
-import com.tjcoding.funtimer.service.alarm.AlarmNotifications.Companion.CHANNEL_ID
-import com.tjcoding.funtimer.service.alarm.AlarmNotifications.Companion.getAlarmNotificationId
-import com.tjcoding.funtimer.service.alarm.AlarmNotifications.Companion.getReminderNotificationId
+import com.tjcoding.funtimer.service.alarm.AlarmNotificationsManager.Companion.CHANNEL_ID
+import com.tjcoding.funtimer.service.alarm.AlarmNotificationsManager.Companion.getAlarmNotificationId
+import com.tjcoding.funtimer.service.alarm.AlarmNotificationsManager.Companion.getReminderNotificationId
 import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.DISMISS_ALARM_ACTION
 import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.MUTE_ALARM_ACTION
 import javax.inject.Inject
 
 
-class AlarmNotificationsImpl @Inject constructor() : AlarmNotifications {
+class AlarmNotificationsManagerImpl @Inject constructor() : AlarmNotificationsManager {
 
     override fun showAlarmNotification(service: Service, timerItem: TimerItem) {
         val nightModeFlags: Int = service.applicationContext.resources.configuration.uiMode and

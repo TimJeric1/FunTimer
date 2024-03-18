@@ -2,7 +2,6 @@ package com.tjcoding.funtimer.presentation.timer_setup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +23,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -32,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -54,6 +57,7 @@ import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 import com.tjcoding.funtimer.utility.Util.ObserveAsEvents
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -67,7 +71,8 @@ fun TimerSetupScreenRoot(
         onEvent = viewModel::onEvent,
         state = viewModel.state.collectAsStateWithLifecycle().value,
         shouldShowCustomTimePickerDialogStream = viewModel.shouldShowCustomTimePickerDialogStream,
-        shouldShowExtraTimePickerDialogStream = viewModel.shouldShowExtraTimePickerDialogStream
+        shouldShowExtraTimePickerDialogStream = viewModel.shouldShowExtraTimePickerDialogStream,
+        shouldShowSnackbarWithTextStream = viewModel.shouldShowSnackbarWithTextStream
     )
 }
 
@@ -79,14 +84,21 @@ fun TimerSetupScreen(
     onEvent: (TimerSetupEvent) -> Unit,
     shouldShowCustomTimePickerDialogStream: Flow<Boolean>,
     shouldShowExtraTimePickerDialogStream: Flow<Boolean>,
+    shouldShowSnackbarWithTextStream: Flow<String>,
 
 ) {
 
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     var shouldShowCustomTimePickerDialog by remember { mutableStateOf(false) }
+
     var shouldShowExtraTimePickerDialog by remember { mutableStateOf(false) }
+
     var radioOptions = state.displayedDurations.values.map { if (it == -1) "custom" else "$it min" }
+
     val screenHeight = LocalConfiguration.current.screenHeightDp
+
     LaunchedEffect(key1 = state.displayedDurations.values) {
         radioOptions = state.displayedDurations.values.map { if (it == -1) "custom" else "$it min" }
     }
@@ -97,9 +109,22 @@ fun TimerSetupScreen(
     ObserveAsEvents(stream = shouldShowExtraTimePickerDialogStream) { shouldShowExtraTimePickerDialogNew ->
         shouldShowExtraTimePickerDialog = shouldShowExtraTimePickerDialogNew
     }
-
+    ObserveAsEvents(stream = shouldShowSnackbarWithTextStream) { text ->
+        scope.launch {
+            snackbarHostState
+                .showSnackbar(
+                    message = text,
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Short
+                )
+        }
+    }
 
     Scaffold(
+        modifier = modifier,
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             TopAppBar(title = {
                 Text(text = "Fun Timer")
@@ -120,16 +145,14 @@ fun TimerSetupScreen(
     ) { paddingValues ->
         if (state.selectedLayoutView == LayoutView.STANDARD)
             StandardLayout(
-                modifier,
-                paddingValues,
+                Modifier.fillMaxSize().padding(paddingValues),
                 state,
                 onEvent,
                 radioOptions
             )
         else
             AlternativeLayout(
-                modifier,
-                paddingValues,
+                Modifier.fillMaxSize(),
                 screenHeight,
                 state,
                 onEvent,
@@ -158,15 +181,12 @@ fun TimerSetupScreen(
 @Composable
 private fun StandardLayout(
     modifier: Modifier,
-    paddingValues: PaddingValues,
     state: TimerSetupState,
     onEvent: (TimerSetupEvent) -> Unit,
     radioOptions: List<String>
 ) {
     Column(
-        modifier = modifier
-            .padding(paddingValues)
-            .fillMaxSize(),
+        modifier = modifier,
         horizontalAlignment = CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -227,7 +247,7 @@ private fun StandardLayout(
             modifier = Modifier
                 .fillMaxWidth(0.5f)
                 .padding(10.dp)
-                .aspectRatio(7/8f),
+                .aspectRatio(7 / 8f),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
             extraTime = state.getExtraTimeInTimeFormat(),
@@ -243,23 +263,20 @@ private fun StandardLayout(
 @Composable
 private fun AlternativeLayout(
     modifier: Modifier,
-    paddingValues: PaddingValues,
     screenHeight: Int,
     state: TimerSetupState,
     onEvent: (TimerSetupEvent) -> Unit,
     radioOptions: List<String>
 ) {
     Column(
-        modifier = modifier
-            .padding(paddingValues)
-            .fillMaxSize(),
+        modifier = modifier,
         horizontalAlignment = CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         TimerSetupTimerCard(
             modifier = Modifier
                 .height(screenHeight.dp * 0.25f)
-                .aspectRatio(7/8f),
+                .aspectRatio(7 / 8f),
             numbers = state.selectedNumbers,
             time = state.getDurationInTimeFormat(),
             extraTime = state.getExtraTimeInTimeFormat(),
@@ -450,7 +467,8 @@ private fun TimerSetupScreenPreview() {
                 state = TimerSetupState(),
                 onEvent = {},
                 shouldShowCustomTimePickerDialogStream = flowOf(false),
-                shouldShowExtraTimePickerDialogStream = flowOf(false)
+                shouldShowExtraTimePickerDialogStream = flowOf(false),
+                shouldShowSnackbarWithTextStream = flowOf("")
             )
         }
     }

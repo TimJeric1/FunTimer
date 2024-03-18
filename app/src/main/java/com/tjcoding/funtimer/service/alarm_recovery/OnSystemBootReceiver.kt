@@ -6,11 +6,14 @@ import android.content.Intent
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
+import com.tjcoding.funtimer.service.error_notification.ErrorNotificationsManager
+import com.tjcoding.funtimer.utility.Util.getErrorMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -27,11 +30,16 @@ class OnSystemBootReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var alarmScheduler: AlarmScheduler
+
+    @Inject
+    lateinit var errorNotificationsManager: ErrorNotificationsManager
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action != Intent.ACTION_BOOT_COMPLETED) return
         var timerItems: List<TimerItem>
         goAsync {
-            timerItems = timerRepository.getAllActiveTimerItemsStream().first()
+            timerItems =
+                timerRepository.getAllActiveTimerItemsStream().catch { cause -> handleError(context, cause) }
+                .first()
 
             if (timerItems.isEmpty()) return@goAsync
 
@@ -41,6 +49,15 @@ class OnSystemBootReceiver : BroadcastReceiver() {
         }
 
 
+    }
+
+    private fun handleError(context: Context?, cause: Throwable) {
+        if (context != null) {
+            errorNotificationsManager.showErrorNotification(
+                context,
+                errorMessage = getErrorMessage(cause = cause, extraContext = "Couldn't access data")
+            )
+        }
     }
 
 

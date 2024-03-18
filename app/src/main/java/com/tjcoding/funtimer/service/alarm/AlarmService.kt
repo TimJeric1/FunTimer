@@ -16,7 +16,7 @@ class AlarmService : Service() {
 
 
     @Inject
-    lateinit var alarmNotifications: AlarmNotifications
+    lateinit var alarmNotificationsManager: AlarmNotificationsManager
     private var currentAlarm: TimerItem? = null
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -80,11 +80,11 @@ class AlarmService : Service() {
 
     private fun startAlarm(newAlarm: TimerItem) {
         if(currentAlarm != null) {
-            alarmNotifications.showMissedTimerItemNotification(this, currentAlarm!!)
+            alarmNotificationsManager.showMissedTimerItemNotification(this, currentAlarm!!)
             stopAlarm()
         }
         currentAlarm = newAlarm
-        alarmNotifications.showAlarmNotification(this, timerItem = currentAlarm!!)
+        alarmNotificationsManager.showAlarmNotification(this, timerItem = currentAlarm!!)
         AlarmHorn.start(this)
     }
     private fun stopAlarm() {

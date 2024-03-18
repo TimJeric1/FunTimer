@@ -3,6 +3,7 @@ package com.tjcoding.funtimer.presentation.timer_setup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tjcoding.funtimer.BuildConfig
+import com.tjcoding.funtimer.domain.model.AppError
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.domain.repository.UserPreferencesRepository
@@ -11,10 +12,12 @@ import com.tjcoding.funtimer.presentation.common.LayoutView
 import com.tjcoding.funtimer.presentation.common.toIndex
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
 import com.tjcoding.funtimer.utility.Util.addInOrder
+import com.tjcoding.funtimer.utility.Util.getErrorMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 
 
@@ -38,11 +41,15 @@ class TimerSetupViewModel @Inject constructor(
 
     private var timerItemsStreamCounter = 0
     private val timerItemsStream = timerRepository.getAllActiveTimerItemsStream()
+        .catch { cause: Throwable -> handleError(cause, "Couldn't retrieve data") }
         .onEach { updateState(it) }
         // it has to be .statein otherwise it won't replay the last value on back navigation
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
+
+
     private val userPreferencesStream = userPreferencesRepository.timerSetupScreenUserPreferencesStream
+        .catch { cause: Throwable -> handleError(cause, "Couldn't retrieve preferences data") }
 
     private val _state = MutableStateFlow(TimerSetupState())
     // it has to combine timerItemStream in order for the timerItemsStream to have a collector
@@ -59,6 +66,9 @@ class TimerSetupViewModel @Inject constructor(
 
     private val shouldShowExtraTimePickerDialogChannel = Channel<Boolean>()
     val shouldShowExtraTimePickerDialogStream = shouldShowExtraTimePickerDialogChannel.receiveAsFlow()
+
+    private val shouldShowSnackbarWithTextChannel = Channel<String>()
+    val shouldShowSnackbarWithTextStream = shouldShowSnackbarWithTextChannel.receiveAsFlow()
 
 
     fun onEvent(event: TimerSetupEvent) {
@@ -148,9 +158,13 @@ class TimerSetupViewModel @Inject constructor(
     }
 
     private fun onLayoutViewButtonClick() {
-        viewModelScope.launch {
-            userPreferencesRepository.updateTimerSetupScreenSelectedLayoutView(if (state.value.selectedLayoutView ==
-                LayoutView.STANDARD) LayoutView.ALTERNATIVE else LayoutView.STANDARD)
+        try {
+            viewModelScope.launch {
+                userPreferencesRepository.updateTimerSetupScreenSelectedLayoutView(if (state.value.selectedLayoutView ==
+                    LayoutView.STANDARD) LayoutView.ALTERNATIVE else LayoutView.STANDARD)
+            }
+        } catch (cause: AppError) {
+            handleError(cause, "Couldn't save layout change")
         }
     }
 
@@ -159,14 +173,23 @@ class TimerSetupViewModel @Inject constructor(
     }
 
     private fun onCustomDurationPicked(duration: Int) {
-        viewModelScope.launch {
-            userPreferencesRepository.updateTimerSetupScreenSelectedCustomDurations(selectedCustomDuration = duration, index = state.value.selectedDurationOption.toIndex())
+        try {
+            viewModelScope.launch {
+                userPreferencesRepository.updateTimerSetupScreenSelectedCustomDurations(
+                    selectedCustomDuration = duration,
+                    index = state.value.selectedDurationOption.toIndex()
+                )
+            }
+        } catch (cause: AppError) {
+            handleError(cause, "Couldn't save layout change")
         }
     }
 
     private fun onExtraTimePicked(extraTime: Int) {
-        viewModelScope.launch {
-            userPreferencesRepository.updateTimerSetupScreenSelectedExtraTime(extraTime)
+        try {
+            viewModelScope.launch { userPreferencesRepository.updateTimerSetupScreenSelectedExtraTime(extraTime) }
+        } catch (cause: AppError) {
+            handleError(cause, "Couldn't save extra time change")
         }
     }
 
@@ -198,13 +221,16 @@ class TimerSetupViewModel @Inject constructor(
             extraTime = state.value.selectedExtraTime,
             hasTriggered = false
         )
-        viewModelScope.launch {
-            timerRepository.insertTimerItem(timerItem)
+        try {
+            viewModelScope.launch {
+                timerRepository.insertTimerItem(timerItem)
+                alarmScheduler.scheduleOrUpdateAlarm(timerItem)
+                _state.update { it.copy(selectedNumbers = emptyList()) }
+            }
+        } catch (cause: AppError) {
+            handleError(cause, "Couldn't insert item")
         }
-        alarmScheduler.scheduleOrUpdateAlarm(timerItem)
-        _state.update {
-            it.copy(selectedNumbers = emptyList())
-        }
+
     }
 
     private fun onDurationRadioButtonClick(newDuration: DurationOption) {
@@ -296,5 +322,10 @@ class TimerSetupViewModel @Inject constructor(
         }
     }
 
+
+    private fun handleError(cause: Throwable, extraContext: String) = viewModelScope.launch {
+        val errorMsg = getErrorMessage(cause, extraContext)
+        shouldShowSnackbarWithTextChannel.send(errorMsg)
+    }
 
 }

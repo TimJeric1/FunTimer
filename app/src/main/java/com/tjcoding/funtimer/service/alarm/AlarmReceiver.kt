@@ -5,8 +5,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import com.tjcoding.funtimer.domain.model.AppError
+import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.service.alarm.AlarmService.Companion.FIRE_ALARM_ACTION
+import com.tjcoding.funtimer.service.error_notification.ErrorNotificationsManager
+import com.tjcoding.funtimer.utility.Util
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -25,6 +29,9 @@ class AlarmReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var timerRepository: TimerRepository
+
+    @Inject
+    lateinit var errorNotificationsManager: ErrorNotificationsManager
     override fun onReceive(context: Context?, intent: Intent?) {
 
 
@@ -36,11 +43,15 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         goAsync {
-            val timerItem = timerRepository.getTimerItemById(timerItemId)
-            if (timerItem == null) return@goAsync
-
-            timerRepository.updateTimerItem(originalTimerItem = timerItem, newTimerItem = timerItem.copy(hasTriggered = true))
-
+            val timerItem: TimerItem?
+            try {
+                timerItem = timerRepository.getTimerItemById(timerItemId)
+                if (timerItem == null) return@goAsync
+                timerRepository.updateTimerItem(originalTimerItem = timerItem, newTimerItem = timerItem.copy(hasTriggered = true))
+            } catch (cause: AppError) {
+                handleError(context, cause)
+                return@goAsync
+            }
             val serviceIntent = Intent(context, AlarmService::class.java)
             serviceIntent.action = FIRE_ALARM_ACTION
             serviceIntent.putExtra("TIMER_ITEM", timerItem)
@@ -88,4 +99,18 @@ class AlarmReceiver : BroadcastReceiver() {
         }
         return block() // last attempt
     }
+
+
+    private fun handleError(context: Context?, cause: Throwable) {
+        if (context != null) {
+            errorNotificationsManager.showErrorNotification(
+                context,
+                errorMessage = Util.getErrorMessage(
+                    cause = cause,
+                    extraContext = "Couldn't access data"
+                )
+            )
+        }
+    }
+
 }

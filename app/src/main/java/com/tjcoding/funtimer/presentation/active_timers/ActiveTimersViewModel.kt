@@ -2,12 +2,15 @@ package com.tjcoding.funtimer.presentation.active_timers
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tjcoding.funtimer.domain.model.AppError
 import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
+import com.tjcoding.funtimer.utility.Util
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -22,6 +25,7 @@ class ActiveTimersViewModel @Inject constructor(
 
 
     private val timerItemsStream = repository.getAllActiveTimerItemsStream()
+        .catch { cause: Throwable -> handleError(cause, "Couldn't retrieve data") }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     private val _state = MutableStateFlow(ActiveTimersState())
     val state = combine(_state, timerItemsStream) { state, timerItems -> state.copy(activeTimerItems = timerItems.map { it.toActiveTimerItem() }) }
@@ -35,6 +39,9 @@ class ActiveTimersViewModel @Inject constructor(
 
     private val shouldNavigateToEditTimerItemScreenChannel = Channel<Boolean>()
     val shouldNavigateToEditTimerItemScreenStream = shouldNavigateToEditTimerItemScreenChannel.receiveAsFlow()
+
+    private val shouldShowSnackbarWithTextChannel = Channel<String>()
+    val shouldShowSnackbarWithTextStream = shouldShowSnackbarWithTextChannel.receiveAsFlow()
 
     fun onEvent(event: ActiveTimersEvent){
         when(event){
@@ -67,10 +74,20 @@ class ActiveTimersViewModel @Inject constructor(
     }
 
     private fun onAlertDialogDeleteClick(activeTimerItem: ActiveTimerItem) {
-        viewModelScope.launch {
-            repository.deleteTimerItem(activeTimerItem.toTimerItem())
+        try {
+            viewModelScope.launch {
+                repository.deleteTimerItem(activeTimerItem.toTimerItem())
+                alarmScheduler.cancelAlarm(activeTimerItem.toTimerItem())
+            }
+        } catch (cause: AppError) {
+            handleError(cause, "Couldn't delete item")
         }
-        alarmScheduler.cancelAlarm(activeTimerItem.toTimerItem())
+
+    }
+
+    private fun handleError(cause: Throwable, extraContext: String) = viewModelScope.launch {
+        val errorMsg = Util.getErrorMessage(cause, extraContext)
+        shouldShowSnackbarWithTextChannel.send(errorMsg)
     }
 
 

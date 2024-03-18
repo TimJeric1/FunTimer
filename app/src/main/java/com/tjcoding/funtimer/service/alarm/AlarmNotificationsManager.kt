@@ -4,7 +4,7 @@ import android.app.Service
 import android.content.Context
 import com.tjcoding.funtimer.domain.model.TimerItem
 
-interface AlarmNotifications {
+interface AlarmNotificationsManager {
     fun showAlarmNotification(service: Service, timerItem: TimerItem)
 
     fun showMissedTimerItemNotification(context: Context, timerItem: TimerItem)

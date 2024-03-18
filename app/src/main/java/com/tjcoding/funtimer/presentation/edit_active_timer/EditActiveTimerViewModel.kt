@@ -3,6 +3,7 @@ package com.tjcoding.funtimer.presentation.edit_active_timer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tjcoding.funtimer.BuildConfig
+import com.tjcoding.funtimer.domain.model.AppError
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.domain.repository.UserPreferencesRepository
@@ -13,11 +14,13 @@ import com.tjcoding.funtimer.presentation.common.LayoutView
 import com.tjcoding.funtimer.presentation.common.toDuration
 import com.tjcoding.funtimer.presentation.common.toIndex
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
+import com.tjcoding.funtimer.utility.Util
 import com.tjcoding.funtimer.utility.Util.addInOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 
 
@@ -37,19 +40,21 @@ class EditActiveTimerViewModel @Inject constructor(
     private val alarmScheduler: AlarmScheduler,
 ) : ViewModel() {
 
-
+    // Used only in updateState()
     private var timerItemsStreamCounter = 0
     private val timerItemsStream = timerRepository.getAllActiveTimerItemsStream()
+        .catch { cause: Throwable -> handleError(cause, "Couldn't retrieve data") }
         .onEach { updateState(it) }
         // it has to be .statein otherwise it won't replay the last value on back navigation
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     private val userPreferencesStream =
         userPreferencesRepository.editActiveTimerScreenUserPreferencesStream
+            .catch { cause: Throwable -> handleError(cause, "Couldn't retrieve preferences data") }
 
     private val _state = MutableStateFlow(EditActiveTimerState())
 
-    // it has to combine timerItemStream in order for the timerItemsStream to have a collector
+    // it has to combine timerItemStream in order for the timerItemsStream to have a collector and emit values
     val state =
         combine(_state, timerItemsStream, userPreferencesStream) { state, _, userPreferences ->
             state.copy(
@@ -65,6 +70,14 @@ class EditActiveTimerViewModel @Inject constructor(
     private val shouldNavigateUpChannel = Channel<Boolean>()
     val shouldNavigateUpStream =
         shouldNavigateUpChannel.receiveAsFlow()
+
+    private val shouldShowSnackbarWithTextChannel = Channel<String>()
+    val shouldShowSnackbarWithTextStream =
+        shouldShowSnackbarWithTextChannel.receiveAsFlow()
+
+    private val shouldShowErrorAlertDialogWithTextChannel = Channel<String>()
+    val shouldShowErrorAlertDialogWithTextStream =
+        shouldShowErrorAlertDialogWithTextChannel.receiveAsFlow()
 
 
     fun onEvent(event: EditActiveTimerEvent) {
@@ -116,9 +129,19 @@ class EditActiveTimerViewModel @Inject constructor(
             is EditActiveTimerEvent.OnScreenLaunch -> {
                 onScreenLaunch(event.timerItemId)
             }
+
+            EditActiveTimerEvent.OnErrorAlertDialogOkClick -> {
+                onErrorAlertDialogOkClick()
+            }
         }
 
 
+    }
+
+    private fun onErrorAlertDialogOkClick() {
+        viewModelScope.launch {
+            shouldNavigateUpChannel.send(true)
+        }
     }
 
     private fun onScreenLaunch(timerItemId: UUID) {
@@ -126,7 +149,7 @@ class EditActiveTimerViewModel @Inject constructor(
             val timerItem = timerRepository.getTimerItemById(timerItemId)
             if (timerItem == null) {
                 viewModelScope.launch {
-                    // TODO: show error message dialog
+                    shouldShowErrorAlertDialogWithTextChannel.send("Timer you are trying to edit doesn't exist")
                 }
                 return@launch
             }
@@ -172,13 +195,18 @@ class EditActiveTimerViewModel @Inject constructor(
 
 
     private fun onLayoutViewButtonClick() {
-        viewModelScope.launch {
-            userPreferencesRepository.updateEditActiveTimerScreenLayoutView(
-                if (state.value.selectedLayoutView ==
-                    LayoutView.STANDARD
-                ) LayoutView.ALTERNATIVE else LayoutView.STANDARD
-            )
+        try {
+            viewModelScope.launch {
+                userPreferencesRepository.updateEditActiveTimerScreenLayoutView(
+                    if (state.value.selectedLayoutView ==
+                        LayoutView.STANDARD
+                    ) LayoutView.ALTERNATIVE else LayoutView.STANDARD
+                )
+            }
+        } catch (cause: AppError) {
+            handleError(cause, "Couldn't save layout change")
         }
+
     }
 
     private fun onDurationRadioButtonLongClick() {
@@ -186,12 +214,18 @@ class EditActiveTimerViewModel @Inject constructor(
     }
 
     private fun onCustomDurationPicked(duration: Int) {
-        viewModelScope.launch {
-            userPreferencesRepository.updateEditActiveTimerScreenCustomDurations(
-                selectedCustomDuration = duration,
-                index = state.value.selectedDurationOption.toIndex()
-            )
+        try {
+            viewModelScope.launch {
+                userPreferencesRepository.updateEditActiveTimerScreenCustomDurations(
+                    selectedCustomDuration = duration,
+                    index = state.value.selectedDurationOption.toIndex()
+                )
+            }
+        } catch (cause: AppError) {
+            handleError(cause, "Couldn't save layout change")
+            return
         }
+
         val previousDuration =
             state.value.selectedDurationOption.toDuration(state.value.displayedDurations)
         if (previousDuration == duration) return
@@ -228,14 +262,17 @@ class EditActiveTimerViewModel @Inject constructor(
         val originalTimerItem = state.value.originalTimerItem
         val editedTimerItem = state.value.editedActiveTimerItem.toTimerItem()
         if (editedTimerItem.selectedNumbers.isEmpty()) {
-            // TODO: show error dialog
+            viewModelScope.launch { shouldShowSnackbarWithTextChannel.send("You must have 1 or more selected numbers") }
             return
         }
 
 
 
         viewModelScope.launch {
-            timerRepository.updateTimerItem(originalTimerItem = originalTimerItem.toTimerItem(), newTimerItem = editedTimerItem)
+            timerRepository.updateTimerItem(
+                originalTimerItem = originalTimerItem.toTimerItem(),
+                newTimerItem = editedTimerItem
+            )
             if (originalTimerItem.triggerTime != editedTimerItem.triggerTime)
                 alarmScheduler.scheduleOrUpdateAlarm(editedTimerItem)
             shouldNavigateUpChannel.send(true)
@@ -334,6 +371,11 @@ class EditActiveTimerViewModel @Inject constructor(
         _state.update {
             it.copy(possibleNumbers = newPossibleNumbers)
         }
+    }
+
+    private fun handleError(cause: Throwable, extraContext: String) = viewModelScope.launch {
+        val errorMsg = Util.getErrorMessage(cause, extraContext)
+        shouldShowSnackbarWithTextChannel.send(errorMsg)
     }
 
 

@@ -5,7 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.tjcoding.funtimer.domain.model.AppError
 import com.tjcoding.funtimer.presentation.active_timers.ActiveTimerItem
 import com.tjcoding.funtimer.presentation.common.DurationOption
 import com.tjcoding.funtimer.presentation.common.LayoutView
@@ -93,20 +92,6 @@ object Util {
         }
     }
 
-    fun getErrorMessage(cause: Throwable, extraContext: String): String {
-        return when (cause) {
-            is AppError -> {
-                when (cause) {
-                    AppError.IOError -> ("$extraContext: Database IO error, please try again")
-                    AppError.OutOfMemoryError -> ("$extraContext: Device out of memory, please clear some memory")
-                    AppError.Unknown -> ("$extraContext: Unknown error, please try again")
-                }
-            }
-
-            else -> throw cause
-        }
-
-    }
 
 
 }

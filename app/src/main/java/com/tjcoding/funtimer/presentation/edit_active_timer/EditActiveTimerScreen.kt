@@ -141,7 +141,7 @@ fun EditActiveTimerScreen(
     }
 
     ObserveAsEvents(stream = shouldShowErrorAlertDialogWithTextStream) { text ->
-        if(text.isBlank()) return@ObserveAsEvents
+        if (text.isBlank()) return@ObserveAsEvents
         shouldShowErrorAlertDialog = true
         errorAlertDialogText = text
     }
@@ -177,14 +177,18 @@ fun EditActiveTimerScreen(
     ) { paddingValues ->
         if (state.selectedLayoutView == LayoutView.STANDARD)
             StandardLayout(
-                Modifier.fillMaxSize().padding(paddingValues),
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
                 state,
                 onEvent,
                 radioOptions
             )
         else
             AlternativeLayout(
-                Modifier.fillMaxSize().padding(paddingValues),
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
                 state,
                 onEvent,
                 radioOptions

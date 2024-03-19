@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
-import com.tjcoding.funtimer.domain.error_handler.ErrorHandler
 import com.tjcoding.funtimer.domain.model.EditActiveTimerScreenUserPreferences
 import com.tjcoding.funtimer.domain.model.TimerSetupScreenUserPreferences
 import com.tjcoding.funtimer.domain.repository.UserPreferencesRepository
@@ -26,7 +25,6 @@ import java.io.IOException
 
 class UserPreferencesRepositoryImpl(
     private val dataStore: DataStore<Preferences>,
-    private val errorHandler: ErrorHandler,
 ) : UserPreferencesRepository {
 
     private object PreferencesKeys {
@@ -40,9 +38,6 @@ class UserPreferencesRepositoryImpl(
 
     override val timerSetupScreenUserPreferencesStream: Flow<TimerSetupScreenUserPreferences> = dataStore.data
         .retryWhen { cause, attempt -> shouldRetry(cause, attempt)}
-        .catch { cause ->
-            throw errorHandler.getError(cause)
-        }
         .map { preferences ->
             val timerSetupScreenSelectedDurations = preferences[PreferencesKeys.TIMER_SETUP_SCREEN_SELECTED_CUSTOM_DURATIONS]?.map { it.toInt() } ?: TIMER_SETUP_SCREEN_DEFAULT_DISPLAYED_DURATIONS.values.toList()
             val timerSetupScreenSelectedCustomDurations = mapOf(
@@ -136,7 +131,7 @@ class UserPreferencesRepositoryImpl(
                 if (shouldRetry(cause, attempt.toLong())) {
                     continue
                 } else {
-                    throw errorHandler.getError(cause) // Rethrow after exceeding retries
+                    throw cause // Rethrow after exceeding retries
                 }
             }
         }

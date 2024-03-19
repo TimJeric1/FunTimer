@@ -23,9 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -34,7 +31,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -57,8 +53,6 @@ import com.tjcoding.funtimer.ui.theme.FunTimerTheme
 import com.tjcoding.funtimer.utility.Util.ObserveAsEvents
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
-
 
 @Composable
 fun TimerSetupScreenRoot(
@@ -72,7 +66,6 @@ fun TimerSetupScreenRoot(
         state = viewModel.state.collectAsStateWithLifecycle().value,
         shouldShowCustomTimePickerDialogStream = viewModel.shouldShowCustomTimePickerDialogStream,
         shouldShowExtraTimePickerDialogStream = viewModel.shouldShowExtraTimePickerDialogStream,
-        shouldShowSnackbarWithTextStream = viewModel.shouldShowSnackbarWithTextStream
     )
 }
 
@@ -84,13 +77,8 @@ fun TimerSetupScreen(
     onEvent: (TimerSetupEvent) -> Unit,
     shouldShowCustomTimePickerDialogStream: Flow<Boolean>,
     shouldShowExtraTimePickerDialogStream: Flow<Boolean>,
-    shouldShowSnackbarWithTextStream: Flow<String>,
 
-) {
-
-    val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
-
+    ) {
     var shouldShowCustomTimePickerDialog by remember { mutableStateOf(false) }
 
     var shouldShowExtraTimePickerDialog by remember { mutableStateOf(false) }
@@ -109,22 +97,9 @@ fun TimerSetupScreen(
     ObserveAsEvents(stream = shouldShowExtraTimePickerDialogStream) { shouldShowExtraTimePickerDialogNew ->
         shouldShowExtraTimePickerDialog = shouldShowExtraTimePickerDialogNew
     }
-    ObserveAsEvents(stream = shouldShowSnackbarWithTextStream) { text ->
-        scope.launch {
-            snackbarHostState
-                .showSnackbar(
-                    message = text,
-                    withDismissAction = true,
-                    duration = SnackbarDuration.Short
-                )
-        }
-    }
 
     Scaffold(
         modifier = modifier,
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
         topBar = {
             TopAppBar(title = {
                 Text(text = "Fun Timer")
@@ -145,7 +120,9 @@ fun TimerSetupScreen(
     ) { paddingValues ->
         if (state.selectedLayoutView == LayoutView.STANDARD)
             StandardLayout(
-                Modifier.fillMaxSize().padding(paddingValues),
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
                 state,
                 onEvent,
                 radioOptions
@@ -452,9 +429,6 @@ fun TimerSetupTimerCard(
 }
 
 
-
-
-
 @Composable
 @PreviewLightDark
 private fun TimerSetupScreenPreview() {
@@ -468,7 +442,6 @@ private fun TimerSetupScreenPreview() {
                 onEvent = {},
                 shouldShowCustomTimePickerDialogStream = flowOf(false),
                 shouldShowExtraTimePickerDialogStream = flowOf(false),
-                shouldShowSnackbarWithTextStream = flowOf("")
             )
         }
     }

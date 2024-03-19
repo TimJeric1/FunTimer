@@ -3,7 +3,6 @@ package com.tjcoding.funtimer.presentation.edit_active_timer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tjcoding.funtimer.BuildConfig
-import com.tjcoding.funtimer.domain.model.AppError
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.domain.repository.UserPreferencesRepository
@@ -14,13 +13,11 @@ import com.tjcoding.funtimer.presentation.common.LayoutView
 import com.tjcoding.funtimer.presentation.common.toDuration
 import com.tjcoding.funtimer.presentation.common.toIndex
 import com.tjcoding.funtimer.service.alarm.AlarmScheduler
-import com.tjcoding.funtimer.utility.Util
 import com.tjcoding.funtimer.utility.Util.addInOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 
 
@@ -43,14 +40,12 @@ class EditActiveTimerViewModel @Inject constructor(
     // Used only in updateState()
     private var timerItemsStreamCounter = 0
     private val timerItemsStream = timerRepository.getAllActiveTimerItemsStream()
-        .catch { cause: Throwable -> handleError(cause, "Couldn't retrieve data") }
         .onEach { updateState(it) }
         // it has to be .statein otherwise it won't replay the last value on back navigation
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     private val userPreferencesStream =
         userPreferencesRepository.editActiveTimerScreenUserPreferencesStream
-            .catch { cause: Throwable -> handleError(cause, "Couldn't retrieve preferences data") }
 
     private val _state = MutableStateFlow(EditActiveTimerState())
 
@@ -195,7 +190,6 @@ class EditActiveTimerViewModel @Inject constructor(
 
 
     private fun onLayoutViewButtonClick() {
-        try {
             viewModelScope.launch {
                 userPreferencesRepository.updateEditActiveTimerScreenLayoutView(
                     if (state.value.selectedLayoutView ==
@@ -203,9 +197,6 @@ class EditActiveTimerViewModel @Inject constructor(
                     ) LayoutView.ALTERNATIVE else LayoutView.STANDARD
                 )
             }
-        } catch (cause: AppError) {
-            handleError(cause, "Couldn't save layout change")
-        }
 
     }
 
@@ -214,17 +205,12 @@ class EditActiveTimerViewModel @Inject constructor(
     }
 
     private fun onCustomDurationPicked(duration: Int) {
-        try {
             viewModelScope.launch {
                 userPreferencesRepository.updateEditActiveTimerScreenCustomDurations(
                     selectedCustomDuration = duration,
                     index = state.value.selectedDurationOption.toIndex()
                 )
             }
-        } catch (cause: AppError) {
-            handleError(cause, "Couldn't save layout change")
-            return
-        }
 
         val previousDuration =
             state.value.selectedDurationOption.toDuration(state.value.displayedDurations)
@@ -373,10 +359,7 @@ class EditActiveTimerViewModel @Inject constructor(
         }
     }
 
-    private fun handleError(cause: Throwable, extraContext: String) = viewModelScope.launch {
-        val errorMsg = Util.getErrorMessage(cause, extraContext)
-        shouldShowSnackbarWithTextChannel.send(errorMsg)
-    }
+
 
 
 }

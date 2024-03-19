@@ -20,9 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -31,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +46,6 @@ import com.tjcoding.funtimer.utility.Util.SecondsFormatTommss
 import com.tjcoding.funtimer.utility.navigation.SecondaryScreen
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -71,7 +66,6 @@ fun ActiveTimersScreenRoot(
             val route = SecondaryScreen.EditActiveTimerScreen.createRoute(id)
             navController.navigate(route)
         },
-        shouldShowSnackbarWithTextStream = viewModel.shouldShowSnackbarWithTextStream
     )
 }
 
@@ -85,11 +79,7 @@ fun ActiveTimersScreen(
     shouldNavigateToEditTimerItemScreenStream: Flow<Boolean>,
     selectedActiveTimerItemStream: Flow<ActiveTimerItem>,
     navigateToEditActiveTimerScreen: (String) -> Unit,
-    shouldShowSnackbarWithTextStream: Flow<String>,
 ) {
-
-    val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     var shouldShowAlertDialog by remember { mutableStateOf(false) }
     var selectedTimerItem: ActiveTimerItem? by remember { mutableStateOf(null) }
@@ -108,22 +98,8 @@ fun ActiveTimersScreen(
         selectedTimerItem = selectedTimerItemNew
     }
 
-    ObserveAsEvents(stream = shouldShowSnackbarWithTextStream) { text ->
-        scope.launch {
-            snackbarHostState
-                .showSnackbar(
-                    message = text,
-                    withDismissAction = true,
-                    duration = SnackbarDuration.Short
-                )
-        }
-    }
-
     Scaffold(
         modifier = modifier,
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
         topBar = {
             TopAppBar(
                 title = {
@@ -135,7 +111,9 @@ fun ActiveTimersScreen(
 
         if (state.activeTimerItems.isEmpty()) {
             Box(
-                modifier = Modifier.fillMaxSize().padding(paddingValues), // Fill the entire screen
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues), // Fill the entire screen
                 contentAlignment = Alignment.Center // Center content within the Box
             ) {
                 Text(
@@ -233,7 +211,10 @@ private fun TimerCardsVerticalGrid(
         modifier = modifier,
         items = activeTimerItems,
         key = { pastTimerItem -> pastTimerItem.id }) { lazyListModifier, activeTimerItem ->
-        AlarmAndExtraTimeCountdown(alarmTime = activeTimerItem.alarmTime, triggerTime = activeTimerItem.triggerTime) {countDownAlarmTime ,countDownExtraTime ->
+        AlarmAndExtraTimeCountdown(
+            alarmTime = activeTimerItem.alarmTime,
+            triggerTime = activeTimerItem.triggerTime
+        ) { countDownAlarmTime, countDownExtraTime ->
             ActiveTimerCard(
                 modifier = lazyListModifier
                     .aspectRatio(7 / 8f)
@@ -360,7 +341,6 @@ private fun ActiveTimersScreenPreview() {
                 shouldShowDeleteTimerItemDialogStream = flowOf(false),
                 selectedActiveTimerItemStream = flowOf(),
                 navigateToEditActiveTimerScreen = {},
-                shouldShowSnackbarWithTextStream = flowOf("")
             )
         }
     }
@@ -383,7 +363,6 @@ private fun ActiveTimersScreenEmptyPreview() {
                 shouldShowDeleteTimerItemDialogStream = flowOf(false),
                 selectedActiveTimerItemStream = flowOf(),
                 navigateToEditActiveTimerScreen = {},
-                shouldShowSnackbarWithTextStream = flowOf("")
             )
         }
     }

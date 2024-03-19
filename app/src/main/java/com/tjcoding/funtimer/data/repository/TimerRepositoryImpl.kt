@@ -3,14 +3,12 @@ package com.tjcoding.funtimer.data.repository
 import com.tjcoding.funtimer.data.local.dao.TimerDao
 import com.tjcoding.funtimer.data.mapper.toEntitiesPair
 import com.tjcoding.funtimer.data.mapper.toTimerItem
-import com.tjcoding.funtimer.domain.error_handler.ErrorHandler
 import com.tjcoding.funtimer.domain.model.TimerItem
 import com.tjcoding.funtimer.domain.repository.TimerRepository
 import com.tjcoding.funtimer.utility.Util
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retryWhen
@@ -20,7 +18,6 @@ import java.util.UUID
 class TimerRepositoryImpl(
     private val timerDao: TimerDao,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
-    private val errorHandler: ErrorHandler
 ) : TimerRepository {
 
     override fun getAllTriggeredTimerItemsStream(): Flow<List<TimerItem>> {
@@ -29,7 +26,6 @@ class TimerRepositoryImpl(
         // and it applies the Dispatcher for all operations that come before it (in this case the .map function and .getAllTimerItemsMap function).
         return timerDao.getAllTriggeredTimerItemsAsMapsStream()
             .retryWhen { cause, attempt -> Util.shouldRetry(cause, attempt) }
-            .catch { cause: Throwable -> throw errorHandler.getError(cause) }
             .map { timerItemMap -> timerItemMap.map { it.toPair().toTimerItem() } }
             .flowOn(defaultDispatcher)
 
@@ -42,7 +38,6 @@ class TimerRepositoryImpl(
         // and it applies the Dispatcher for all operations that come before it (in this case the .map function and .getAllTimerItemsMap function).
         return timerDao.getAllNotTriggeredTimerItemsAsMapsStream()
             .retryWhen { cause, attempt -> Util.shouldRetry(cause, attempt) }
-            .catch { cause: Throwable -> throw errorHandler.getError(cause) }
             .map { timerItemMap -> timerItemMap.map { it.toPair().toTimerItem() } }
             .flowOn(defaultDispatcher)
     }
@@ -98,7 +93,7 @@ class TimerRepositoryImpl(
                 if (Util.shouldRetry(cause, attempt.toLong())) {
                     continue
                 } else {
-                    throw errorHandler.getError(cause) // Rethrow after exceeding retries
+                    throw cause // Rethrow after exceeding retries
                 }
             }
         }

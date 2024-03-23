@@ -37,10 +37,8 @@ class FakeUserPreferencesRepository : UserPreferencesRepository {
             selectedLayoutView = DEFAULT_SELECTED_LAYOUT_VIEW,
         )
     )
-    override val timerSetupScreenUserPreferencesStream: Flow<TimerSetupScreenUserPreferences>
-        get() = fakeTimerSetupScreenUserPreferencesStream
-    override val editActiveTimerScreenUserPreferencesStream: Flow<EditActiveTimerScreenUserPreferences>
-        get() = fakeEditActiveTimerScreenUserPreferencesStream
+    override val timerSetupScreenUserPreferencesStream: Flow<TimerSetupScreenUserPreferences> = fakeTimerSetupScreenUserPreferencesStream
+    override val editActiveTimerScreenUserPreferencesStream: Flow<EditActiveTimerScreenUserPreferences> = fakeEditActiveTimerScreenUserPreferencesStream
 
     override suspend fun updateTimerSetupScreenSelectedCustomDurations(
         selectedCustomDuration: Int,

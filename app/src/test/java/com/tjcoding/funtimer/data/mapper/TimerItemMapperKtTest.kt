@@ -46,9 +46,9 @@ class TimerItemMapperKtTest {
         val entitiesPair = Pair(
             AlarmTriggerTimeEntity(id, triggerTime,30, 10, false),
             listOf(
-                SelectedNumberEntity(selectedNumber = 1, alarmTriggerTimeEntityId = id),
-                SelectedNumberEntity(selectedNumber = 2, alarmTriggerTimeEntityId = id),
-                SelectedNumberEntity(selectedNumber = 3, alarmTriggerTimeEntityId = id)
+                SelectedNumberEntity(selectedNumber = 1, alarmTriggerTimeEntityId = id, alarmTriggerTimeEntitySelectedNumberId = 0),
+                SelectedNumberEntity(selectedNumber = 2, alarmTriggerTimeEntityId = id, alarmTriggerTimeEntitySelectedNumberId = 1),
+                SelectedNumberEntity(selectedNumber = 3, alarmTriggerTimeEntityId = id, alarmTriggerTimeEntitySelectedNumberId = 2)
             )
         )
 

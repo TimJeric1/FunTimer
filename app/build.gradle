@@ -52,6 +52,11 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -97,7 +102,8 @@ dependencies {
     testImplementation ('junit:junit:4.13.2')
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("com.google.truth:truth:1.1.4")
-    testImplementation("io.mockk:mockk:1.13.8")
+
+
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.4")
 
 

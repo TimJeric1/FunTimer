@@ -2,7 +2,8 @@ import com.tjcoding.funtimer.utility.Util
 import com.tjcoding.funtimer.utility.Util.addInOrder
 import com.tjcoding.funtimer.utility.Util.formatTo24HourAndMinute
 import com.tjcoding.funtimer.utility.Util.formatToTimeRemaining
-import kotlinx.coroutines.runBlocking
+import com.tjcoding.funtimer.utility.Util.retryOnIOError
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.IOException
@@ -56,24 +57,54 @@ class UtilTest {
     }
 
     @Test
-    fun shouldRetry_shouldReturnTrueForIOExceptionAndWithinMaxAttempts() = runBlocking {
+    fun shouldRetry_shouldReturnTrueForIOExceptionAndWithinMaxAttempts() = runTest {
         val ioException = IOException("Simulated IOException")
         val shouldRetry = Util.shouldRetry(ioException, 2)
         assertTrue(shouldRetry)
     }
 
     @Test
-    fun shouldRetry_shouldReturnFalseForIOExceptionAfterMaxAttempts() = runBlocking {
+    fun shouldRetry_shouldReturnFalseForIOExceptionAfterMaxAttempts() = runTest {
         val ioException = IOException("Simulated IOException")
         val shouldRetry = Util.shouldRetry(ioException, 4)
         assertFalse(shouldRetry)
     }
 
     @Test
-    fun shouldRetry_shouldReturnFalseForNonIOException() = runBlocking {
+    fun shouldRetry_shouldReturnFalseForNonIOException() = runTest {
         val exception = RuntimeException("Simulated exception")
         val shouldRetry = Util.shouldRetry(exception, 2)
         assertFalse(shouldRetry)
     }
+
+
+    @Test
+    fun `retryOnIOError should retry and succeed`() =
+        runTest {
+            var attemptCount = 0
+
+            val result = retryOnIOError {
+                attemptCount++
+                if (attemptCount < 3) {
+                    throw IOException("Simulated IOException")
+                } else {
+                    "Success"
+                }
+            }
+
+            assertEquals("Success", result)
+            assertEquals(3, attemptCount)
+        }
+
+    @Test(expected = IOException::class)
+    fun `retryOnIOError should retry and fail`() =
+        runTest {
+            var attemptCount = 0
+
+            retryOnIOError {
+                attemptCount++
+                throw IOException("Simulated IOException")
+            }
+        }
 
 }

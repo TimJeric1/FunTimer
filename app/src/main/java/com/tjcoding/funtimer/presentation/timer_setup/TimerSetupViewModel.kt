@@ -141,6 +141,7 @@ class TimerSetupViewModel @Inject constructor(
     }
 
     private fun onBackspaceIconClick() {
+        if(state.value.selectedNumbers.isEmpty()) return
         val newSelectedNumbers = state.value.selectedNumbers.toMutableList()
         val removedNumber = newSelectedNumbers.removeLast()
         val newPossibleNumbers = state.value.possibleNumbers.toMutableList()

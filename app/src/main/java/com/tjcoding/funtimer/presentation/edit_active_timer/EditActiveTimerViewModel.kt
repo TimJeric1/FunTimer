@@ -175,6 +175,7 @@ class EditActiveTimerViewModel @Inject constructor(
     }
 
     private fun onBackspaceIconClick() {
+        if(state.value.editedActiveTimerItem.selectedNumbers.isEmpty()) return
         val editedTimerItem = state.value.editedActiveTimerItem
         val newSelectedNumbers = editedTimerItem.selectedNumbers.toMutableList()
         val removedNumber = newSelectedNumbers.removeLast()

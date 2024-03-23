@@ -308,7 +308,7 @@ class TimerSetupViewModel @Inject constructor(
     }
 
     private fun updateDisplayedNumber() {
-        val newDisplayedNumber = state.value.possibleNumbers[0]
+        val newDisplayedNumber = _state.value.possibleNumbers[0]
         _state.update {
             it.copy(displayedNumber = newDisplayedNumber)
         }

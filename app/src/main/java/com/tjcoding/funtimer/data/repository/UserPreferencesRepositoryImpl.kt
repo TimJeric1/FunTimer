@@ -16,6 +16,7 @@ import com.tjcoding.funtimer.presentation.common.toIndex
 import com.tjcoding.funtimer.utility.Util.TIMER_SETUP_SCREEN_DEFAULT_DISPLAYED_DURATIONS
 import com.tjcoding.funtimer.utility.Util.DEFAULT_SELECTED_EXTRA_TIME
 import com.tjcoding.funtimer.utility.Util.EDIT_ACTIVE_TIMER_SCREEN_DEFAULT_DISPLAYED_DURATIONS
+import com.tjcoding.funtimer.utility.Util.retryOnIOError
 import com.tjcoding.funtimer.utility.Util.shouldRetry
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -121,19 +122,5 @@ class UserPreferencesRepositoryImpl(
         }
     }
 
-    private suspend fun <T> retryOnIOError(block: suspend () -> T): T {
-        var attempt = 0
-        while (true) {
-            try {
-                return block() // Successful insertion, return from the function
-            } catch (cause: Throwable) {
-                attempt++
-                if (shouldRetry(cause, attempt.toLong())) {
-                    continue
-                } else {
-                    throw cause // Rethrow after exceeding retries
-                }
-            }
-        }
-    }
+
 }

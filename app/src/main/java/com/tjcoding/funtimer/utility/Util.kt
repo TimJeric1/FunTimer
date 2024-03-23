@@ -80,6 +80,22 @@ object Util {
         return false
     }
 
+    suspend fun <T> retryOnIOError(block: suspend () -> T): T {
+        var attempt = 0
+        while (true) {
+            try {
+                return block() // Successful insertion, return from the function
+            } catch (cause: Throwable) {
+                attempt++
+                if (shouldRetry(cause, attempt.toLong())) {
+                    continue
+                } else {
+                    throw cause // Rethrow after exceeding retries
+                }
+            }
+        }
+    }
+
     @Composable
     fun <T> ObserveAsEvents(stream: Flow<T>, onEvent: (T) -> Unit) {
         val lifecycleOwner = LocalLifecycleOwner.current
